@@ -4,46 +4,9 @@ import { ThemedView } from '../components/ThemedView';
 import { Ionicons } from '@expo/vector-icons';
 import { dashboardStyles as styles, colors } from '../constants/Theme';
 import { Footer } from '../components/Footer';
-import Svg, { Circle } from 'react-native-svg';
+import CircularProgress from 'react-native-circular-progress-indicator';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
-const ProgressCircle = ({ progress }: { progress: number }) => {
-  const size = 45;
-  const strokeWidth = 0;
-  const radius = (size - strokeWidth) / 2;
-  const circumference = radius * 2 * Math.PI;
-  const strokeDashoffset = circumference - (progress / 100) * circumference;
-
-  return (
-    <View style={[styles.progressCircle, localStyles.progressContainer]}>
-      <Svg width={size} height={size}>
-        {/* Background circle */}
-        <Circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke={colors.white}
-          strokeWidth={strokeWidth}
-          opacity={0.2}
-        />
-        {/* Progress circle */}
-        <Circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke={colors.white}
-          strokeWidth={strokeWidth}
-          strokeDasharray={`${circumference} ${circumference}`}
-          strokeDashoffset={strokeDashoffset}
-          strokeLinecap="round"
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
-        />
-      </Svg>
-      <Text style={[styles.progressText, localStyles.progressTextOverlay]}>{`${progress}%`}</Text>
-    </View>
-  );
-};
 
 const ProjectCard = ({ title, date, progress }: { title: string, date: string, progress: number }) => (
   <TouchableOpacity style={styles.projectCard}>
@@ -87,20 +50,6 @@ const TaskItem = ({ title, description, time, status }: { title: string, descrip
   </View>
 );
 
-const localStyles = StyleSheet.create({
-  progressContainer: {
-    position: 'relative',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  progressTextOverlay: {
-    position: 'absolute',
-    color: colors.white,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-});
-
 export default function Dashboard() {
   return (
     <ThemedView style={styles.container}>
@@ -113,7 +62,20 @@ export default function Dashboard() {
 
       <ScrollView style={styles.content}>
         <View style={styles.progressSection}>
-          <ProgressCircle progress={85} />
+          <View style={[styles.progressCircle, { backgroundColor: '#7980FF' }]}>
+            <CircularProgress
+              value={85}
+              radius={25}
+              duration={2000}
+              progressValueColor={colors.white}
+              activeStrokeColor={colors.white}
+              inActiveStrokeColor={'rgba(255, 255, 255, 0.3)'}
+              inActiveStrokeWidth={5}
+              activeStrokeWidth={5}
+              titleColor={colors.white}
+              titleStyle={{ fontWeight: '600' }}
+            />
+          </View>
           <View style={styles.progressInfo}>
             <Text style={styles.progressTitle}>Progress Today Task</Text>
             <Text style={styles.progressSubtext}>13/15 Tasks Completed</Text>

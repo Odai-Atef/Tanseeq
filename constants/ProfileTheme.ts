@@ -45,7 +45,7 @@ export const ProfileTheme = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: colors.primary,
     padding: 4,
     alignItems: 'center',
   },
@@ -101,7 +101,7 @@ export const ProfileTheme = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     borderRadius: 12,
     padding: 20,
     width: '100%',
@@ -153,7 +153,7 @@ export const ProfileTheme = StyleSheet.create({
     alignItems: 'center',
   },
   saveButtonText: {
-    color: 'white',
+    color: colors.white,
     fontSize: 16,
     fontWeight: '600',
   },

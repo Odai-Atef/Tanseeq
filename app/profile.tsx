@@ -57,8 +57,8 @@ export default function Profile() {
               source={require('../assets/images/avt4.jpg')}
               style={ProfileTheme.avatar}
             />
-            <TouchableOpacity style={ProfileTheme.cameraButton}>
-              <Ionicons name="camera-outline" size={20} color="white" />
+            <TouchableOpacity style={[ProfileTheme.cameraButton, { backgroundColor: colors.primary }]}>
+              <Ionicons name="camera-outline" size={20} color={colors.white} />
             </TouchableOpacity>
           </View>
           <ThemedText style={ProfileTheme.userName}>Jonathan Smith</ThemedText>
