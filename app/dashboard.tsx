@@ -9,8 +9,8 @@ import Svg, { Circle } from 'react-native-svg';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const ProgressCircle = ({ progress }: { progress: number }) => {
-  const size = 60;
-  const strokeWidth = 4;
+  const size = 45;
+  const strokeWidth = 0;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const strokeDashoffset = circumference - (progress / 100) * circumference;

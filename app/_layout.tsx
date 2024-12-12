@@ -28,11 +28,16 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={colorScheme === 'light' ? DarkTheme : DefaultTheme}>
       <Stack>
+        <Stack.Screen name="dashboard" options={{ headerShown: false }} />
+        <Stack.Screen name="tasks" options={{ title: 'Calender', headerShown: true }} />
+        <Stack.Screen name="my_tasks" options={{ title: 'Tasks', headerShown: true }} />
+
+       
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="task_view" options={{ headerShown: false }} />
-        <Stack.Screen name="task_add" options={{ headerShown: false }} />
+        <Stack.Screen name="task_add" options={{ headerShown: true }} />
         <Stack.Screen name="profile" options={{ headerShown: false }} />
         <Stack.Screen 
           name="(auth)" 

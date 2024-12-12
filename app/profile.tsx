@@ -50,8 +50,6 @@ export default function Profile() {
 
   return (
     <ThemedView style={ProfileTheme.container}>
-    
-
       <ScrollView>
         <View style={ProfileTheme.profileSection}>
           <View style={ProfileTheme.avatarContainer}>

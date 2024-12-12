@@ -56,17 +56,6 @@ export default function TaskAdd() {
 
   return (
     <ThemedView style={taskAddStyles.container}>
-      <View style={taskAddStyles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={taskAddStyles.headerButton}>
-          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
-        </TouchableOpacity>
-        <ThemedText style={taskAddStyles.headerTitle}>Create New Task</ThemedText>
-        <View style={taskAddStyles.headerRight}>
-       
-         
-        </View>
-      </View>
-
       <ScrollView style={taskAddStyles.content}>
         <View style={taskAddStyles.section}>
           <ThemedText style={taskAddStyles.label}>Task Name</ThemedText>

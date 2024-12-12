@@ -187,7 +187,6 @@ export const dashboardStyles = {
   content: {
     flex: 1,
     padding: 16,
-    marginBottom: 60,
   } as ViewStyle,
   progressSection: {
     flexDirection: 'row',
