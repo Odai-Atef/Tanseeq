@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, viewport-fit=cover">
+    <!-- font -->
+    <link rel="stylesheet" href="fonts/fonts.css">
+    <!-- Icons -->
+    <link rel="stylesheet" href="fonts/font-icons.css">
+    <link rel="stylesheet" type="text/css" href="css/nouislider.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/styles.css"/>
+
+    <!-- Favicon and Touch Icons  -->
+    <link rel="shortcut icon" href="images/logo/168.png" />
+    <link rel="apple-touch-icon-precomposed" href="images/logo/168.png" />
+
+    <title>rang sliders</title>
+</head>
+
+<body>
+    <!-- preloade -->
+    <div class="preload preload-container">
+        <div class="logo-img">
+            <img src="images/logo/logo-2.png" alt="logo">
+        </div>
+        <div class="spinner-circle lg success">
+            <span class="spinner-circle1 spinner-child"></span>
+            <span class="spinner-circle2 spinner-child"></span>
+            <span class="spinner-circle3 spinner-child"></span>
+            <span class="spinner-circle4 spinner-child"></span>
+            <span class="spinner-circle5 spinner-child"></span>
+            <span class="spinner-circle6 spinner-child"></span>
+            <span class="spinner-circle7 spinner-child"></span>
+            <span class="spinner-circle8 spinner-child"></span>
+            <span class="spinner-circle9 spinner-child"></span>
+        </div>
+    </div>
+    <!-- /preload -->
+    <div class="header fixed-top line-bt">
+        <div class="left">
+          <a href="javascript:void(0);" class="icon back-btn"><i class="icon-back"></i></a>
+        </div>
+        <h4>Rang Sliders</h4> 
+    </div>
+
+    <div class="app-content style-3 pb-32">
+        <div class="tf-container">
+            <div class="card mt-20">
+                <div class="card-header pb-20 line-bt"> 
+                    <h4 class="fw-6">Basic Slider</h4>    
+                </div>
+                <div class="card-body mt-20">
+                    <div id="basic-slider"></div>
+                </div>
+            </div>
+            <div class="card mt-20">
+                <div class="card-header pb-20 line-bt"> 
+                    <h4 class="fw-6">Slider Tooltip</h4>    
+                </div>
+                <div class="card-body mt-60 slider-tooltip-default">
+                    <div id="slider-tooltip"></div>
+                </div>
+            </div>
+            <div class="card mt-20">
+                <div class="card-header pb-20 line-bt"> 
+                    <h4 class="fw-6">Slider Behaviour (Snap)</h4>    
+                </div>
+                <div class="card-body mt-20">
+                    <div id="basic-slider-one"></div>
+                </div>
+            </div>
+            <div class="card mt-20">
+                <div class="card-header pb-20 line-bt"> 
+                    <h4 class="fw-6">Disabling A Slider</h4>    
+                </div>
+                <div class="card-body mt-20">
+                    <div id="slider-disable"></div>
+                    <label class="d-inline-flex align-items-center gap-10 mt-20 fw-5">
+                        <input class="tf-checkbox" type="checkbox" id="checkbox-slider">
+                        Disable slider
+                    </label>
+                </div>
+            </div>
+            <div class="card mt-20">
+                <div class="card-header pb-20 line-bt"> 
+                    <h4 class="fw-6">Changing the slider by key press</h4>    
+                </div>
+                <div class="card-body mt-60 slider-tooltip-default">
+                    <div id="keypress-two-val"></div>
+                    <div class="input-stroke mt-20">
+                        <input type="text" id="ip-val-lower" class="form-control fw-normal">
+                    </div>
+                    <div class="input-stroke mt-10">
+                        <input type="text" id="ip-val-upper" class="form-control fw-normal">
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="card mt-20 pb-60">
+                <div class="card-header pb-20 line-bt"> 
+                    <h4 class="fw-6">Soft Limits</h4>    
+                </div>
+                <div class="card-body mt-20">
+                    <div id="limit-val"></div>
+                
+                </div>
+            </div>
+            <div class="card mt-20 pb-60">
+                <div class="card-header pb-20 line-bt"> 
+                    <h4 class="fw-6">Moving the slider by clicking pips</h4>    
+                </div>
+                <div class="card-body mt-20">
+                    <div id="pips-val"></div>
+                
+                </div>
+            </div>
+            <div class="card mt-20">
+                <div class="card-header pb-20 line-bt"> 
+                    <h4 class="fw-6">Slider Direction</h4>    
+                </div>
+                <div class="card-body mt-20">
+                    <div id="slider-dir"></div>
+                    <div class="mt-20 field-dir fw-normal"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/nouislider.min.js"></script>
+    <script type="text/javascript" src="js/rangle-slider.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+
+    
+    
+</body>
+</html>
