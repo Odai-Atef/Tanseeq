@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../constants/Theme';
 
 type FooterProps = {
-  activeTab: 'home' | 'tasks' | 'profile' | 'my-tasks';
+  activeTab: 'home' | 'tasks' | 'profile' | 'calendar';
 };
 
 export function Footer({ activeTab }: FooterProps) {
@@ -20,12 +20,13 @@ export function Footer({ activeTab }: FooterProps) {
         </TouchableOpacity>
       </Link>
 
-      <Link href="/tasks" asChild>
+     
+      <Link href="/tasks/calendar" asChild>
         <TouchableOpacity style={styles.tab}>
           <Ionicons
-            name={activeTab === 'tasks' ? 'calendar' : 'calendar-outline'}
+            name={activeTab === 'calendar' ? 'calendar' : 'calendar-outline'}
             size={24}
-            color={activeTab === 'tasks' ? colors.primary : colors.textSecondary}
+            color={activeTab === 'calendar' ? colors.primary : colors.textSecondary}
           />
         </TouchableOpacity>
       </Link>
@@ -36,12 +37,12 @@ export function Footer({ activeTab }: FooterProps) {
         </TouchableOpacity>
       </Link>
 
-      <Link href="/my_tasks" asChild>
+      <Link href="/tasks" asChild>
         <TouchableOpacity style={styles.tab}>
           <Ionicons
-            name={activeTab === 'my-tasks' ? 'checkmark' : 'checkmark-outline'}
+            name={activeTab === 'tasks' ? 'checkmark' : 'checkmark-outline'}
             size={24}
-            color={activeTab === 'my-tasks' ? colors.primary : colors.textSecondary}
+            color={activeTab === 'tasks' ? colors.primary : colors.textSecondary}
           />
         </TouchableOpacity>
       </Link>

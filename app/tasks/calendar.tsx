@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { ThemedView } from '../components/ThemedView';
-import { Footer } from '../components/Footer';
-import { TasksTheme } from '../constants/TasksTheme';
+import { ThemedView } from '../../components/ThemedView';
+import { Footer } from '../../components/Footer';
+import { TasksTheme } from '../../constants/TasksTheme';
 import { Ionicons } from '@expo/vector-icons';
 import { Calendar, DateData } from 'react-native-calendars';
 import { useRouter } from 'expo-router';
-import { API_ENDPOINTS } from '../constants/api';
+import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { format } from 'date-fns';
 
@@ -80,7 +80,7 @@ const TaskSection = ({
               key={schedule.id} 
               style={TasksTheme.taskItem}
               onPress={() => router.push({
-                pathname: "/task_view",
+                pathname: "/tasks/view",
                 params: { id: schedule.task.id }
               })}
             >
