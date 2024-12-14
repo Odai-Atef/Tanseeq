@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Image, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from '../components/ThemedView';
 import { ThemedText } from '../components/ThemedText';
 import { Footer } from '../components/Footer';
-import {  dashboardStyles as styles,colors } from '../constants/Theme';
+import { dashboardStyles as styles, colors } from '../constants/Theme';
 import { ProfileTheme } from '../constants/ProfileTheme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type IconName = keyof typeof Ionicons.glyphMap;
+
+interface UserInfo {
+  id: string;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+}
 
 const ProfileListItem = ({ 
   icon, 
@@ -43,10 +51,49 @@ const ProfileListItem = ({
 export default function Profile() {
   const router = useRouter();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleLogout = () => {
-    router.push('/(auth)/signin');
+  useEffect(() => {
+    const loadUserInfo = async () => {
+      try {
+        const userInfoStr = await AsyncStorage.getItem('userInfo');
+        if (userInfoStr) {
+          setUserInfo(JSON.parse(userInfoStr));
+        }
+      } catch (error) {
+        console.error('Error loading user info:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUserInfo();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.multiRemove(['access_token', 'refresh_token', 'userInfo']);
+      router.push('/(auth)/signin');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
+
+  if (loading) {
+    return (
+      <ThemedView style={styles.container}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+        <Footer activeTab="profile" />
+      </ThemedView>
+    );
+  }
+
+  const displayName = userInfo ? 
+    [userInfo.first_name, userInfo.last_name].filter(Boolean).join(' ') || 'User' 
+    : 'User';
 
   return (
     <ThemedView style={styles.container}>
@@ -61,8 +108,8 @@ export default function Profile() {
               <Ionicons name="camera-outline" size={20} color={colors.primary} />
             </TouchableOpacity>
           </View>
-          <ThemedText style={ProfileTheme.userName}>Jonathan Smith</ThemedText>
-          <Text style={ProfileTheme.userEmail}>jonathansmith@workmail.com</Text>
+          <ThemedText style={ProfileTheme.userName}>{displayName}</ThemedText>
+          <Text style={ProfileTheme.userEmail}>{userInfo?.email || 'No email'}</Text>
         </View>
 
         <TouchableOpacity
