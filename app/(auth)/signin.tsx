@@ -1,22 +1,150 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, commonStyles } from '../../constants/Theme';
+import { API_ENDPOINTS } from '../../constants/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+interface ApiError {
+  message: string;
+  extensions: {
+    reason: string;
+    code: string;
+  };
+}
+
+interface LoginResponse {
+  data?: {
+    access_token: string;
+    refresh_token: string;
+    user: {
+      id: string;
+      email: string;
+    };
+  };
+  errors?: ApiError[];
+}
+
+interface UserInfoResponse {
+  data?: {
+    id: string;
+    email: string;
+    first_name?: string;
+    last_name?: string;
+    avatar?: string;
+    role?: string;
+    // Add other user fields as needed
+  };
+  errors?: ApiError[];
+}
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [emailError, setEmailError] = useState('');
   const router = useRouter();
 
-  const handleSignIn = () => {
-    // Implement sign in logic here
-    console.log('Sign in:', { email, password });
-    // Navigate to dashboard
-    router.replace('/dashboard');
+  const fetchUserInfo = async (accessToken: string): Promise<void> => {
+    try {
+      const response = await fetch(API_ENDPOINTS.USER_INFO, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data: UserInfoResponse = await response.json();
+
+      if (data.errors) {
+        throw new Error(data.errors[0]?.message || 'Failed to fetch user information');
+      }
+
+      if (!data.data) {
+        throw new Error('Invalid user info response');
+      }
+
+      // Save detailed user info to AsyncStorage
+      await AsyncStorage.setItem('userInfo', JSON.stringify(data.data));
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+      // Don't throw the error as we already have basic user info
+    }
+  };
+
+  const handleSignIn = async () => {
+    // Reset error state
+    setEmailError('');
+
+    // Validate email
+    if (!email) {
+      setEmailError('Email is required');
+      return;
+    }
+    if (!validateEmail(email)) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+
+    // Validate password
+    if (!password) {
+      Alert.alert('Error', 'Password is required');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(API_ENDPOINTS.LOGIN, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data: LoginResponse = await response.json();
+
+      if (data.errors) {
+        // Show the API error message
+        const errorMessage = data.errors[0]?.message;
+        Alert.alert('Error', errorMessage);
+        return;
+      }
+
+      if (!data.data) {
+        throw new Error('Invalid response from server');
+      }
+
+      // Save auth tokens
+      await Promise.all([
+        AsyncStorage.setItem('access_token', data.data.access_token),
+        AsyncStorage.setItem('refresh_token', data.data.refresh_token),
+      ]);
+
+      // Fetch and save detailed user info
+      await fetchUserInfo(data.data.access_token);
+
+      // Navigate to dashboard on success
+      router.replace('/dashboard');
+    } catch (error: any) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to sign in. Please try again.';
+      Alert.alert('Error', errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -34,14 +162,24 @@ export default function SignIn() {
           <View style={commonStyles.inputContainer}>
             <Ionicons name="mail-outline" size={20} color={colors.secondary} style={{ marginRight: 8 }} />
             <TextInput
-              style={commonStyles.input}
+              style={[commonStyles.input, emailError && { borderColor: 'red' }]}
               placeholder="Type your email"
               value={email}
-              onChangeText={setEmail}
+              onChangeText={(text) => {
+                setEmail(text);
+                setEmailError(''); // Clear error when user types
+              }}
               keyboardType="email-address"
               placeholderTextColor={colors.secondary}
+              editable={!loading}
+              autoCapitalize="none"
             />
           </View>
+          {emailError ? (
+            <Text style={{ color: 'red', marginLeft: 10, marginTop: -10, marginBottom: 10 }}>
+              {emailError}
+            </Text>
+          ) : null}
 
           <View style={commonStyles.inputContainer}>
             <Ionicons name="lock-closed-outline" size={20} color={colors.secondary} style={{ marginRight: 8 }} />
@@ -52,14 +190,20 @@ export default function SignIn() {
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
               placeholderTextColor={colors.secondary}
+              editable={!loading}
+              autoCapitalize="none"
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={commonStyles.eyeIcon}>
               <Ionicons name={showPassword ? "eye-outline" : "eye-off-outline"} size={20} color={colors.secondary} />
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={commonStyles.button} onPress={handleSignIn}>
-            <Text style={commonStyles.buttonText}>Sign In</Text>
+          <TouchableOpacity 
+            style={[commonStyles.button, loading && { opacity: 0.7 }]} 
+            onPress={handleSignIn}
+            disabled={loading}
+          >
+            <Text style={commonStyles.buttonText}>{loading ? 'Signing In...' : 'Sign In'}</Text>
           </TouchableOpacity>
 
           <View style={commonStyles.dividerContainer}>

@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from '../components/ThemedView';
 import { ThemedText } from '../components/ThemedText';
 import { Footer } from '../components/Footer';
-import { colors } from '../constants/Theme';
+import {  dashboardStyles as styles,colors } from '../constants/Theme';
 import { ProfileTheme } from '../constants/ProfileTheme';
 
 type IconName = keyof typeof Ionicons.glyphMap;
@@ -36,7 +36,7 @@ const ProfileListItem = ({
     ]}>
       {title}
     </ThemedText>
-    <Ionicons name="chevron-forward-outline" size={20} color={colors.textSecondary} />
+    <Ionicons name="chevron-forward-outline" size={20} color={colors.textPrimary} />
   </TouchableOpacity>
 );
 
@@ -49,7 +49,7 @@ export default function Profile() {
   };
 
   return (
-    <ThemedView style={ProfileTheme.container}>
+    <ThemedView style={styles.container}>
       <ScrollView>
         <View style={ProfileTheme.profileSection}>
           <View style={ProfileTheme.avatarContainer}>
@@ -58,7 +58,7 @@ export default function Profile() {
               style={ProfileTheme.avatar}
             />
             <TouchableOpacity style={[ProfileTheme.cameraButton, { backgroundColor: colors.primary }]}>
-              <Ionicons name="camera-outline" size={20} color={colors.white} />
+              <Ionicons name="camera-outline" size={20} color={colors.primary} />
             </TouchableOpacity>
           </View>
           <ThemedText style={ProfileTheme.userName}>Jonathan Smith</ThemedText>

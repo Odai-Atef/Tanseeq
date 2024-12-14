@@ -34,6 +34,23 @@ export const TasksTheme = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    color: '#F05A5A',
+    fontSize: 16,
+    textAlign: 'center',
+  },
   section: {
     marginBottom: 24,
     backgroundColor: '#FFFFFF',

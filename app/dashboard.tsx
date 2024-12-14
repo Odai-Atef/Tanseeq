@@ -1,10 +1,11 @@
-import React from 'react';
-import { ScrollView, View, Text, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ScrollView, View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { ThemedView } from '../components/ThemedView';
 import { Ionicons } from '@expo/vector-icons';
 import { dashboardStyles as styles, colors } from '../constants/Theme';
 import { Footer } from '../components/Footer';
 import CircularProgress from 'react-native-circular-progress-indicator';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -51,11 +52,32 @@ const TaskItem = ({ title, description, time, status }: { title: string, descrip
 );
 
 export default function Dashboard() {
+  const [userName, setUserName] = useState('User');
+
+  useEffect(() => {
+    const getUserInfo = async () => {
+      try {
+        const userInfoString = await AsyncStorage.getItem('userInfo');
+        if (userInfoString) {
+          const userInfo = JSON.parse(userInfoString);
+          const fullName = [userInfo.first_name, userInfo.last_name]
+            .filter(Boolean)
+            .join(' ');
+          setUserName(fullName || 'User');
+        }
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+      }
+    };
+
+    getUserInfo();
+  }, []);
+
   return (
     <ThemedView style={styles.container}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>Hello, User!</Text>
+          <Text style={styles.greeting}>Hello, {userName}!</Text>
           <Text style={styles.subGreeting}>Let's complete your tasks</Text>
         </View>
       </View>

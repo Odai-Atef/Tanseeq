@@ -45,7 +45,7 @@ export const ProfileTheme = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: colors.primary,
+    backgroundColor: 'rgba(0,0,0,0.5)',
     padding: 4,
     alignItems: 'center',
   },
@@ -88,6 +88,7 @@ export const ProfileTheme = StyleSheet.create({
   listItemText: {
     flex: 1,
     fontSize: 16,
+    color:'#31394F'
   },
   modal: {
     position: 'absolute',
@@ -101,7 +102,7 @@ export const ProfileTheme = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    backgroundColor: colors.white,
+    backgroundColor: 'white',
     borderRadius: 12,
     padding: 20,
     width: '100%',
@@ -153,7 +154,7 @@ export const ProfileTheme = StyleSheet.create({
     alignItems: 'center',
   },
   saveButtonText: {
-    color: colors.white,
+    color: 'white',
     fontSize: 16,
     fontWeight: '600',
   },

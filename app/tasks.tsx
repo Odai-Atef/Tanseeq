@@ -1,36 +1,63 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { ThemedView } from '../components/ThemedView';
 import { Footer } from '../components/Footer';
 import { TasksTheme } from '../constants/TasksTheme';
 import { Ionicons } from '@expo/vector-icons';
 import { Calendar, DateData } from 'react-native-calendars';
-import { useRouter, useFocusEffect } from 'expo-router';
-import { taskStore, Task } from '../utils/taskStore';
+import { useRouter } from 'expo-router';
+import { API_ENDPOINTS } from '../constants/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { format } from 'date-fns';
+
+type TaskStatus = 'Done' | 'Not-Started' | 'In-progress';
+
+interface Task {
+  id: string;
+  name: string;
+}
+
+interface Schedule {
+  id: string;
+  day: string;
+  start_time: string;
+  end_time: string;
+  status: TaskStatus;
+  task: Task;
+}
+
+interface ApiResponse {
+  data: Schedule[];
+}
 
 const TaskSection = ({ 
   title, 
   count, 
-  tasks, 
+  tasks,
   countType,
   isExpanded,
   onToggle 
 }: { 
   title: string; 
   count: number; 
-  tasks: Task[];
+  tasks: Schedule[];
   countType: 'type-1' | 'type-2' | 'type-3';
   isExpanded: boolean;
   onToggle: () => void;
 }) => {
   const router = useRouter();
+  const hasTasks = tasks.length > 0;
 
   return (
     <View style={TasksTheme.taskSection}>
       <TouchableOpacity onPress={onToggle} style={TasksTheme.taskSectionHeader}>
         <View style={TasksTheme.taskTitleContainer}>
           <Text style={TasksTheme.taskSectionTitle}>{title}</Text>
-          <View style={[TasksTheme.taskCount, { backgroundColor: countType === 'type-1' ? '#7980FF' : countType === 'type-2' ? '#54B24C' : '#F05A5A' }]}>
+          <View style={[TasksTheme.taskCount, { 
+            backgroundColor: countType === 'type-1' ? '#7980FF' : // In Progress - Blue
+                           countType === 'type-2' ? '#54B24C' : // Done - Green
+                           '#F05A5A' // Not Started - Red
+          }]}>
             <Text style={TasksTheme.taskCountText}>{count}</Text>
           </View>
         </View>
@@ -41,28 +68,25 @@ const TaskSection = ({
         />
       </TouchableOpacity>
 
-      {isExpanded && (
+      {isExpanded && hasTasks && (
         <>
           <View style={TasksTheme.assignHeader}>
             <Text style={TasksTheme.assignText}>Task Name</Text>
-            <Text style={TasksTheme.assignText}>Due Date</Text>
+            <Text style={TasksTheme.assignText}>Time</Text>
           </View>
 
-          {tasks.map((task) => (
+          {tasks.map((schedule) => (
             <TouchableOpacity 
-              key={task.id} 
+              key={schedule.id} 
               style={TasksTheme.taskItem}
               onPress={() => router.push({
                 pathname: "/task_view",
-                params: { id: task.id }
+                params: { id: schedule.task.id }
               })}
             >
-              <Text style={TasksTheme.taskName}>{task.name}</Text>
+              <Text style={TasksTheme.taskName}>{schedule.task.name}</Text>
               <Text style={TasksTheme.taskDueDate}>
-                {new Date(task.dueDate).toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric'
-                })}
+                {/* {format(new Date(`2000-01-01T${schedule.start_time}`), 'hh:mm a')} */}
               </Text>
             </TouchableOpacity>
           ))}
@@ -74,35 +98,60 @@ const TaskSection = ({
 
 export default function Tasks() {
   const [expandedSections, setExpandedSections] = useState({
-    backlog: true,
-    todo: true,
-    ongoing: true
+    inProgress: true,
+    done: true,
+    notStarted: true
   });
-  const [selectedDate, setSelectedDate] = useState('');
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const loadTasks = async () => {
-    const loadedTasks = await taskStore.getTasks();
-    setTasks(loadedTasks);
+  const fetchSchedules = async (date: string) => {
+    try {
+      const token = await AsyncStorage.getItem('access_token');
+      if (!token) {
+        throw new Error('No access token found');
+      }
+
+      const response = await fetch(
+        `${API_ENDPOINTS.SCHEDULE}?fields=*,task.*&filter[day][_eq]=${date}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch schedules');
+      }
+
+      const result: ApiResponse = await response.json();
+      setSchedules(result.data || []);
+      setError('');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load schedules');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Reload tasks when screen is focused
-  useFocusEffect(
-    React.useCallback(() => {
-      loadTasks();
-    }, [])
-  );
+  useEffect(() => {
+    fetchSchedules(selectedDate);
+  }, [selectedDate]);
 
-  const toggleSection = (section: 'backlog' | 'todo' | 'ongoing') => {
+  const toggleSection = (section: 'inProgress' | 'done' | 'notStarted') => {
     setExpandedSections(prev => ({
       ...prev,
       [section]: !prev[section]
     }));
   };
 
-  const backlogTasks = tasks.filter(task => task.status === 'backlog');
-  const todoTasks = tasks.filter(task => task.status === 'todo');
-  const ongoingTasks = tasks.filter(task => task.status === 'ongoing');
+  const inProgressTasks = schedules.filter(schedule => schedule.status === 'In-progress');
+  const doneTasks = schedules.filter(schedule => schedule.status === 'Done');
+  const notStartedTasks = schedules.filter(schedule => schedule.status === 'Not-Started');
 
   return (
     <ThemedView style={TasksTheme.container}>
@@ -145,37 +194,49 @@ export default function Tasks() {
             [selectedDate]: {
               selected: true,
               disableTouchEvent: true,
-              selectedDotColor: 'white'
+              selectedColor: '#7980FF'
             }
           }}
         />
 
-        <TaskSection 
-          title="To Do" 
-          count={todoTasks.length} 
-          tasks={todoTasks}
-          countType="type-1"
-          isExpanded={expandedSections.todo}
-          onToggle={() => toggleSection('todo')}
-        />
+        {loading ? (
+          <View style={TasksTheme.loadingContainer}>
+            <ActivityIndicator size="large" color="#7980FF" />
+          </View>
+        ) : error ? (
+          <View style={TasksTheme.errorContainer}>
+            <Text style={TasksTheme.errorText}>{error}</Text>
+          </View>
+        ) : (
+          <>
+            <TaskSection 
+              title="In Progress" 
+              count={inProgressTasks.length} 
+              tasks={inProgressTasks}
+              countType="type-1"
+              isExpanded={expandedSections.inProgress}
+              onToggle={() => toggleSection('inProgress')}
+            />
 
-        <TaskSection 
-          title="Ongoing" 
-          count={ongoingTasks.length} 
-          tasks={ongoingTasks}
-          countType="type-2"
-          isExpanded={expandedSections.ongoing}
-          onToggle={() => toggleSection('ongoing')}
-        />
+            <TaskSection 
+              title="Done" 
+              count={doneTasks.length} 
+              tasks={doneTasks}
+              countType="type-2"
+              isExpanded={expandedSections.done}
+              onToggle={() => toggleSection('done')}
+            />
 
-        <TaskSection 
-          title="Backlog" 
-          count={backlogTasks.length} 
-          tasks={backlogTasks}
-          countType="type-3"
-          isExpanded={expandedSections.backlog}
-          onToggle={() => toggleSection('backlog')}
-        />
+            <TaskSection 
+              title="Not Started" 
+              count={notStartedTasks.length} 
+              tasks={notStartedTasks}
+              countType="type-3"
+              isExpanded={expandedSections.notStarted}
+              onToggle={() => toggleSection('notStarted')}
+            />
+          </>
+        )}
       </ScrollView>
 
       <Footer activeTab="tasks" />
