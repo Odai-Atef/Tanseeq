@@ -3,10 +3,10 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Platform, Alert } 
 import { useRouter } from 'expo-router';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { ThemedView } from '../components/ThemedView';
-import { ThemedText } from '../components/ThemedText';
-import { colors, taskAddStyles } from '../constants/Theme';
-import { taskStore } from '../utils/taskStore';
+import { ThemedView } from '../../components/ThemedView';
+import { ThemedText } from '../../components/ThemedText';
+import { colors, taskAddStyles } from '../../constants/Theme';
+import { taskStore } from '../../utils/taskStore';
 
 export default function TaskAdd() {
   const router = useRouter();
@@ -58,7 +58,7 @@ export default function TaskAdd() {
     <ThemedView style={taskAddStyles.container}>
       <ScrollView style={taskAddStyles.content}>
         <View style={taskAddStyles.section}>
-          <ThemedText style={taskAddStyles.label}>Task Name</ThemedText>
+          <ThemedText style={taskAddStyles.label}>Title</ThemedText>
           <TextInput
             style={taskAddStyles.input}
             placeholder="Wireframe for NFT Landing Page"
@@ -92,7 +92,7 @@ export default function TaskAdd() {
         <View style={taskAddStyles.section}>
           <ThemedText style={taskAddStyles.label}>Period</ThemedText>
           <View style={taskAddStyles.radioGroup}>
-            {['Style 01', 'Style 02', 'Style 03', 'Style 04'].map((period, index) => (
+            {['Every Day', 'Weekly', 'Bi Weekly', 'Monthly','Every 3 Months','Every 6 Months','Every Year'].map((period, index) => (
               <TouchableOpacity
                 key={index}
                 style={[
@@ -114,7 +114,7 @@ export default function TaskAdd() {
         <View style={taskAddStyles.section}>
           <ThemedText style={taskAddStyles.label}>Days</ThemedText>
           <View style={taskAddStyles.radioGroup}>
-            {['Style 01', 'Style 02', 'Style 03', 'Style 04'].map((day, index) => (
+            {['Friday', 'Saturday', 'Sunday', 'Monday','Tuesday','Wednesday','Thursday'].map((day, index) => (
               <TouchableOpacity
                 key={index}
                 style={[

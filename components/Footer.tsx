@@ -24,14 +24,14 @@ export function Footer({ activeTab }: FooterProps) {
       <Link href="/tasks/calendar" asChild>
         <TouchableOpacity style={styles.tab}>
           <Ionicons
-            name={activeTab === 'calendar' ? 'calendar' : 'calendar-outline'}
+            name={activeTab === 'tasks/calendar' ? 'calendar' : 'calendar-outline'}
             size={24}
-            color={activeTab === 'calendar' ? colors.primary : colors.textSecondary}
+            color={activeTab === 'tasks/calendar' ? colors.primary : colors.textSecondary}
           />
         </TouchableOpacity>
       </Link>
 
-      <Link href="/task_add" asChild>
+      <Link href="/tasks/add" asChild>
         <TouchableOpacity style={styles.addButton}>
           <Ionicons name="add" size={24} color="white" />
         </TouchableOpacity>

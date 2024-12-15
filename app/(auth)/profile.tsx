@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Image, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { ThemedView } from '../components/ThemedView';
-import { ThemedText } from '../components/ThemedText';
-import { Footer } from '../components/Footer';
-import { dashboardStyles as styles, colors } from '../constants/Theme';
-import { ProfileTheme } from '../constants/ProfileTheme';
+import { ThemedView } from '../../components/ThemedView';
+import { ThemedText } from '../../components/ThemedText';
+import { Footer } from '../../components/Footer';
+import { dashboardStyles as styles, colors } from '../../constants/Theme';
+import { ProfileTheme } from '../../constants/ProfileTheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type IconName = keyof typeof Ionicons.glyphMap;
@@ -101,12 +101,10 @@ export default function Profile() {
         <View style={ProfileTheme.profileSection}>
           <View style={ProfileTheme.avatarContainer}>
             <Image
-              source={require('../assets/images/avt4.jpg')}
+              source={require('../../assets/images/avt4.jpg')}
               style={ProfileTheme.avatar}
             />
-            <TouchableOpacity style={[ProfileTheme.cameraButton, { backgroundColor: colors.primary }]}>
-              <Ionicons name="camera-outline" size={20} color={colors.primary} />
-            </TouchableOpacity>
+          
           </View>
           <ThemedText style={ProfileTheme.userName}>{displayName}</ThemedText>
           <Text style={ProfileTheme.userEmail}>{userInfo?.email || 'No email'}</Text>

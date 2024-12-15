@@ -239,7 +239,7 @@ export default function Tasks() {
         )}
       </ScrollView>
 
-      <Footer activeTab="tasks" />
+      <Footer activeTab="tasks/calendar" />
     </ThemedView>
   );
 }

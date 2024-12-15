@@ -50,18 +50,7 @@ export default function EditProfile() {
             />
           </View>
 
-          <View style={ProfileTheme.inputGroup}>
-            <ThemedText style={ProfileTheme.label}>Email Address</ThemedText>
-            <TextInput
-              style={ProfileTheme.input}
-              value={email}
-              onChangeText={setEmail}
-              placeholder="Enter your email"
-              placeholderTextColor={colors.textSecondary}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          </View>
+       
 
           <View style={ProfileTheme.inputGroup}>
             <ThemedText style={ProfileTheme.label}>Phone Number</ThemedText>

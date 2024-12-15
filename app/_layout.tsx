@@ -28,7 +28,7 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'light' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={colorScheme === 'light' ? DefaultTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="dashboard" options={{ headerShown: false }} />
         <Stack.Screen name="tasks/calendar" options={{ title: 'Calendar', headerShown: true }} />
@@ -37,7 +37,7 @@ export default function RootLayout() {
        
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="tasks/view" options={{ title:'Task Details',headerShown: true }} />
-        <Stack.Screen name="task_add" options={{ headerShown: true }} />
+        <Stack.Screen name="tasks/add" options={{ headerShown: true, title: 'Add Task' }} />
         <Stack.Screen name="profile" options={{ headerShown: false }} />
         <Stack.Screen 
           name="(auth)" 
