@@ -33,7 +33,7 @@ export default function TaskAdd() {
   const id = params.id as string | undefined;
   const [taskName, setTaskName] = useState('');
   const [description, setDescription] = useState('');
-  const [selectedPeriod, setSelectedPeriod] = useState('1');
+  const [selectedPeriod, setSelectedPeriod] = useState('');
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [startDate, setStartDate] = useState(new Date());
   const [showStartPicker, setShowStartPicker] = useState(false);

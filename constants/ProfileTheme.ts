@@ -4,6 +4,7 @@ import { colors } from './Theme';
 export const ProfileTheme = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.white,
   },
   header: {
     flexDirection: 'row',
@@ -12,6 +13,7 @@ export const ProfileTheme = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: colors.line,
+    backgroundColor: colors.white,
   },
   backButton: {
     padding: 8,
@@ -19,10 +21,12 @@ export const ProfileTheme = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
+    color: colors.textPrimary,
   },
   content: {
     flex: 1,
     padding: 16,
+    backgroundColor: colors.white,
   },
   profileSection: {
     alignItems: 'center',
@@ -32,7 +36,7 @@ export const ProfileTheme = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: colors.lightGray,
+    backgroundColor: colors.background,
     marginBottom: 16,
     overflow: 'hidden',
   },
@@ -52,6 +56,7 @@ export const ProfileTheme = StyleSheet.create({
   userName: {
     fontSize: 20,
     fontWeight: '600',
+    color: colors.textPrimary,
   },
   userEmail: {
     color: colors.textSecondary,
@@ -65,7 +70,7 @@ export const ProfileTheme = StyleSheet.create({
     alignItems: 'center',
   },
   editButtonText: {
-    color: 'white',
+    color: colors.white,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -75,12 +80,13 @@ export const ProfileTheme = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: colors.line,
+    backgroundColor: colors.white,
   },
   iconContainer: {
     width: 36,
     height: 36,
     borderRadius: 12,
-    backgroundColor: colors.lightGray,
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -88,7 +94,7 @@ export const ProfileTheme = StyleSheet.create({
   listItemText: {
     flex: 1,
     fontSize: 16,
-    color:'#31394F'
+    color: colors.textPrimary,
   },
   modal: {
     position: 'absolute',
@@ -102,7 +108,7 @@ export const ProfileTheme = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     borderRadius: 12,
     padding: 20,
     width: '100%',
@@ -110,6 +116,7 @@ export const ProfileTheme = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: '600',
+    color: colors.textPrimary,
     textAlign: 'center',
     marginBottom: 16,
   },
@@ -140,6 +147,7 @@ export const ProfileTheme = StyleSheet.create({
     padding: 12,
     fontSize: 16,
     color: colors.textPrimary,
+    backgroundColor: colors.background,
   },
   changePhotoText: {
     color: colors.primary,
@@ -154,7 +162,7 @@ export const ProfileTheme = StyleSheet.create({
     alignItems: 'center',
   },
   saveButtonText: {
-    color: 'white',
+    color: colors.white,
     fontSize: 16,
     fontWeight: '600',
   },
