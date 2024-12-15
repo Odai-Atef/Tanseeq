@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Platform, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Platform, Animated } from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { ThemedView } from '../../components/ThemedView';
@@ -9,14 +9,100 @@ import { colors, taskAddStyles } from '../../constants/Theme';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+type PeriodValues = {
+  'Every Day': string;
+  'Weekly': string;
+  'Bi Weekly': string;
+  'Monthly': string;
+  'Every 3 Months': string;
+  'Every 6 Months': string;
+  'Every Year': string;
+};
+
+interface Task {
+  id: number;
+  name: string;
+  description: string;
+  repeat_monthly: string;
+  repeat_days: string[];
+}
+
 export default function TaskAdd() {
   const router = useRouter();
+  const params = useLocalSearchParams();
+  const id = params.id as string | undefined;
   const [taskName, setTaskName] = useState('');
   const [description, setDescription] = useState('');
   const [selectedPeriod, setSelectedPeriod] = useState('1');
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [startDate, setStartDate] = useState(new Date());
   const [showStartPicker, setShowStartPicker] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
+  const [isLoading, setIsLoading] = useState(!!id);
+
+  useEffect(() => {
+    if (id) {
+      fetchTaskData();
+    }
+  }, [id]);
+
+  const fetchTaskData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('access_token');
+      if (!token) {
+        showNotification('Authentication required', 'error');
+        return;
+      }
+
+      const response = await fetch(`${API_ENDPOINTS.TASKS}/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch task');
+      }
+      const result = await response.json();
+
+
+      const task: Task = result;
+      setTaskName(task.name);
+      setDescription(task.description);
+      setSelectedPeriod(task.repeat_monthly);
+      // setSelectedDays(task.repeat_days);
+    } catch (error) {
+      showNotification('Failed to load task data', 'error');
+      console.error('Error fetching task:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  };
+
+  const periodValues: PeriodValues = {
+    'Every Day': '1',
+    'Weekly': '7',
+    'Bi Weekly': '14',
+    'Monthly': '28',
+    'Every 3 Months': '90',
+    'Every 6 Months': '180',
+    'Every Year': '360'
+  };
+
+  const periods = Object.keys(periodValues) as (keyof PeriodValues)[];
 
   const handleStartDateChange = (event: any, selectedDate?: Date) => {
     setShowStartPicker(false);
@@ -36,67 +122,79 @@ export default function TaskAdd() {
   const handleSubmit = async () => {
     // Validate required fields
     if (!taskName.trim()) {
-      Alert.alert('Error', 'Please enter a task name');
+      showNotification('Please enter a task name', 'error');
       return;
     }
     if (!description.trim()) {
-      Alert.alert('Error', 'Please enter a description');
+      showNotification('Please enter a description', 'error');
       return;
     }
     if (!selectedPeriod) {
-      Alert.alert('Error', 'Please select a period');
+      showNotification('Please select a period', 'error');
       return;
     }
     if (selectedDays.length === 0) {
-      Alert.alert('Error', 'Please select at least one day');
+      showNotification('Please select at least one day', 'error');
       return;
     }
+
+    setIsSubmitting(true);
 
     try {
       const token = await AsyncStorage.getItem('access_token');
       if (!token) {
-        Alert.alert('Error', 'Authentication required');
+        showNotification('Authentication required', 'error');
+        setIsSubmitting(false);
         return;
       }
 
-      const response = await fetch(API_ENDPOINTS.TASKS, {
-        method: 'POST',
+      const endpoint = id ? `${API_ENDPOINTS.TASKS}/${id}` : API_ENDPOINTS.TASKS;
+      const method = id ? 'PATCH' : 'POST';
+
+      const response = await fetch(endpoint, {
+        method,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          title: taskName,
+          name: taskName,
           description,
-          period: selectedPeriod,
-          days: selectedDays,
-          start_date: startDate.toISOString(),
-          due_date: new Date(startDate.getTime() + (parseInt(selectedDays[0] || '1') * 24 * 60 * 60 * 1000)).toISOString(),
-          status: 'todo'
+          repeat_monthly: selectedPeriod,
+          repeat_days: selectedDays,
         })
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create task');
+        throw new Error(`Failed to ${id ? 'update' : 'create'} task`);
       }
 
-      Alert.alert(
-        'Success',
-        'Task created successfully',
-        [
-          {
-            text: 'OK',
-            onPress: () => router.push('/tasks')
-          }
-        ]
-      );
+      const data = await response.json();
+      setIsSubmitting(false);
+      showNotification(`Task ${id ? 'updated' : 'created'} successfully`, 'success');
+      
+      // Navigate after a brief delay to allow the toast to be seen
+      setTimeout(() => {
+        router.push(`/tasks/view?id=${id || data.id}`);
+      }, 1000);
+
     } catch (error) {
-      Alert.alert('Error', 'Failed to create task. Please try again.');
-      console.error('Error creating task:', error);
+      showNotification(`Failed to ${id ? 'update' : 'create'} task. Please try again.`, 'error');
+      console.error('Error submitting task:', error);
+      setIsSubmitting(false);
     }
   };
 
+  if (isLoading) {
+    return (
+      <ThemedView style={[taskAddStyles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <Text>Loading...</Text>
+      </ThemedView>
+    );
+  }
+
   return (
+    
     <ThemedView style={taskAddStyles.container}>
       <ScrollView style={taskAddStyles.content}>
         <View style={taskAddStyles.section}>
@@ -134,18 +232,18 @@ export default function TaskAdd() {
         <View style={taskAddStyles.section}>
           <ThemedText style={taskAddStyles.label}>Period *</ThemedText>
           <View style={taskAddStyles.radioGroup}>
-            {['Every Day', 'Weekly', 'Bi Weekly', 'Monthly','Every 3 Months','Every 6 Months','Every Year'].map((period, index) => (
+            {periods.map((period) => (
               <TouchableOpacity
-                key={index}
+                key={period}
                 style={[
                   taskAddStyles.radioButton,
-                  selectedPeriod === (index + 1).toString() && taskAddStyles.radioButtonActive
+                  selectedPeriod === periodValues[period] && taskAddStyles.radioButtonActive
                 ]}
-                onPress={() => setSelectedPeriod((index + 1).toString())}
+                onPress={() => setSelectedPeriod(periodValues[period])}
               >
                 <View style={[
                   taskAddStyles.checkbox,
-                  selectedPeriod === (index + 1).toString() && taskAddStyles.checkboxChecked
+                  selectedPeriod === periodValues[period] && taskAddStyles.checkboxChecked
                 ]} />
                 <ThemedText style={taskAddStyles.checkboxText}>{period}</ThemedText>
               </TouchableOpacity>
@@ -156,7 +254,7 @@ export default function TaskAdd() {
         <View style={taskAddStyles.section}>
           <ThemedText style={taskAddStyles.label}>Days *</ThemedText>
           <View style={taskAddStyles.radioGroup}>
-            {['Friday', 'Saturday', 'Sunday', 'Monday','Tuesday','Wednesday','Thursday'].map((day, index) => (
+            {[ 'Sunday', 'Monday','Tuesday','Wednesday','Thursday','Friday', 'Saturday'].map((day, index) => (
               <TouchableOpacity
                 key={index}
                 style={[
@@ -177,8 +275,17 @@ export default function TaskAdd() {
       </ScrollView>
 
       <View style={taskAddStyles.footer}>
-        <TouchableOpacity style={taskAddStyles.submitButton} onPress={handleSubmit}>
-          <Text style={taskAddStyles.submitButtonText}>Done</Text>
+        <TouchableOpacity 
+          style={[
+            taskAddStyles.submitButton,
+            isSubmitting && { opacity: 0.5 }
+          ]} 
+          onPress={handleSubmit}
+          disabled={isSubmitting}
+        >
+          <Text style={taskAddStyles.submitButtonText}>
+            {isSubmitting ? 'Submitting...' : id ? 'Update' : 'Create'}
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -189,6 +296,32 @@ export default function TaskAdd() {
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={handleStartDateChange}
         />
+      )}
+
+      {showToast && (
+        <View
+          style={{
+            position: 'absolute',
+            top: 20,
+            left: '50%',
+            transform: [{ translateX: -150 }],
+            backgroundColor: toastType === 'success' ? '#4CAF50' : '#f44336',
+            padding: 16,
+            borderRadius: 8,
+            width: 300,
+            alignItems: 'center',
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
+        >
+          <Text style={{ color: '#fff', fontSize: 16 }}>{toastMessage}</Text>
+        </View>
       )}
     </ThemedView>
   );

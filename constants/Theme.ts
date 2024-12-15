@@ -1,7 +1,7 @@
 import { TextStyle, ViewStyle, ImageStyle, ColorValue } from 'react-native';
 
 // Colors from CSS variables
-const themeColors = {
+export const colors = {
   surface: '#f5f5f5',
   white: '#fff',
   primary: '#7980ff',
@@ -43,13 +43,11 @@ const themeColors = {
   lightGray: '#F0F1F5',
 } as const;
 
-export const colors = themeColors;
-
 // Common styles used across the app
 export const commonStyles = {
   container: {
     flex: 1,
-    backgroundColor: themeColors.white,
+    backgroundColor: colors.white,
   } as ViewStyle,
   header: {
     flexDirection: 'row',
@@ -57,7 +55,7 @@ export const commonStyles = {
     paddingTop: 16,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: themeColors.line,
+    borderBottomColor: colors.line,
     justifyContent: 'center',
   } as ViewStyle,
   headerTitle: {
@@ -75,14 +73,14 @@ export const commonStyles = {
   subtitle: {
     fontSize: 16,
     lineHeight: 24,
-    color: themeColors.secondary,
+    color: colors.secondary,
     marginBottom: 24,
   } as TextStyle,
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: themeColors.line,
+    borderColor: colors.line,
     borderRadius: 12,
     marginBottom: 16,
     paddingHorizontal: 12,
@@ -91,13 +89,13 @@ export const commonStyles = {
     flex: 1,
     height: 48,
     fontSize: 16,
-    color: themeColors.secondary,
+    color: colors.secondary,
   } as TextStyle,
   eyeIcon: {
     padding: 8,
   } as ViewStyle,
   button: {
-    backgroundColor: themeColors.primary,
+    backgroundColor: colors.primary,
     borderRadius: 12,
     height: 48,
     justifyContent: 'center',
@@ -105,7 +103,7 @@ export const commonStyles = {
     marginTop: 24,
   } as ViewStyle,
   buttonText: {
-    color: themeColors.white,
+    color: colors.white,
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '600',
@@ -119,12 +117,12 @@ export const commonStyles = {
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: themeColors.line,
+    backgroundColor: colors.line,
   } as ViewStyle,
   dividerText: {
     marginLeft: 16,
     marginRight: 16,
-    color: themeColors.secondary,
+    color: colors.secondary,
   } as TextStyle,
   socialButtonsContainer: {
     flexDirection: 'row',
@@ -136,7 +134,7 @@ export const commonStyles = {
     height: 48,
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: themeColors.line,
+    borderColor: colors.line,
     justifyContent: 'center',
     alignItems: 'center',
   } as ViewStyle,
@@ -154,7 +152,7 @@ export const commonStyles = {
     lineHeight: 24,
   } as TextStyle,
   bottomLink: {
-    color: themeColors.primary,
+    color: colors.primary,
     fontWeight: '600',
   } as TextStyle,
 } as const;
@@ -163,25 +161,25 @@ export const commonStyles = {
 export const dashboardStyles = {
   container: {
     flex: 1,
-    backgroundColor: themeColors.background,
+    backgroundColor: colors.background,
   } as ViewStyle,
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: themeColors.white,
+    backgroundColor: colors.white,
   } as ViewStyle,
   greeting: {
     fontSize: 20,
     lineHeight: 28,
     fontWeight: '700',
-    color: themeColors.textPrimary,
+    color: colors.textPrimary,
   } as TextStyle,
   subGreeting: {
     fontSize: 16,
     lineHeight: 24,
-    color: themeColors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 4,
   } as TextStyle,
   content: {
@@ -190,7 +188,7 @@ export const dashboardStyles = {
   } as ViewStyle,
   progressSection: {
     flexDirection: 'row',
-    backgroundColor: themeColors.primary,
+    backgroundColor: colors.primary,
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
@@ -199,7 +197,7 @@ export const dashboardStyles = {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: themeColors.white,
+    backgroundColor: colors.white,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -209,13 +207,13 @@ export const dashboardStyles = {
     justifyContent: 'center',
   } as ViewStyle,
   progressTitle: {
-    color: themeColors.white,
+    color: colors.white,
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '700',
   } as TextStyle,
   progressSubtext: {
-    color: themeColors.white,
+    color: colors.white,
     fontSize: 12,
     lineHeight: 20,
     marginTop: 4,
@@ -230,18 +228,18 @@ export const dashboardStyles = {
     fontSize: 18,
     lineHeight: 28,
     fontWeight: '700',
-    color: themeColors.textPrimary,
+    color: colors.textPrimary,
   } as TextStyle,
   viewAll: {
     fontSize: 12,
     lineHeight: 20,
-    color: themeColors.textSecondary,
+    color: colors.textSecondary,
   } as TextStyle,
   projectsScroll: {
     marginBottom: 24,
   } as ViewStyle,
   projectCard: {
-    backgroundColor: themeColors.white,
+    backgroundColor: colors.white,
     borderRadius: 12,
     padding: 16,
     marginRight: 16,
@@ -256,18 +254,18 @@ export const dashboardStyles = {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: themeColors.lightGray,
+    backgroundColor: colors.lightGray,
     justifyContent: 'center',
     alignItems: 'center',
   } as ViewStyle,
   priorityBadge: {
-    backgroundColor: themeColors.rgbaDanger,
+    backgroundColor: colors.rgbaDanger,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
   } as ViewStyle,
   priorityText: {
-    color: themeColors.danger,
+    color: colors.danger,
     fontSize: 11,
     lineHeight: 16,
   } as TextStyle,
@@ -275,7 +273,7 @@ export const dashboardStyles = {
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '700',
-    color: themeColors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 8,
   } as TextStyle,
   cardMeta: {
@@ -290,28 +288,28 @@ export const dashboardStyles = {
   metaText: {
     fontSize: 11,
     lineHeight: 16,
-    color: themeColors.textSecondary,
+    color: colors.textSecondary,
     marginLeft: 4,
   } as TextStyle,
   progressBar: {
     flex: 1,
     height: 4,
-    backgroundColor: themeColors.lightGray,
+    backgroundColor: colors.lightGray,
     borderRadius: 2,
     marginHorizontal: 8,
   } as ViewStyle,
   progressFill: {
     height: '100%',
-    backgroundColor: themeColors.primary,
+    backgroundColor: colors.primary,
     borderRadius: 2,
   } as ViewStyle,
   progressText: {
     fontSize: 11,
     lineHeight: 16,
-    color: themeColors.textSecondary,
+    color: colors.textSecondary,
   } as TextStyle,
   taskItem: {
-    backgroundColor: themeColors.white,
+    backgroundColor: colors.white,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -326,12 +324,12 @@ export const dashboardStyles = {
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '700',
-    color: themeColors.textPrimary,
+    color: colors.textPrimary,
   } as TextStyle,
   taskDescription: {
     fontSize: 12,
     lineHeight: 20,
-    color: themeColors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 12,
   } as TextStyle,
   taskFooter: {
@@ -342,7 +340,7 @@ export const dashboardStyles = {
   taskTime: {
     fontSize: 11,
     lineHeight: 16,
-    color: themeColors.textSecondary,
+    color: colors.textSecondary,
   } as TextStyle,
   statusBadge: {
     paddingHorizontal: 8,
@@ -360,6 +358,7 @@ export const dashboardStyles = {
 export const taskAddStyles = {
   container: {
     flex: 1,
+    backgroundColor: colors.white,
   } as ViewStyle,
   header: {
     flexDirection: 'row',
@@ -367,7 +366,8 @@ export const taskAddStyles = {
     justifyContent: 'space-between',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: themeColors.line,
+    borderBottomColor: colors.line,
+    backgroundColor: colors.white,
   } as ViewStyle,
   headerButton: {
     padding: 8,
@@ -378,10 +378,12 @@ export const taskAddStyles = {
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
+    color: colors.textPrimary,
   } as TextStyle,
   content: {
     flex: 1,
     padding: 16,
+    backgroundColor: colors.white,
   } as ViewStyle,
   section: {
     marginBottom: 24,
@@ -390,7 +392,7 @@ export const taskAddStyles = {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 16,
-    color: themeColors.textPrimary,
+    color: colors.textPrimary,
   } as TextStyle,
   input: {
     width: '100%',
@@ -401,9 +403,9 @@ export const taskAddStyles = {
     paddingLeft: 20,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'transparent',
-    color: 'rgba(49, 57, 79, 0.7)',
-    backgroundColor: '#f8fafc',
+    borderColor: colors.line,
+    color: colors.textPrimary,
+    backgroundColor: colors.background,
   } as TextStyle,
   textArea: {
     height: 140,
@@ -414,14 +416,16 @@ export const taskAddStyles = {
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: themeColors.line,
+    borderColor: colors.line,
     borderRadius: 8,
     padding: 16,
     borderStyle: 'dashed',
+    backgroundColor: colors.background,
   } as ViewStyle,
   uploadText: {
     marginLeft: 8,
     fontSize: 16,
+    color: colors.textPrimary,
   } as TextStyle,
   radioGroup: {
     gap: 10,
@@ -431,22 +435,25 @@ export const taskAddStyles = {
     alignItems: 'center',
     padding: 12,
     borderWidth: 1,
-    borderColor: themeColors.line,
+    borderColor: colors.line,
     borderRadius: 8,
+    backgroundColor: colors.background,
   } as ViewStyle,
   radioButtonActive: {
-    borderColor: themeColors.primary,
+    borderColor: colors.primary,
+    backgroundColor: 'rgba(121, 128, 255, 0.1)',
   } as ViewStyle,
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
     borderWidth: 1,
-    borderColor: themeColors.line,
+    borderColor: colors.line,
     borderRadius: 8,
+    backgroundColor: colors.background,
   } as ViewStyle,
   checkboxActive: {
-    borderColor: themeColors.primary,
+    borderColor: colors.primary,
     backgroundColor: 'rgba(121, 128, 255, 0.1)',
   } as ViewStyle,
   checkbox: {
@@ -454,32 +461,34 @@ export const taskAddStyles = {
     height: 20,
     borderRadius: 4,
     borderWidth: 2,
-    borderColor: themeColors.line,
+    borderColor: colors.line,
     marginRight: 12,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: colors.white,
   } as ViewStyle,
   checkboxChecked: {
-    borderColor: themeColors.primary,
-    backgroundColor: themeColors.primary,
+    borderColor: colors.primary,
+    backgroundColor: colors.primary,
   } as ViewStyle,
   checkboxText: {
     fontSize: 16,
-    color: themeColors.textPrimary,
+    color: colors.textPrimary,
   } as TextStyle,
   footer: {
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: themeColors.line,
+    borderTopColor: colors.line,
+    backgroundColor: colors.white,
   } as ViewStyle,
   submitButton: {
-    backgroundColor: themeColors.primary,
+    backgroundColor: colors.primary,
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
   } as ViewStyle,
   submitButtonText: {
-    color: themeColors.white,
+    color: colors.white,
     fontSize: 16,
     fontWeight: '600',
   } as TextStyle,
@@ -490,14 +499,14 @@ export const footerStyles = {
   menubarFooter: {
     paddingVertical: 10,
     paddingHorizontal: 26,
-    backgroundColor: themeColors.white,
+    backgroundColor: colors.white,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    shadowColor: themeColors.textPrimary,
+    shadowColor: colors.textPrimary,
     shadowOffset: {
       width: 0,
       height: -8,
@@ -531,7 +540,7 @@ export const footerStyles = {
     marginTop: -45,
     width: 64,
     height: 64,
-    backgroundColor: themeColors.primary,
+    backgroundColor: colors.primary,
     borderRadius: 9999,
     justifyContent: 'center',
     alignItems: 'center',

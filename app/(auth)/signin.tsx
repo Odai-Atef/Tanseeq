@@ -41,7 +41,6 @@ interface UserInfoResponse {
     last_name?: string;
     avatar?: string;
     role?: string;
-    // Add other user fields as needed
   };
   errors?: ApiError[];
 }
@@ -74,19 +73,15 @@ export default function SignIn() {
         throw new Error('Invalid user info response');
       }
 
-      // Save detailed user info to AsyncStorage
       await AsyncStorage.setItem('userInfo', JSON.stringify(data.data));
     } catch (error) {
       console.error('Error fetching user info:', error);
-      // Don't throw the error as we already have basic user info
     }
   };
 
   const handleSignIn = async () => {
-    // Reset error state
     setEmailError('');
 
-    // Validate email
     if (!email) {
       setEmailError('Email is required');
       return;
@@ -96,7 +91,6 @@ export default function SignIn() {
       return;
     }
 
-    // Validate password
     if (!password) {
       Alert.alert('Error', 'Password is required');
       return;
@@ -118,7 +112,6 @@ export default function SignIn() {
       const data: LoginResponse = await response.json();
 
       if (data.errors) {
-        // Show the API error message
         const errorMessage = data.errors[0]?.message;
         Alert.alert('Error', errorMessage);
         return;
@@ -128,16 +121,13 @@ export default function SignIn() {
         throw new Error('Invalid response from server');
       }
 
-      // Save auth tokens
       await Promise.all([
         AsyncStorage.setItem('access_token', data.data.access_token),
         AsyncStorage.setItem('refresh_token', data.data.refresh_token),
       ]);
 
-      // Fetch and save detailed user info
       await fetchUserInfo(data.data.access_token);
 
-      // Navigate to dashboard on success
       router.replace('/dashboard');
     } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to sign in. Please try again.';
@@ -149,7 +139,7 @@ export default function SignIn() {
 
   return (
     <ThemedView style={commonStyles.container}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
         <View style={commonStyles.header}>
           <ThemedText style={commonStyles.headerTitle}>Sign In</ThemedText>
         </View>
@@ -167,12 +157,15 @@ export default function SignIn() {
               value={email}
               onChangeText={(text) => {
                 setEmail(text);
-                setEmailError(''); // Clear error when user types
+                setEmailError('');
               }}
               keyboardType="email-address"
               placeholderTextColor={colors.secondary}
               editable={!loading}
               autoCapitalize="none"
+              autoFocus={false}
+              autoCorrect={false}
+              blurOnSubmit={true}
             />
           </View>
           {emailError ? (
@@ -192,6 +185,9 @@ export default function SignIn() {
               placeholderTextColor={colors.secondary}
               editable={!loading}
               autoCapitalize="none"
+              autoFocus={false}
+              autoCorrect={false}
+              blurOnSubmit={true}
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={commonStyles.eyeIcon}>
               <Ionicons name={showPassword ? "eye-outline" : "eye-off-outline"} size={20} color={colors.secondary} />
