@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, ActivityIndicator } from 'react-native';
+import { View, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { colors } from '../../constants/Theme';
 
 interface TaskImage {
   id: string;
@@ -51,11 +52,12 @@ const getDayName = (day: string): string => {
 };
 
 export default function TaskView() {
-  const { id } = useLocalSearchParams();
   const router = useRouter();
+  const { id } = useLocalSearchParams();
   const [task, setTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -97,16 +99,50 @@ export default function TaskView() {
     }
   }, [id]);
 
+  const handleDelete = async () => {
+    Alert.alert(
+      "Delete Task",
+      "Are you sure you want to delete this task?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              setIsDeleting(true);
+              const token = await AsyncStorage.getItem('access_token');
+              if (!token) throw new Error('No access token found');
+
+              const response = await fetch(`${API_ENDPOINTS.TASKS}/${id}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+                },
+              });
+
+              if (!response.ok) throw new Error('Failed to delete task');
+
+              router.replace('/tasks');
+            } catch (error) {
+              Alert.alert('Error', 'Failed to delete task. Please try again.');
+              console.error('Error deleting task:', error);
+            } finally {
+              setIsDeleting(false);
+            }
+          }
+        }
+      ]
+    );
+  };
+
   if (loading) {
     return (
       <ThemedView style={TasksTheme.container}>
-        <View style={TasksTheme.header}>
-          <TouchableOpacity onPress={() => router.back()} style={TasksTheme.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#31394F" />
-          </TouchableOpacity>
-          <ThemedText style={TasksTheme.headerTitle}>Task Details</ThemedText>
-          <View style={{ width: 24 }} />
-        </View>
         <View style={[TasksTheme.content, { justifyContent: 'center', alignItems: 'center' }]}>
           <ActivityIndicator size="large" color="#7980FF" />
         </View>
@@ -117,13 +153,6 @@ export default function TaskView() {
   if (error || !task) {
     return (
       <ThemedView style={TasksTheme.container}>
-        <View style={TasksTheme.header}>
-          <TouchableOpacity onPress={() => router.back()} style={TasksTheme.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#31394F" />
-          </TouchableOpacity>
-          <ThemedText style={TasksTheme.headerTitle}>Task Details</ThemedText>
-          <View style={{ width: 24 }} />
-        </View>
         <View style={[TasksTheme.content, { justifyContent: 'center', alignItems: 'center' }]}>
           <ThemedText style={{ color: '#F05A5A' }}>{error || 'Task not found'}</ThemedText>
         </View>
@@ -133,6 +162,8 @@ export default function TaskView() {
 
   return (
     <ThemedView style={TasksTheme.container}>
+      
+
       <ScrollView style={TasksTheme.content}>
         <View style={TasksTheme.section}>
           <ThemedText style={TasksTheme.title}>{task.name}</ThemedText>
@@ -141,16 +172,9 @@ export default function TaskView() {
 
         <View style={TasksTheme.section}>
           <ThemedText style={TasksTheme.subtitle}>Status</ThemedText>
-          <View style={[
-            TasksTheme.statusBadge,
-            {
-              backgroundColor: '#7980FF'
-            }
-          ]}>
-            <ThemedText style={TasksTheme.statusText}>
-              {task.status}
+          <ThemedText style={TasksTheme.description}>
+          {task.status}
             </ThemedText>
-          </View>
         </View>
 
         {task.repeat_days && task.repeat_days.length > 0 && (
@@ -209,6 +233,53 @@ export default function TaskView() {
           </ThemedText>
         </View>
       </ScrollView>
+
+      <View style={{
+        flexDirection: 'row',
+        padding: 16,
+        gap: 12,
+        borderTopWidth: 1,
+        borderTopColor: colors.line,
+        backgroundColor: colors.white,
+      }}>
+        <TouchableOpacity
+          style={{
+            flex: 1,
+            backgroundColor: colors.primary,
+            padding: 16,
+            borderRadius: 8,
+            alignItems: 'center',
+            flexDirection: 'row',
+            justifyContent: 'center',
+          }}
+          onPress={() => router.push({
+            pathname: "/tasks/add",
+            params: { id: task.id }
+          })}
+        >
+          <Ionicons name="pencil" size={20} color="white" style={{ marginRight: 8 }} />
+          <ThemedText style={{ color: 'white', fontSize: 16, fontWeight: '600' }}>Edit Task</ThemedText>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            flex: 1,
+            backgroundColor: colors.danger,
+            padding: 16,
+            borderRadius: 8,
+            alignItems: 'center',
+            flexDirection: 'row',
+            justifyContent: 'center',
+          }}
+          onPress={handleDelete}
+          disabled={isDeleting}
+        >
+          <Ionicons name="trash" size={20} color="white" style={{ marginRight: 8 }} />
+          <ThemedText style={{ color: 'white', fontSize: 16, fontWeight: '600' }}>
+            {isDeleting ? 'Deleting...' : 'Delete Task'}
+          </ThemedText>
+        </TouchableOpacity>
+      </View>
     </ThemedView>
   );
 }
