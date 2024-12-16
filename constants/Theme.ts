@@ -1,4 +1,4 @@
-import { TextStyle, ViewStyle, ImageStyle, ColorValue } from 'react-native';
+import { TextStyle, ViewStyle, ImageStyle, StyleSheet } from 'react-native';
 
 // Colors from CSS variables
 export const colors = {
@@ -44,11 +44,11 @@ export const colors = {
 } as const;
 
 // Common styles used across the app
-export const commonStyles = {
+export const commonStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-  } as ViewStyle,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -57,25 +57,25 @@ export const commonStyles = {
     borderBottomWidth: 1,
     borderBottomColor: colors.line,
     justifyContent: 'center',
-  } as ViewStyle,
+  },
   headerTitle: {
     fontSize: 18,
     lineHeight: 28,
     fontWeight: '700',
     textAlign: 'center',
-  } as TextStyle,
+  },
   content: {
     paddingTop: 24,
     paddingBottom: 24,
     paddingLeft: 16,
     paddingRight: 16,
-  } as ViewStyle,
+  },
   subtitle: {
     fontSize: 16,
     lineHeight: 24,
     color: colors.secondary,
     marginBottom: 24,
-  } as TextStyle,
+  },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -84,16 +84,16 @@ export const commonStyles = {
     borderRadius: 12,
     marginBottom: 16,
     paddingHorizontal: 12,
-  } as ViewStyle,
+  },
   input: {
     flex: 1,
     height: 48,
     fontSize: 16,
     color: colors.secondary,
-  } as TextStyle,
+  },
   eyeIcon: {
     padding: 8,
-  } as ViewStyle,
+  },
   button: {
     backgroundColor: colors.primary,
     borderRadius: 12,
@@ -101,34 +101,34 @@ export const commonStyles = {
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 24,
-  } as ViewStyle,
+  },
   buttonText: {
     color: colors.white,
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '600',
-  } as TextStyle,
+  },
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 24,
     marginBottom: 24,
-  } as ViewStyle,
+  },
   divider: {
     flex: 1,
     height: 1,
     backgroundColor: colors.line,
-  } as ViewStyle,
+  },
   dividerText: {
     marginLeft: 16,
     marginRight: 16,
     color: colors.secondary,
-  } as TextStyle,
+  },
   socialButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 16,
-  } as ViewStyle,
+  },
   socialButton: {
     width: 48,
     height: 48,
@@ -137,62 +137,62 @@ export const commonStyles = {
     borderColor: colors.line,
     justifyContent: 'center',
     alignItems: 'center',
-  } as ViewStyle,
+  },
   socialIcon: {
     width: 24,
     height: 24,
     resizeMode: 'contain',
-  } as ImageStyle,
+  },
   bottomContainer: {
     marginTop: 32,
     alignItems: 'center',
-  } as ViewStyle,
+  },
   bottomText: {
     fontSize: 16,
     lineHeight: 24,
-  } as TextStyle,
+  },
   bottomLink: {
     color: colors.primary,
     fontWeight: '600',
-  } as TextStyle,
-} as const;
+  },
+});
 
 // Dashboard specific styles
-export const dashboardStyles = {
+export const dashboardStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-  } as ViewStyle,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 16,
     backgroundColor: colors.white,
-  } as ViewStyle,
+  },
   greeting: {
     fontSize: 20,
     lineHeight: 28,
     fontWeight: '700',
     color: colors.textPrimary,
-  } as TextStyle,
+  },
   subGreeting: {
     fontSize: 16,
     lineHeight: 24,
     color: colors.textSecondary,
     marginTop: 4,
-  } as TextStyle,
+  },
   content: {
     flex: 1,
     padding: 16,
-  } as ViewStyle,
+  },
   progressSection: {
     flexDirection: 'row',
     backgroundColor: colors.primary,
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
-  } as ViewStyle,
+  },
   progressCircle: {
     width: 60,
     height: 60,
@@ -201,55 +201,55 @@ export const dashboardStyles = {
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
-  } as ViewStyle,
+  },
   progressInfo: {
     flex: 1,
     justifyContent: 'center',
-  } as ViewStyle,
+  },
   progressTitle: {
     color: colors.white,
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '700',
-  } as TextStyle,
+  },
   progressSubtext: {
     color: colors.white,
     fontSize: 12,
     lineHeight: 20,
     marginTop: 4,
-  } as TextStyle,
+  },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
-  } as ViewStyle,
+  },
   sectionTitle: {
     fontSize: 18,
     lineHeight: 28,
     fontWeight: '700',
     color: colors.textPrimary,
-  } as TextStyle,
+  },
   viewAll: {
     fontSize: 12,
     lineHeight: 20,
     color: colors.textSecondary,
-  } as TextStyle,
+  },
   projectsScroll: {
     marginBottom: 24,
-  } as ViewStyle,
+  },
   projectCard: {
     backgroundColor: colors.white,
     borderRadius: 12,
     padding: 16,
     marginRight: 16,
     width: 280,
-  } as ViewStyle,
+  },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 12,
-  } as ViewStyle,
+  },
   iconContainer: {
     width: 40,
     height: 40,
@@ -257,109 +257,109 @@ export const dashboardStyles = {
     backgroundColor: colors.lightGray,
     justifyContent: 'center',
     alignItems: 'center',
-  } as ViewStyle,
+  },
   priorityBadge: {
     backgroundColor: colors.rgbaDanger,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
-  } as ViewStyle,
+  },
   priorityText: {
     color: colors.danger,
     fontSize: 11,
     lineHeight: 16,
-  } as TextStyle,
+  },
   cardTitle: {
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '700',
     color: colors.textPrimary,
     marginBottom: 8,
-  } as TextStyle,
+  },
   cardMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-  } as ViewStyle,
+  },
   metaItem: {
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: 8,
-  } as ViewStyle,
+  },
   metaText: {
     fontSize: 11,
     lineHeight: 16,
     color: colors.textSecondary,
     marginLeft: 4,
-  } as TextStyle,
+  },
   progressBar: {
     flex: 1,
     height: 4,
     backgroundColor: colors.lightGray,
     borderRadius: 2,
     marginHorizontal: 8,
-  } as ViewStyle,
+  },
   progressFill: {
     height: '100%',
     backgroundColor: colors.primary,
     borderRadius: 2,
-  } as ViewStyle,
+  },
   progressText: {
     fontSize: 11,
     lineHeight: 16,
     color: colors.textSecondary,
-  } as TextStyle,
+  },
   taskItem: {
     backgroundColor: colors.white,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-  } as ViewStyle,
+  },
   taskHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
-  } as ViewStyle,
+  },
   taskTitle: {
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '700',
     color: colors.textPrimary,
-  } as TextStyle,
+  },
   taskDescription: {
     fontSize: 12,
     lineHeight: 20,
     color: colors.textSecondary,
     marginBottom: 12,
-  } as TextStyle,
+  },
   taskFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  } as ViewStyle,
+  },
   taskTime: {
     fontSize: 11,
     lineHeight: 16,
     color: colors.textSecondary,
-  } as TextStyle,
+  },
   statusBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
-  } as ViewStyle,
+  },
   statusText: {
     fontSize: 11,
     lineHeight: 16,
     textTransform: 'capitalize',
-  } as TextStyle,
-} as const;
+  },
+});
 
 // Task Add styles
-export const taskAddStyles = {
+export const taskAddStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-  } as ViewStyle,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -367,33 +367,30 @@ export const taskAddStyles = {
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: colors.line,
-    backgroundColor: colors.white,
-  } as ViewStyle,
+  },
   headerButton: {
     padding: 8,
-  } as ViewStyle,
+  },
   headerRight: {
     flexDirection: 'row',
-  } as ViewStyle,
+  },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.textPrimary,
-  } as TextStyle,
+  },
   content: {
     flex: 1,
     padding: 16,
-    backgroundColor: colors.white,
-  } as ViewStyle,
+  },
   section: {
     marginBottom: 24,
-  } as ViewStyle,
+  },
   label: {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 16,
     color: colors.textPrimary,
-  } as TextStyle,
+  },
   input: {
     width: '100%',
     fontSize: 14,
@@ -406,11 +403,11 @@ export const taskAddStyles = {
     borderColor: colors.line,
     color: colors.textPrimary,
     backgroundColor: colors.background,
-  } as TextStyle,
+  },
   textArea: {
     height: 140,
     textAlignVertical: 'top',
-  } as TextStyle,
+  },
   uploadButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -420,16 +417,14 @@ export const taskAddStyles = {
     borderRadius: 8,
     padding: 16,
     borderStyle: 'dashed',
-    backgroundColor: colors.background,
-  } as ViewStyle,
+  },
   uploadText: {
     marginLeft: 8,
     fontSize: 16,
-    color: colors.textPrimary,
-  } as TextStyle,
+  },
   radioGroup: {
     gap: 10,
-  } as ViewStyle,
+  },
   radioButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -437,12 +432,10 @@ export const taskAddStyles = {
     borderWidth: 1,
     borderColor: colors.line,
     borderRadius: 8,
-    backgroundColor: colors.background,
-  } as ViewStyle,
+  },
   radioButtonActive: {
     borderColor: colors.primary,
-    backgroundColor: 'rgba(121, 128, 255, 0.1)',
-  } as ViewStyle,
+  },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -450,12 +443,11 @@ export const taskAddStyles = {
     borderWidth: 1,
     borderColor: colors.line,
     borderRadius: 8,
-    backgroundColor: colors.background,
-  } as ViewStyle,
+  },
   checkboxActive: {
     borderColor: colors.primary,
     backgroundColor: 'rgba(121, 128, 255, 0.1)',
-  } as ViewStyle,
+  },
   checkbox: {
     width: 20,
     height: 20,
@@ -465,37 +457,146 @@ export const taskAddStyles = {
     marginRight: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.white,
-  } as ViewStyle,
+  },
   checkboxChecked: {
     borderColor: colors.primary,
     backgroundColor: colors.primary,
-  } as ViewStyle,
+  },
   checkboxText: {
     fontSize: 16,
     color: colors.textPrimary,
-  } as TextStyle,
+  },
   footer: {
     padding: 16,
     borderTopWidth: 1,
     borderTopColor: colors.line,
-    backgroundColor: colors.white,
-  } as ViewStyle,
+  },
   submitButton: {
     backgroundColor: colors.primary,
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
-  } as ViewStyle,
+  },
   submitButtonText: {
     color: colors.white,
     fontSize: 16,
     fontWeight: '600',
-  } as TextStyle,
-} as const;
+  },
+});
+
+// Schedule Add styles
+export const scheduleAddStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.line,
+    backgroundColor: colors.white,
+  },
+  backButton: {
+    padding: 8,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.textPrimary,
+  },
+  headerSpace: {
+    width: 40,
+  },
+  content: {
+    flex: 1,
+    padding: 16,
+  },
+  section: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
+    color: colors.textPrimary,
+  },
+  dateButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderWidth: 1,
+    borderColor: colors.line,
+    borderRadius: 8,
+    backgroundColor: colors.background,
+  },
+  dateIcon: {
+    marginRight: 8,
+  },
+  dateText: {
+    fontSize: 16,
+    color: colors.textPrimary,
+  },
+  loadingContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  errorContainer: {
+    padding: 20,
+    alignItems: 'center',
+    backgroundColor: colors.background,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.line,
+  },
+  errorText: {
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+  taskList: {
+    gap: 12,
+  },
+  taskItem: {
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.line,
+  },
+  taskItemSelected: {
+    backgroundColor: 'rgba(121, 128, 255, 0.1)',
+    borderColor: colors.primary,
+  },
+  taskItemText: {
+    fontSize: 16,
+    color: colors.textPrimary,
+  },
+  footer: {
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: colors.line,
+    backgroundColor: colors.white,
+  },
+  submitButton: {
+    backgroundColor: colors.primary,
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  submitButtonDisabled: {
+    opacity: 0.5,
+  },
+  submitButtonText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
 
 // Footer styles
-export const footerStyles = {
+export const footerStyles = StyleSheet.create({
   menubarFooter: {
     paddingVertical: 10,
     paddingHorizontal: 26,
@@ -514,28 +615,28 @@ export const footerStyles = {
     shadowOpacity: 0.08,
     shadowRadius: 44,
     elevation: 8,
-  } as ViewStyle,
+  },
   innerBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-  } as ViewStyle,
+  },
   footerSide: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '40%',
-  } as ViewStyle,
+  },
   footerItem: {
     alignItems: 'center',
     justifyContent: 'center',
     padding: 10,
-  } as ViewStyle,
+  },
   addTaskWrapper: {
     alignItems: 'center',
     width: '20%',
-  } as ViewStyle,
+  },
   actionAddTask: {
     marginTop: -45,
     width: 64,
@@ -544,5 +645,5 @@ export const footerStyles = {
     borderRadius: 9999,
     justifyContent: 'center',
     alignItems: 'center',
-  } as ViewStyle,
-} as const;
+  },
+});

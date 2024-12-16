@@ -93,7 +93,7 @@ export function Footer({ activeTab }: FooterProps) {
               style={styles.modalOption}
               onPress={() => {
                 setShowModal(false);
-                router.push('/schedules');
+                router.push('/schedules/add');
               }}
             >
               <Ionicons name="time-outline" size={24} color={colors.primary} />

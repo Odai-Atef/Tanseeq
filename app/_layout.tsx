@@ -38,6 +38,8 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="tasks/view" options={{ title:'Task Details',headerShown: true }} />
         <Stack.Screen name="tasks/add" options={{ headerShown: true, title: 'Add Task' }} />
+        <Stack.Screen name="schedules/add" options={{ headerShown: true, title: 'Assign Task to Schedule' }} />
+
         <Stack.Screen name="profile" options={{ headerShown: false }} />
         <Stack.Screen 
           name="(auth)" 
