@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, Platform, ActivityIndicator, Alert } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Platform, ActivityIndicator, Alert, Modal } from 'react-native';
 import { useRouter } from 'expo-router';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { ThemedView } from '../../components/ThemedView';
@@ -107,8 +107,8 @@ export default function ScheduleAdd() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          task_id: selectedTaskId,
-          scheduled_date: date.toISOString(),
+          task: selectedTaskId,
+          day: date.toISOString(),
         }),
       });
 
@@ -122,16 +122,64 @@ export default function ScheduleAdd() {
     }
   };
 
+  const renderDatePicker = () => {
+    if (!showDatePicker) return null;
+
+    const pickerElement = (
+      <DateTimePicker
+        value={date}
+        mode="date"
+        display={Platform.OS === 'ios' ? "spinner" : "default"}
+        onChange={handleDateChange}
+        minimumDate={today}
+        textColor={colors.textPrimary} // Set text color for iOS
+        themeVariant="dark" // Ensure light theme for better visibility
+      />
+    );
+
+    if (Platform.OS === 'ios') {
+      return (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={showDatePicker}
+          onRequestClose={() => setShowDatePicker(false)}
+        >
+          <View style={{
+            flex: 1,
+            justifyContent: 'flex-end',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          }}>
+            <View style={{
+              backgroundColor: colors.white,
+              borderTopLeftRadius: 12,
+              borderTopRightRadius: 12,
+              padding: 16,
+            }}>
+              <View style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginBottom: 16,
+              }}>
+                <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+                  <ThemedText style={{ color: colors.textSecondary }}>Cancel</ThemedText>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+                  <ThemedText style={{ color: colors.primary }}>Done</ThemedText>
+                </TouchableOpacity>
+              </View>
+              {pickerElement}
+            </View>
+          </View>
+        </Modal>
+      );
+    }
+
+    return pickerElement;
+  };
+
   return (
     <ThemedView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
-        </TouchableOpacity>
-        <ThemedText style={styles.headerTitle}>Add Schedule</ThemedText>
-        <View style={styles.headerSpace} />
-      </View>
-
       <ScrollView style={styles.content}>
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Date</ThemedText>
@@ -198,37 +246,7 @@ export default function ScheduleAdd() {
         </TouchableOpacity>
       </View>
 
-      {Platform.OS === 'ios' ? (
-        showDatePicker && (
-          <View style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            backgroundColor: colors.white,
-            borderTopWidth: 1,
-            borderTopColor: colors.line,
-          }}>
-            <DateTimePicker
-              value={date}
-              mode="date"
-              display="spinner"
-              onChange={handleDateChange}
-              minimumDate={today}
-            />
-          </View>
-        )
-      ) : (
-        showDatePicker && (
-          <DateTimePicker
-            value={date}
-            mode="date"
-            display="default"
-            onChange={handleDateChange}
-            minimumDate={today}
-          />
-        )
-      )}
+      {renderDatePicker()}
     </ThemedView>
   );
 }

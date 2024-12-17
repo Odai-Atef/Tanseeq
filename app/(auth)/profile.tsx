@@ -82,7 +82,7 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { borderTopWidth: 44, borderTopColor: 'rgb(121, 128, 255)' }]}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
@@ -96,7 +96,7 @@ export default function Profile() {
     : 'User';
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { borderTopWidth: 50, borderTopColor: 'rgb(121, 128, 255)' }]}>
       <ScrollView>
         <View style={ProfileTheme.profileSection}>
           <View style={ProfileTheme.avatarContainer}>

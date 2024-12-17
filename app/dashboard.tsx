@@ -172,7 +172,7 @@ export default function Dashboard() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { borderTopWidth: 50, borderTopColor: 'rgb(121, 128, 255)' }]}>
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>Hello, {userName}!</Text>

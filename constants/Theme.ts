@@ -59,6 +59,7 @@ export const commonStyles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerTitle: {
+    color:'#1b325f',
     fontSize: 18,
     lineHeight: 28,
     fontWeight: '700',

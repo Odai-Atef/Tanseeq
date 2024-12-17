@@ -138,7 +138,7 @@ export default function SignIn() {
   };
 
   return (
-    <ThemedView style={commonStyles.container}>
+    <ThemedView style={[commonStyles.container, { borderTopWidth: 50, borderTopColor: 'rgb(121, 128, 255)' }]}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
         <View style={commonStyles.header}>
           <ThemedText style={commonStyles.headerTitle}>Sign In</ThemedText>
