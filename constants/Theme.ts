@@ -235,79 +235,6 @@ export const dashboardStyles = StyleSheet.create({
     lineHeight: 20,
     color: colors.textSecondary,
   },
-  projectsScroll: {
-    marginBottom: 24,
-  },
-  projectCard: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: 16,
-    marginRight: 16,
-    width: 280,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.lightGray,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  priorityBadge: {
-    backgroundColor: colors.rgbaDanger,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  priorityText: {
-    color: colors.danger,
-    fontSize: 11,
-    lineHeight: 16,
-  },
-  cardTitle: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: '700',
-    color: colors.textPrimary,
-    marginBottom: 8,
-  },
-  cardMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  metaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: 8,
-  },
-  metaText: {
-    fontSize: 11,
-    lineHeight: 16,
-    color: colors.textSecondary,
-    marginLeft: 4,
-  },
-  progressBar: {
-    flex: 1,
-    height: 4,
-    backgroundColor: colors.lightGray,
-    borderRadius: 2,
-    marginHorizontal: 8,
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: colors.primary,
-    borderRadius: 2,
-  },
-  progressText: {
-    fontSize: 11,
-    lineHeight: 16,
-    color: colors.textSecondary,
-  },
   taskItem: {
     backgroundColor: colors.white,
     borderRadius: 12,
@@ -352,135 +279,39 @@ export const dashboardStyles = StyleSheet.create({
     lineHeight: 16,
     textTransform: 'capitalize',
   },
-});
-
-// Task Add styles
-export const taskAddStyles = StyleSheet.create({
-  container: {
+  emptyState: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
     backgroundColor: colors.white,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.line,
-  },
-  headerButton: {
-    padding: 8,
-  },
-  headerRight: {
-    flexDirection: 'row',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 16,
-    color: colors.textPrimary,
-  },
-  input: {
-    width: '100%',
-    fontSize: 14,
-    fontWeight: '400',
-    lineHeight: 16,
-    padding: 16,
-    paddingLeft: 20,
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.line,
-    color: colors.textPrimary,
-    backgroundColor: colors.background,
+    marginTop: 16,
   },
-  textArea: {
-    height: 140,
-    textAlignVertical: 'top',
+  emptyStateIcon: {
+    marginBottom: 16,
+    color: colors.textSecondary,
   },
-  uploadButton: {
-    flexDirection: 'row',
+  emptyStateText: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: colors.line,
-    borderRadius: 8,
-    padding: 16,
-    borderStyle: 'dashed',
+    padding: 24,
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    marginTop: 16,
   },
-  uploadText: {
-    marginLeft: 8,
+  loadingText: {
     fontSize: 16,
-  },
-  radioGroup: {
-    gap: 10,
-  },
-  radioButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    borderWidth: 1,
-    borderColor: colors.line,
-    borderRadius: 8,
-  },
-  radioButtonActive: {
-    borderColor: colors.primary,
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    borderWidth: 1,
-    borderColor: colors.line,
-    borderRadius: 8,
-  },
-  checkboxActive: {
-    borderColor: colors.primary,
-    backgroundColor: 'rgba(121, 128, 255, 0.1)',
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: colors.line,
-    marginRight: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkboxChecked: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primary,
-  },
-  checkboxText: {
-    fontSize: 16,
-    color: colors.textPrimary,
-  },
-  footer: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: colors.line,
-  },
-  submitButton: {
-    backgroundColor: colors.primary,
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  submitButtonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: '600',
+    lineHeight: 24,
+    color: colors.textSecondary,
+    marginTop: 12,
   },
 });
 
@@ -645,5 +476,135 @@ export const footerStyles = StyleSheet.create({
     borderRadius: 9999,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+});
+
+// Task Add styles
+export const taskAddStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.line,
+  },
+  headerButton: {
+    padding: 8,
+  },
+  headerRight: {
+    flexDirection: 'row',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  content: {
+    flex: 1,
+    padding: 16,
+  },
+  section: {
+    marginBottom: 24,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 16,
+    color: colors.textPrimary,
+  },
+  input: {
+    width: '100%',
+    fontSize: 14,
+    fontWeight: '400',
+    lineHeight: 16,
+    padding: 16,
+    paddingLeft: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.line,
+    color: colors.textPrimary,
+    backgroundColor: colors.background,
+  },
+  textArea: {
+    height: 140,
+    textAlignVertical: 'top',
+  },
+  uploadButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.line,
+    borderRadius: 8,
+    padding: 16,
+    borderStyle: 'dashed',
+  },
+  uploadText: {
+    marginLeft: 8,
+    fontSize: 16,
+  },
+  radioGroup: {
+    gap: 10,
+  },
+  radioButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderWidth: 1,
+    borderColor: colors.line,
+    borderRadius: 8,
+  },
+  radioButtonActive: {
+    borderColor: colors.primary,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderWidth: 1,
+    borderColor: colors.line,
+    borderRadius: 8,
+  },
+  checkboxActive: {
+    borderColor: colors.primary,
+    backgroundColor: 'rgba(121, 128, 255, 0.1)',
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: colors.line,
+    marginRight: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkboxChecked: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primary,
+  },
+  checkboxText: {
+    fontSize: 16,
+    color: colors.textPrimary,
+  },
+  footer: {
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: colors.line,
+  },
+  submitButton: {
+    backgroundColor: colors.primary,
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

@@ -1,37 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, View, Text, TouchableOpacity, Dimensions } from 'react-native';
+import { ScrollView, View, Text, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
 import { ThemedView } from '../components/ThemedView';
 import { Ionicons } from '@expo/vector-icons';
 import { dashboardStyles as styles, colors } from '../constants/Theme';
 import { Footer } from '../components/Footer';
 import CircularProgress from 'react-native-circular-progress-indicator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_ENDPOINTS } from '../constants/api';
+import { router } from 'expo-router';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const ProjectCard = ({ title, date, progress }: { title: string, date: string, progress: number }) => (
-  <TouchableOpacity style={styles.projectCard}>
-    <View style={styles.cardHeader}>
-      <View style={styles.iconContainer}>
-        <Ionicons name="wallet-outline" size={24} color="#7980FF" />
-      </View>
-      <View style={styles.priorityBadge}>
-        <Text style={styles.priorityText}>High</Text>
-      </View>
-    </View>
-    <Text style={styles.cardTitle}>{title}</Text>
-    <View style={styles.cardMeta}>
-      <View style={styles.metaItem}>
-        <Ionicons name="calendar-outline" size={16} color="#464D61" />
-        <Text style={styles.metaText}>{date}</Text>
-      </View>
-      <View style={styles.progressBar}>
-        <View style={[styles.progressFill, { width: `${progress}%` }]} />
-      </View>
-      <Text style={styles.progressText}>{`${progress}%`}</Text>
-    </View>
-  </TouchableOpacity>
-);
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  start_time: string;
+  end_time: string;
+  date_updated: string;
+  date: string;
+}
 
 const TaskItem = ({ title, description, time, status }: { title: string, description: string, time: string, status: string }) => (
   <View style={styles.taskItem}>
@@ -42,8 +31,8 @@ const TaskItem = ({ title, description, time, status }: { title: string, descrip
     <Text style={styles.taskDescription}>{description}</Text>
     <View style={styles.taskFooter}>
       <Text style={styles.taskTime}>{time}</Text>
-      <View style={[styles.statusBadge, { backgroundColor: status === 'completed' ? '#E8F5E9' : '#E3F2FD' }]}>
-        <Text style={[styles.statusText, { color: status === 'completed' ? '#4CAF50' : '#2196F3' }]}>
+      <View style={[styles.statusBadge, { backgroundColor: status === 'done' ? '#E8F5E9' : '#E3F2FD' }]}>
+        <Text style={[styles.statusText, { color: status === 'done' ? '#4CAF50' : '#2196F3' }]}>
           {status}
         </Text>
       </View>
@@ -51,8 +40,21 @@ const TaskItem = ({ title, description, time, status }: { title: string, descrip
   </View>
 );
 
+const EmptyState = ({ message }: { message: string }) => (
+  <View style={styles.emptyState}>
+    <Ionicons name="calendar-outline" size={48} color="#464D61" style={styles.emptyStateIcon} />
+    <Text style={styles.emptyStateText}>{message}</Text>
+  </View>
+);
+
 export default function Dashboard() {
   const [userName, setUserName] = useState('User');
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [firstInProgressTask, setFirstInProgressTask] = useState<Task | null>(null);
+  const [recentCompletedTask, setRecentCompletedTask] = useState<Task | null>(null);
+  const [progressPercentage, setProgressPercentage] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const getUserInfo = async () => {
@@ -71,7 +73,103 @@ export default function Dashboard() {
     };
 
     getUserInfo();
+    fetchTodayTasks();
   }, []);
+
+  const fetchTodayTasks = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const token = await AsyncStorage.getItem('token');
+      const today = new Date().toISOString().split('T')[0];
+      
+      const response = await fetch(`${API_ENDPOINTS.SCHEDULE}?filter[date][_eq]=${today}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) throw new Error('Failed to fetch tasks');
+      
+      const data = await response.json();
+      const todayTasks: Task[] = data.data || [];
+      setTasks(todayTasks);
+
+      // Find first in-progress task
+      const inProgressTask = todayTasks.find(task => task.status === 'in progress');
+      setFirstInProgressTask(inProgressTask || null);
+
+      // Find most recent completed task
+      const completedTasks = todayTasks.filter(task => task.status === 'done');
+      const mostRecentCompleted = completedTasks.sort((a, b) => 
+        new Date(b.date_updated).getTime() - new Date(a.date_updated).getTime()
+      )[0];
+      setRecentCompletedTask(mostRecentCompleted || null);
+
+      // Calculate progress percentage
+      const totalTasks = todayTasks.length;
+      const activeTasks = todayTasks.filter(task => 
+        !['done', 'cancelled'].includes(task.status)
+      ).length;
+      
+      const percentage = totalTasks > 0 
+        ? Math.round((activeTasks / totalTasks) * 100)
+        : 0;
+      
+      setProgressPercentage(percentage);
+    } catch (error) {
+      console.error('Error fetching today tasks:', error);
+      setError('Failed to load tasks. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const renderTaskContent = () => {
+    if (isLoading) {
+      return (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={styles.loadingText}>Loading tasks...</Text>
+        </View>
+      );
+    }
+
+    if (error) {
+      return <EmptyState message={error} />;
+    }
+
+    if (tasks.length === 0) {
+      return <EmptyState message="No tasks scheduled for today" />;
+    }
+
+    return (
+      <>
+        {firstInProgressTask && (
+          <TaskItem 
+            title={firstInProgressTask.title}
+            description={firstInProgressTask.description}
+            time={`${firstInProgressTask.start_time} - ${firstInProgressTask.end_time}`}
+            status={firstInProgressTask.status}
+          />
+        )}
+        
+        {recentCompletedTask && (
+          <TaskItem 
+            title={recentCompletedTask.title}
+            description={recentCompletedTask.description}
+            time={`${recentCompletedTask.start_time} - ${recentCompletedTask.end_time}`}
+            status={recentCompletedTask.status}
+          />
+        )}
+
+        {!firstInProgressTask && !recentCompletedTask && (
+          <EmptyState message="No in-progress or completed tasks" />
+        )}
+      </>
+    );
+  };
 
   return (
     <ThemedView style={styles.container}>
@@ -86,7 +184,7 @@ export default function Dashboard() {
         <View style={styles.progressSection}>
           <View style={[styles.progressCircle, { backgroundColor: '#7980FF' }]}>
             <CircularProgress
-              value={85}
+              value={progressPercentage}
               radius={25}
               duration={2000}
               progressValueColor={colors.white}
@@ -100,49 +198,20 @@ export default function Dashboard() {
           </View>
           <View style={styles.progressInfo}>
             <Text style={styles.progressTitle}>Progress Today Task</Text>
-            <Text style={styles.progressSubtext}>13/15 Tasks Completed</Text>
+            <Text style={styles.progressSubtext}>
+              {tasks.filter(task => task.status === 'done').length}/{tasks.length} Tasks Completed
+            </Text>
           </View>
         </View>
 
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Recent Projects</Text>
-          <TouchableOpacity>
-            <Text style={styles.viewAll}>View All</Text>
-          </TouchableOpacity>
-        </View>
-
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.projectsScroll}>
-          <ProjectCard 
-            title="Banking Platform Web & Mobile App"
-            date="June 28, 2022"
-            progress={78}
-          />
-          <ProjectCard 
-            title="Education Web & App"
-            date="June 15, 2022"
-            progress={56}
-          />
-        </ScrollView>
-
-        <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Today Tasks</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/tasks/calendar')}>
             <Text style={styles.viewAll}>View All</Text>
           </TouchableOpacity>
         </View>
 
-        <TaskItem 
-          title="NFT Web & Mobile Apps"
-          description="Create NFT website with necessary pages"
-          time="10:00 AM - 03:00 PM"
-          status="in progress"
-        />
-        <TaskItem 
-          title="Shop Website & Mobile Apps"
-          description="Create shop website with necessary pages"
-          time="10:00 AM - 03:00 PM"
-          status="completed"
-        />
+        {renderTaskContent()}
       </ScrollView>
 
       <Footer activeTab="home" />
