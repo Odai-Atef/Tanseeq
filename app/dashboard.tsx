@@ -13,26 +13,26 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface Task {
   id: string;
-  title: string;
+  name: string;
   description: string;
   status: string;
-  start_time: string;
-  end_time: string;
+  start_at: string;
+  end_at: string;
   date_updated: string;
   date: string;
 }
 
-const TaskItem = ({ title, description, time, status }: { title: string, description: string, time: string, status: string }) => (
+const TaskItem = ({ name, description, time, status }: { name: string, description: string, time: string, status: string }) => (
   <View style={styles.taskItem}>
     <View style={styles.taskHeader}>
-      <Text style={styles.taskTitle}>{title}</Text>
+      <Text style={styles.taskTitle}>{name}</Text>
       <Ionicons name="ellipsis-vertical" size={20} color="#464D61" />
     </View>
     <Text style={styles.taskDescription}>{description}</Text>
     <View style={styles.taskFooter}>
       <Text style={styles.taskTime}>{time}</Text>
-      <View style={[styles.statusBadge, { backgroundColor: status === 'done' ? '#E8F5E9' : '#E3F2FD' }]}>
-        <Text style={[styles.statusText, { color: status === 'done' ? '#4CAF50' : '#2196F3' }]}>
+      <View style={[styles.statusBadge, { backgroundColor: status === 'Done' ? '#E8F5E9' : '#E3F2FD' }]}>
+        <Text style={[styles.statusText, { color: status === 'Done' ? '#4CAF50' : '#2196F3' }]}>
           {status}
         </Text>
       </View>
@@ -81,14 +81,18 @@ export default function Dashboard() {
       setIsLoading(true);
       setError(null);
       
-      const token = await AsyncStorage.getItem('token');
+      const token = await AsyncStorage.getItem('access_token');
       const today = new Date().toISOString().split('T')[0];
       
-      const response = await fetch(`${API_ENDPOINTS.SCHEDULE}?filter[date][_eq]=${today}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      const response = await fetch(
+        `${API_ENDPOINTS.SCHEDULE}?fields=*,task.*&filter[day][_eq]=${today}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
       
       if (!response.ok) throw new Error('Failed to fetch tasks');
       
@@ -97,11 +101,11 @@ export default function Dashboard() {
       setTasks(todayTasks);
 
       // Find first in-progress task
-      const inProgressTask = todayTasks.find(task => task.status === 'in progress');
+      const inProgressTask = todayTasks.find(task => task.status === 'In-progress');
       setFirstInProgressTask(inProgressTask || null);
 
       // Find most recent completed task
-      const completedTasks = todayTasks.filter(task => task.status === 'done');
+      const completedTasks = todayTasks.filter(task => task.status === 'Done');
       const mostRecentCompleted = completedTasks.sort((a, b) => 
         new Date(b.date_updated).getTime() - new Date(a.date_updated).getTime()
       )[0];
@@ -110,7 +114,7 @@ export default function Dashboard() {
       // Calculate progress percentage
       const totalTasks = todayTasks.length;
       const activeTasks = todayTasks.filter(task => 
-        !['done', 'cancelled'].includes(task.status)
+        ['Done', 'Cancelled'].includes(task.status)
       ).length;
       
       const percentage = totalTasks > 0 
@@ -148,18 +152,18 @@ export default function Dashboard() {
       <>
         {firstInProgressTask && (
           <TaskItem 
-            title={firstInProgressTask.title}
+            name={firstInProgressTask.task.name}
             description={firstInProgressTask.description}
-            time={`${firstInProgressTask.start_time} - ${firstInProgressTask.end_time}`}
+            time={`${firstInProgressTask.start_at} - ${firstInProgressTask.end_at}`}
             status={firstInProgressTask.status}
           />
         )}
         
         {recentCompletedTask && (
           <TaskItem 
-            title={recentCompletedTask.title}
-            description={recentCompletedTask.description}
-            time={`${recentCompletedTask.start_time} - ${recentCompletedTask.end_time}`}
+            name={recentCompletedTask.task.name}
+            description={recentCompletedTask.task.description}
+            time={`${recentCompletedTask.start_at} - ${recentCompletedTask.end_at}`}
             status={recentCompletedTask.status}
           />
         )}
@@ -199,7 +203,9 @@ export default function Dashboard() {
           <View style={styles.progressInfo}>
             <Text style={styles.progressTitle}>Progress Today Task</Text>
             <Text style={styles.progressSubtext}>
-              {tasks.filter(task => task.status === 'done').length}/{tasks.length} Tasks Completed
+              { tasks.filter(task => 
+        ['Done', 'Cancelled'].includes(task.status)
+      ).length}/{tasks.length} Tasks Completed
             </Text>
           </View>
         </View>

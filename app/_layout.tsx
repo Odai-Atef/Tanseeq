@@ -30,14 +30,14 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'light' ? DefaultTheme : DefaultTheme}>
       <Stack>
-        <Stack.Screen name="dashboard" options={{ headerShown: false }} />
-        <Stack.Screen name="tasks/calendar" options={{ title: 'Calendar', headerShown: true }} />
+        <Stack.Screen name="dashboard" options={{ headerBackTitle: '',headerShown: false }} />
+        <Stack.Screen name="tasks/calendar" options={{  headerBackTitleVisible: false, headerBackTitle: '',title: 'Calendar', headerShown: true }} />
         <Stack.Screen name="tasks/index" options={{ title: 'Tasks', headerShown: true }} />
 
        
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="tasks/view" options={{ title:'Task Details',headerShown: true }} />
-        <Stack.Screen name="tasks/add" options={{ headerShown: true, title: 'Add Task' }} />
+        <Stack.Screen name="tasks/add" options={{ headerBackTitle:'',headerShown: true, title: 'Add Task' }} />
         <Stack.Screen name="schedules/add" options={{ headerShown: true, title: 'Assign Task to Schedule' }} />
 
         <Stack.Screen name="profile" options={{ headerShown: false }} />
