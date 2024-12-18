@@ -85,6 +85,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'light' ? DefaultTheme : DefaultTheme}>
       <Stack>
+      <Stack.Screen name="index" options={{ headerBackTitle: '',headerShown: false }} />
         <Stack.Screen name="dashboard" options={{ headerBackTitle: '',headerShown: false }} />
         <Stack.Screen name="tasks/calendar" options={{ headerBackTitle: '',title: 'Calendar', headerShown: true }} />
         <Stack.Screen name="tasks/index" options={{ title: 'Tasks', headerShown: true }} />

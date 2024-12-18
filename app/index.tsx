@@ -1,58 +1,34 @@
-import { Redirect } from 'expo-router';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_ENDPOINTS } from '../constants/api';
-import { handleAuthError } from '../utils/auth';
+import { Preloader } from '../components/Preloader';
 
 export default function Index() {
-  const [isValidating, setIsValidating] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const validateAuth = async () => {
-      try {
-        // Check if token exists
-        const token = await AsyncStorage.getItem('access_token');
-        if (!token) {
-          setIsAuthenticated(false);
-          setIsValidating(false);
-          return;
-        }
-
-        // Validate token by calling USER_INFO endpoint
-        const response = await fetch(API_ENDPOINTS.USER_INFO, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.status === 200) {
-          // Store user info
-          const userData = await response.json();
-          await AsyncStorage.setItem('userInfo', JSON.stringify(userData));
-          setIsAuthenticated(true);
-        } else {
-          // Handle auth error (will clear tokens and redirect)
-          await handleAuthError({ status: response.status });
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.error('Auth validation error:', error);
-        setIsAuthenticated(false);
-        await handleAuthError(error);
-      } finally {
-        setIsValidating(false);
-      }
-    };
-
-    validateAuth();
+    checkAuth();
   }, []);
 
-  // Show nothing while validating
-  if (isValidating) {
-    return null;
-  }
+  const checkAuth = async () => {
+    try {
+      const token = await AsyncStorage.getItem('access_token');
+      
+      // Show preloader for at least 1.5 seconds for a smooth experience
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      if (token) {
+        router.replace('/dashboard');
+      } else {
+        router.replace('/(auth)/signin');
+      }
+    } catch (error) {
+      console.error('Auth check error:', error);
+      router.replace('/(auth)/signin');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  // Redirect based on authentication status
-  return <Redirect href={isAuthenticated ? "/dashboard" : "/(auth)/signin"} />;
+  return <Preloader visible={isLoading} />;
 }
