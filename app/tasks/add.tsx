@@ -3,12 +3,13 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Platform } from 'r
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Toast from 'react-native-toast-message';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
 import { colors, taskAddStyles } from '../../constants/Theme';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
+import { Task } from '../../types/Task';
 
 type PeriodValues = {
   'Every Day': string;
@@ -20,22 +21,23 @@ type PeriodValues = {
   'Every Year': string;
 };
 
-interface Task {
-  id: number;
-  name: string;
-  description: string;
-  repeat_monthly: string;
-  repeat_days: string[];
-}
-
 export default function TaskAdd() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const id = params.id as string | undefined;
-  const [taskName, setTaskName] = useState('');
-  const [description, setDescription] = useState('');
-  const [selectedPeriod, setSelectedPeriod] = useState('');
-  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [task, setTask] = useState<Task>(new Task({
+    id: undefined,
+    name: '',
+    description: '',
+    repeat_monthly: '',
+    repeat_days: [],
+    status: 'Active',
+    user_created: '',
+    date_created: new Date().toISOString(),
+    user_updated: null,
+    date_updated: null,
+    images: null
+  }));
   const [startDate, setStartDate] = useState(new Date());
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,13 +67,9 @@ export default function TaskAdd() {
       if (!response.ok) {
         throw new Error('Failed to fetch task');
       }
-      const result = await response.json();
 
-      const task: Task = result;
-      setTaskName(task.name);
-      setDescription(task.description);
-      setSelectedPeriod(task.repeat_monthly);
-      // setSelectedDays(task.repeat_days);
+      const result = await response.json();
+      setTask(Task.fromAPI(result));
     } catch (error) {
       showNotification('Failed to load task data', 'error');
       console.error('Error fetching task:', error);
@@ -112,29 +110,27 @@ export default function TaskAdd() {
   };
 
   const toggleDaySelection = (day: string) => {
-    if (selectedDays.includes(day)) {
-      setSelectedDays(selectedDays.filter(d => d !== day));
+    const newTask = task.clone();
+    if (newTask.repeatsOnDay(day)) {
+      newTask.repeat_days = newTask.repeat_days.filter(d => d !== day);
     } else {
-      setSelectedDays([...selectedDays, day]);
+      newTask.repeat_days = [...newTask.repeat_days, day];
     }
+    setTask(newTask);
+  };
+
+  const updateTaskField = (field: keyof Task, value: any) => {
+    const newTask = task.clone();
+    (newTask as any)[field] = value;
+    setTask(newTask);
   };
 
   const handleSubmit = async () => {
-    // Validate required fields
-    if (!taskName.trim()) {
-      showNotification('Please enter a task name', 'error');
-      return;
-    }
-    if (!description.trim()) {
-      showNotification('Please enter a description', 'error');
-      return;
-    }
-    if (!selectedPeriod) {
-      showNotification('Please select a period', 'error');
-      return;
-    }
-    if (selectedDays.length === 0) {
-      showNotification('Please select at least one day', 'error');
+    const validation = task.validate();
+    if (!validation.isValid) {
+      validation.errors.forEach(error => {
+        showNotification(error, 'error');
+      });
       return;
     }
 
@@ -157,12 +153,7 @@ export default function TaskAdd() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          name: taskName,
-          description,
-          repeat_monthly: selectedPeriod,
-          repeat_days: selectedDays,
-        })
+        body: JSON.stringify(task.toAPI())
       });
 
       if (!response.ok) {
@@ -202,8 +193,8 @@ export default function TaskAdd() {
             style={taskAddStyles.input}
             placeholder="Wireframe for NFT Landing Page"
             placeholderTextColor="rgba(49, 57, 79, 0.6)"
-            value={taskName}
-            onChangeText={setTaskName}
+            value={task.name}
+            onChangeText={name => updateTaskField('name', name)}
           />
         </View>
 
@@ -215,8 +206,8 @@ export default function TaskAdd() {
             placeholderTextColor="rgba(49, 57, 79, 0.6)"
             multiline
             numberOfLines={4}
-            value={description}
-            onChangeText={setDescription}
+            value={task.description || ''}
+            onChangeText={description => updateTaskField('description', description)}
           />
         </View>
 
@@ -236,13 +227,13 @@ export default function TaskAdd() {
                 key={period}
                 style={[
                   taskAddStyles.radioButton,
-                  selectedPeriod === periodValues[period] && taskAddStyles.radioButtonActive
+                  task.repeat_monthly === periodValues[period] && taskAddStyles.radioButtonActive
                 ]}
-                onPress={() => setSelectedPeriod(periodValues[period])}
+                onPress={() => updateTaskField('repeat_monthly', periodValues[period])}
               >
                 <View style={[
                   taskAddStyles.checkbox,
-                  selectedPeriod === periodValues[period] && taskAddStyles.checkboxChecked
+                  task.repeat_monthly === periodValues[period] && taskAddStyles.checkboxChecked
                 ]} />
                 <ThemedText style={taskAddStyles.checkboxText}>{period}</ThemedText>
               </TouchableOpacity>
@@ -253,18 +244,18 @@ export default function TaskAdd() {
         <View style={taskAddStyles.section}>
           <ThemedText style={taskAddStyles.label}>Days *</ThemedText>
           <View style={taskAddStyles.radioGroup}>
-            {[ 'Sunday', 'Monday','Tuesday','Wednesday','Thursday','Friday', 'Saturday'].map((day, index) => (
+            {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day, index) => (
               <TouchableOpacity
                 key={index}
                 style={[
                   taskAddStyles.checkboxContainer,
-                  selectedDays.includes((index + 1).toString()) && taskAddStyles.checkboxActive
+                  task.repeatsOnDay((index + 1).toString()) && taskAddStyles.checkboxActive
                 ]}
                 onPress={() => toggleDaySelection((index + 1).toString())}
               >
                 <View style={[
                   taskAddStyles.checkbox,
-                  selectedDays.includes((index + 1).toString()) && taskAddStyles.checkboxChecked
+                  task.repeatsOnDay((index + 1).toString()) && taskAddStyles.checkboxChecked
                 ]} />
                 <ThemedText style={taskAddStyles.checkboxText}>{day}</ThemedText>
               </TouchableOpacity>

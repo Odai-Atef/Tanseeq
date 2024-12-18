@@ -10,25 +10,10 @@ import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { format } from 'date-fns';
 import Toast from 'react-native-toast-message';
-
-type TaskStatus = 'Done' | 'Not-Started' | 'In-progress';
-
-interface Task {
-  id: string;
-  name: string;
-}
-
-interface Schedule {
-  id: string;
-  day: string;
-  start_time: string;
-  end_time: string;
-  status: TaskStatus;
-  task: Task;
-}
+import { Schedule, TaskStatus } from '../../types/Schedule';
 
 interface ApiResponse {
-  data: Schedule[];
+  data: any[];
 }
 
 const TaskSection = ({ 
@@ -87,7 +72,7 @@ const TaskSection = ({
             >
               <Text style={TasksTheme.taskName}>{schedule.task.name}</Text>
               <Text style={TasksTheme.taskDueDate}>
-                {/* {format(new Date(`2000-01-01T${schedule.start_time}`), 'hh:mm a')} */}
+                {schedule.getFormattedStartTime()}
               </Text>
             </TouchableOpacity>
           ))}
@@ -141,7 +126,8 @@ export default function Tasks() {
       }
 
       const result: ApiResponse = await response.json();
-      setSchedules(result.data || []);
+      const scheduleInstances = (result.data || []).map(schedule => Schedule.fromAPI(schedule));
+      setSchedules(scheduleInstances);
     } catch (err) {
       showError(err instanceof Error ? err.message : 'Failed to load schedules');
     } finally {

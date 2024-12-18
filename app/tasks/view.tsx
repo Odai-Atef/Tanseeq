@@ -10,47 +10,11 @@ import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors } from '../../constants/Theme';
 import Toast from 'react-native-toast-message';
-
-interface TaskImage {
-  id: string;
-  filename_download: string;
-}
-
-interface Task {
-  id: number;
-  status: string;
-  user_created: string;
-  date_created: string;
-  user_updated: string;
-  date_updated: string;
-  name: string;
-  description: string;
-  images: string;
-  repeat_days: string[];
-  repeat_monthly: string;
-}
+import { Task } from '../../types/Task';
 
 interface ApiResponse {
-  data: Task[];
+  data: any[];
 }
-
-type DayMap = {
-  [key in '1' | '2' | '3' | '4' | '5' | '6' | '7']: string;
-};
-
-const days: DayMap = {
-  '1': 'Monday',
-  '2': 'Tuesday',
-  '3': 'Wednesday',
-  '4': 'Thursday',
-  '5': 'Friday',
-  '6': 'Saturday',
-  '7': 'Sunday'
-};
-
-const getDayName = (day: string): string => {
-  return days[day as keyof DayMap] || day;
-};
 
 export default function TaskView() {
   const router = useRouter();
@@ -96,7 +60,7 @@ export default function TaskView() {
 
         const result: ApiResponse = await response.json();
         if (result.data && result.data.length > 0) {
-          setTask(result.data[0]);
+          setTask(Task.fromAPI(result.data[0]));
         } else {
           throw new Error('Task not found');
         }
@@ -142,6 +106,16 @@ export default function TaskView() {
 
               if (!response.ok) throw new Error('Failed to delete task');
 
+              Toast.show({
+                type: 'success',
+                text1: 'Success',
+                text2: 'Task deleted successfully',
+                position: 'top',
+                visibilityTime: 2000,
+                autoHide: true,
+                topOffset: 30
+              });
+
               router.replace('/tasks');
             } catch (error) {
               showError('Failed to delete task. Please try again.');
@@ -186,17 +160,17 @@ export default function TaskView() {
         <View style={TasksTheme.section}>
           <ThemedText style={TasksTheme.subtitle}>Status</ThemedText>
           <ThemedText style={TasksTheme.description}>
-          {task.status}
-            </ThemedText>
+            {task.status}
+          </ThemedText>
         </View>
 
-        {task.repeat_days && task.repeat_days.length > 0 && (
+        {task.repeat_days.length > 0 && (
           <View style={TasksTheme.section}>
             <ThemedText style={TasksTheme.subtitle}>Repeat Days</ThemedText>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
-              {task.repeat_days.map((day) => (
+              {task.getRepeatDayNames().map((dayName) => (
                 <View 
-                  key={day}
+                  key={dayName}
                   style={{
                     backgroundColor: '#F8F9FD',
                     paddingHorizontal: 12,
@@ -204,7 +178,7 @@ export default function TaskView() {
                     borderRadius: 8,
                   }}
                 >
-                  <ThemedText style={{ color: '#31394F' }}>{getDayName(day)}</ThemedText>
+                  <ThemedText style={{ color: '#31394F' }}>{dayName}</ThemedText>
                 </View>
               ))}
             </View>
@@ -223,28 +197,18 @@ export default function TaskView() {
         <View style={TasksTheme.section}>
           <ThemedText style={TasksTheme.subtitle}>Created</ThemedText>
           <ThemedText style={TasksTheme.description}>
-            {new Date(task.date_created).toLocaleDateString('en-US', {
-              month: 'long',
-              day: 'numeric',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            })}
+            {task.getFormattedCreatedDate()}
           </ThemedText>
         </View>
 
-        <View style={TasksTheme.section}>
-          <ThemedText style={TasksTheme.subtitle}>Last Updated</ThemedText>
-          <ThemedText style={TasksTheme.description}>
-            {new Date(task.date_updated).toLocaleDateString('en-US', {
-              month: 'long',
-              day: 'numeric',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            })}
-          </ThemedText>
-        </View>
+        {task.date_updated && (
+          <View style={TasksTheme.section}>
+            <ThemedText style={TasksTheme.subtitle}>Last Updated</ThemedText>
+            <ThemedText style={TasksTheme.description}>
+              {task.getFormattedUpdatedDate()}
+            </ThemedText>
+          </View>
+        )}
       </ScrollView>
 
       <View style={{
