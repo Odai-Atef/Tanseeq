@@ -1,26 +1,41 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
-
-export const Colors = {
-  light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
-  },
-  dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
-  },
-};
+export const colors = {
+  surface: '#f5f5f5',
+  white: '#fff',
+  primary: '#7980ff',
+  primaryBold: '#878dff',
+  secondary: 'rgba(49, 57, 79, 0.7)',
+  secondary2: '#b9bac3',
+  success: '#5fd788',
+  success2: '#54b24c',
+  danger: '#f05a5a',
+  warning: '#fcdb66',
+  info: '#64bef1',
+  light: '#e7e7e7',
+  dark: '#1b325f',
+  disable: '#d3b7a5',
+  onSurface: '#151515',
+  text: '#6f7582',
+  text2: '#c9cbce',
+  text3: '#343434',
+  text4: '#d3d5da',
+  text5: '#abadb2',
+  line: '#e5e5e5',
+  line2: '#d9d9d9',
+  line3: '#dbdbdb',
+  lineRgba: 'rgba(255, 255, 255, 0.1)',
+  backdrop: 'rgba(49, 57, 79, 0.12)',
+  bgProgress: 'rgba(21, 21, 21, 0.15)',
+  rgbaPrimary: 'rgba(135, 59, 10, 0.1)',
+  rgbaSuccess: 'rgba(30, 127, 17, 0.1)',
+  rgbaDanger: 'rgba(225, 0, 0, 0.1)',
+  rgbaWarning: 'rgba(255, 138, 0, 0.1)',
+  rgbaInfo: 'rgba(167, 2, 103, 0.1)',
+  rgbaDark: 'rgba(27, 50, 95, 0.1)',
+  rgbaDisable: 'rgba(135, 59, 10, 0.1)',
+  linerPrimary: ['#7980ff', '#bcc0ff'],
+  linner1: ['rgba(135, 59, 10, 0)', '#2e1200'],
+  background: '#F8F9FA',
+  textPrimary: '#31394F',
+  textSecondary: '#464D61',
+  lightGray: '#F0F1F5',
+} as const;
