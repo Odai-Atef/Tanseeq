@@ -4,8 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
-import { colors } from '../../constants/Theme';
-import { ProfileTheme } from '../../constants/ProfileTheme';
+import { colors, authProfileTheme as styles } from '../../constants/Theme';
 import Toast from 'react-native-toast-message';
 
 export default function EditProfile() {
@@ -49,28 +48,28 @@ export default function EditProfile() {
   };
 
   return (
-    <ThemedView style={ProfileTheme.container}>
-      <ScrollView style={ProfileTheme.content}>
-        <View style={ProfileTheme.profileSection}>
-          <View style={ProfileTheme.avatarContainer}>
+    <ThemedView style={styles.container}>
+      <ScrollView style={styles.content}>
+        <View style={styles.profileSection}>
+          <View style={styles.avatarContainer}>
             <Image
               source={require('../../assets/images/avt4.jpg')}
-              style={ProfileTheme.avatar}
+              style={styles.avatar}
             />
-            <TouchableOpacity style={ProfileTheme.cameraButton}>
+            <TouchableOpacity style={styles.cameraButton}>
               <Ionicons name="camera-outline" size={20} color="white" />
             </TouchableOpacity>
           </View>
           <TouchableOpacity>
-            <ThemedText style={ProfileTheme.changePhotoText}>Change Profile Photo</ThemedText>
+            <ThemedText style={styles.changePhotoText}>Change Profile Photo</ThemedText>
           </TouchableOpacity>
         </View>
 
-        <View style={ProfileTheme.formSection}>
-          <View style={ProfileTheme.inputGroup}>
-            <ThemedText style={ProfileTheme.label}>Full Name</ThemedText>
+        <View style={styles.formSection}>
+          <View style={styles.inputGroup}>
+            <ThemedText style={styles.label}>Full Name</ThemedText>
             <TextInput
-              style={ProfileTheme.input}
+              style={styles.input}
               value={name}
               onChangeText={setName}
               placeholder="Enter your full name"
@@ -79,10 +78,10 @@ export default function EditProfile() {
             />
           </View>
 
-          <View style={ProfileTheme.inputGroup}>
-            <ThemedText style={ProfileTheme.label}>Phone Number</ThemedText>
+          <View style={styles.inputGroup}>
+            <ThemedText style={styles.label}>Phone Number</ThemedText>
             <TextInput
-              style={ProfileTheme.input}
+              style={styles.input}
               value={phone}
               onChangeText={setPhone}
               placeholder="Enter your phone number"
@@ -95,11 +94,11 @@ export default function EditProfile() {
       </ScrollView>
 
       <TouchableOpacity 
-        style={[ProfileTheme.saveButton, isSaving && { opacity: 0.7 }]} 
+        style={[styles.saveButton, isSaving && { opacity: 0.7 }]} 
         onPress={handleSave}
         disabled={isSaving}
       >
-        <ThemedText style={ProfileTheme.saveButtonText}>
+        <ThemedText style={styles.saveButtonText}>
           {isSaving ? 'Saving...' : 'Save Changes'}
         </ThemedText>
       </TouchableOpacity>

@@ -6,6 +6,10 @@ export const dashboardTheme = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  content: {
+    flex: 1,
+    padding: 16,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -136,5 +140,20 @@ export const dashboardTheme = StyleSheet.create({
     lineHeight: 24,
     color: colors.textSecondary,
     textAlign: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    marginTop: 16,
+  },
+  loadingText: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: colors.textSecondary,
+    marginTop: 12,
   },
 });

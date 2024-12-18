@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
+import { View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
 import { Footer } from '../../components/Footer';
-import { myTasksTheme as styles } from '../../constants/MyTasksTheme';
-import { colors } from '../../constants/Theme';
+import { ThemedText } from '../../components/ThemedText';
+import { ThemedView } from '../../components/ThemedView';
+import { colors, taskTheme as styles } from '../../constants/Theme';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -32,36 +33,20 @@ interface ApiResponse {
 const TaskCard: React.FC<TaskCardProps> = ({ task, onPress, onEdit, onDelete }) => {
   const renderRightActions = () => {
     return (
-      <View style={{ 
-        flexDirection: 'row',
-        height: '100%',
-        alignItems: 'stretch'
-      }}>
+      <View style={{ flexDirection: 'row', height: '100%', alignItems: 'stretch' }}>
         <TouchableOpacity
           onPress={onEdit}
-          style={{
-            backgroundColor: colors.primary,
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: 80,
-            minHeight: 80,
-          }}
+          style={styles.actionButton}
         >
           <Ionicons name="pencil" size={24} color="white" />
-          <Text style={{ color: 'white', fontSize: 12, marginTop: 4 }}>Edit</Text>
+          <ThemedText style={styles.actionButtonText}>Edit</ThemedText>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={onDelete}
-          style={{
-            backgroundColor: colors.danger,
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: 80,
-            minHeight: 80,
-          }}
+          style={[styles.actionButton, styles.actionButtonDanger]}
         >
           <Ionicons name="trash" size={24} color="white" />
-          <Text style={{ color: 'white', fontSize: 12, marginTop: 4 }}>Delete</Text>
+          <ThemedText style={styles.actionButtonText}>Delete</ThemedText>
         </TouchableOpacity>
       </View>
     );
@@ -77,8 +62,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onPress, onEdit, onDelete }) 
         onPress={onPress} 
         style={[styles.taskItem, { minHeight: 80 }]}
       >
-        <Text style={styles.taskTitle}>{task.name}</Text>
-        <Text style={styles.taskTime}>{task.description}</Text>
+        <ThemedText style={styles.taskTitle}>{task.name}</ThemedText>
+        <ThemedText style={styles.taskTime}>{task.description}</ThemedText>
       </TouchableOpacity>
     </Swipeable>
   );
@@ -155,32 +140,32 @@ export default function TasksScreen() {
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <ThemedView style={styles.container}>
         <View style={[styles.content, { justifyContent: 'center', alignItems: 'center' }]}>
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
         <Footer activeTab="tasks" />
-      </View>
+      </ThemedView>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.container}>
+      <ThemedView style={styles.container}>
         <View style={[styles.content, { justifyContent: 'center', alignItems: 'center' }]}>
-          <Text style={{ color: colors.danger }}>{error}</Text>
+          <ThemedText style={{ color: colors.danger }}>{error}</ThemedText>
         </View>
         <Footer activeTab="tasks" />
-      </View>
+      </ThemedView>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <ScrollView style={styles.content}>
         <View style={styles.taskSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Tasks ({tasks.length})</Text>
+            <ThemedText style={styles.sectionTitle}>Tasks ({tasks.length})</ThemedText>
           </View>
 
           <View style={styles.taskList}>
@@ -201,6 +186,6 @@ export default function TasksScreen() {
       </ScrollView>
 
       <Footer activeTab="tasks" />
-    </View>
+    </ThemedView>
   );
 }

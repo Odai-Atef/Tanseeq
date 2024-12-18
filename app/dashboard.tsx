@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ScrollView, View, Text, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
 import { ThemedView } from '../components/ThemedView';
 import { Ionicons } from '@expo/vector-icons';
-import { dashboardStyles as styles, colors } from '../constants/Theme';
+import { dashboardTheme as styles, colors } from '../constants/Theme';
 import { Footer } from '../components/Footer';
 import CircularProgress from 'react-native-circular-progress-indicator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,7 +13,10 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface Task {
   id: string;
-  name: string;
+  task: {
+    name: string;
+    description: string;
+  };
   description: string;
   status: string;
   start_at: string;
@@ -153,7 +156,7 @@ export default function Dashboard() {
         {firstInProgressTask && (
           <TaskItem 
             name={firstInProgressTask.task.name}
-            description={firstInProgressTask.description}
+            description={firstInProgressTask.task.description}
             time={`${firstInProgressTask.start_at} - ${firstInProgressTask.end_at}`}
             status={firstInProgressTask.status}
           />
@@ -203,9 +206,9 @@ export default function Dashboard() {
           <View style={styles.progressInfo}>
             <Text style={styles.progressTitle}>Progress Today Task</Text>
             <Text style={styles.progressSubtext}>
-              { tasks.filter(task => 
-        ['Done', 'Cancelled'].includes(task.status)
-      ).length}/{tasks.length} Tasks Completed
+              {tasks.filter(task => 
+                ['Done', 'Cancelled'].includes(task.status)
+              ).length}/{tasks.length} Tasks Completed
             </Text>
           </View>
         </View>

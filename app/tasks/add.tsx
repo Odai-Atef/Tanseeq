@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import { View, TextInput, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
-import { colors, taskAddStyles } from '../../constants/Theme';
+import { colors, taskTheme as styles } from '../../constants/Theme';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
@@ -178,19 +178,19 @@ export default function TaskAdd() {
 
   if (isLoading) {
     return (
-      <ThemedView style={[taskAddStyles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <Text>Loading...</Text>
+      <ThemedView style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ThemedText>Loading...</ThemedText>
       </ThemedView>
     );
   }
 
   return (
-    <ThemedView style={taskAddStyles.container}>
-      <ScrollView style={taskAddStyles.content}>
-        <View style={taskAddStyles.section}>
-          <ThemedText style={taskAddStyles.label}>Title *</ThemedText>
+    <ThemedView style={styles.container}>
+      <ScrollView style={styles.content}>
+        <View style={styles.section}>
+          <ThemedText style={styles.label}>Title *</ThemedText>
           <TextInput
-            style={taskAddStyles.input}
+            style={styles.input}
             placeholder="Wireframe for NFT Landing Page"
             placeholderTextColor="rgba(49, 57, 79, 0.6)"
             value={task.name}
@@ -198,10 +198,10 @@ export default function TaskAdd() {
           />
         </View>
 
-        <View style={taskAddStyles.section}>
-          <ThemedText style={taskAddStyles.label}>Description *</ThemedText>
+        <View style={styles.section}>
+          <ThemedText style={styles.label}>Description *</ThemedText>
           <TextInput
-            style={[taskAddStyles.input, taskAddStyles.textArea]}
+            style={[styles.input, styles.textArea]}
             placeholder="Write your description"
             placeholderTextColor="rgba(49, 57, 79, 0.6)"
             multiline
@@ -211,71 +211,71 @@ export default function TaskAdd() {
           />
         </View>
 
-        <View style={taskAddStyles.section}>
-          <ThemedText style={taskAddStyles.label}>Images (Optional)</ThemedText>
-          <TouchableOpacity style={taskAddStyles.uploadButton}>
+        <View style={styles.section}>
+          <ThemedText style={styles.label}>Images (Optional)</ThemedText>
+          <TouchableOpacity style={styles.uploadButton}>
             <Feather name="upload" size={24} color={colors.textPrimary} />
-            <ThemedText style={taskAddStyles.uploadText}>Upload Image</ThemedText>
+            <ThemedText style={styles.uploadText}>Upload Image</ThemedText>
           </TouchableOpacity>
         </View>
 
-        <View style={taskAddStyles.section}>
-          <ThemedText style={taskAddStyles.label}>Period *</ThemedText>
-          <View style={taskAddStyles.radioGroup}>
+        <View style={styles.section}>
+          <ThemedText style={styles.label}>Period *</ThemedText>
+          <View style={styles.radioGroup}>
             {periods.map((period) => (
               <TouchableOpacity
                 key={period}
                 style={[
-                  taskAddStyles.radioButton,
-                  task.repeat_monthly === periodValues[period] && taskAddStyles.radioButtonActive
+                  styles.radioButton,
+                  task.repeat_monthly === periodValues[period] && styles.radioButtonActive
                 ]}
                 onPress={() => updateTaskField('repeat_monthly', periodValues[period])}
               >
                 <View style={[
-                  taskAddStyles.checkbox,
-                  task.repeat_monthly === periodValues[period] && taskAddStyles.checkboxChecked
+                  styles.checkbox,
+                  task.repeat_monthly === periodValues[period] && styles.checkboxChecked
                 ]} />
-                <ThemedText style={taskAddStyles.checkboxText}>{period}</ThemedText>
+                <ThemedText style={styles.checkboxText}>{period}</ThemedText>
               </TouchableOpacity>
             ))}
           </View>
         </View>
 
-        <View style={taskAddStyles.section}>
-          <ThemedText style={taskAddStyles.label}>Days *</ThemedText>
-          <View style={taskAddStyles.radioGroup}>
+        <View style={styles.section}>
+          <ThemedText style={styles.label}>Days *</ThemedText>
+          <View style={styles.radioGroup}>
             {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day, index) => (
               <TouchableOpacity
                 key={index}
                 style={[
-                  taskAddStyles.checkboxContainer,
-                  task.repeatsOnDay((index + 1).toString()) && taskAddStyles.checkboxActive
+                  styles.checkboxContainer,
+                  task.repeatsOnDay((index + 1).toString()) && styles.checkboxActive
                 ]}
                 onPress={() => toggleDaySelection((index + 1).toString())}
               >
                 <View style={[
-                  taskAddStyles.checkbox,
-                  task.repeatsOnDay((index + 1).toString()) && taskAddStyles.checkboxChecked
+                  styles.checkbox,
+                  task.repeatsOnDay((index + 1).toString()) && styles.checkboxChecked
                 ]} />
-                <ThemedText style={taskAddStyles.checkboxText}>{day}</ThemedText>
+                <ThemedText style={styles.checkboxText}>{day}</ThemedText>
               </TouchableOpacity>
             ))}
           </View>
         </View>
       </ScrollView>
 
-      <View style={taskAddStyles.footer}>
+      <View style={styles.footer}>
         <TouchableOpacity 
           style={[
-            taskAddStyles.submitButton,
+            styles.submitButton,
             isSubmitting && { opacity: 0.5 }
           ]} 
           onPress={handleSubmit}
           disabled={isSubmitting}
         >
-          <Text style={taskAddStyles.submitButtonText}>
+          <ThemedText style={styles.submitButtonText}>
             {isSubmitting ? 'Submitting...' : id ? 'Update' : 'Create'}
-          </Text>
+          </ThemedText>
         </TouchableOpacity>
       </View>
 

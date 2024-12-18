@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, commonStyles } from '../../constants/Theme';
+import { colors, authTheme as styles } from '../../constants/Theme';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
@@ -162,21 +162,21 @@ export default function SignIn() {
   };
 
   return (
-    <ThemedView style={[commonStyles.container, { borderTopWidth: 50, borderTopColor: 'rgb(121, 128, 255)' }]}>
+    <ThemedView style={[styles.container, { borderTopWidth: 50, borderTopColor: colors.primary }]}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
-        <View style={commonStyles.header}>
-          <ThemedText style={commonStyles.headerTitle}>Sign In</ThemedText>
+        <View style={styles.header}>
+          <ThemedText style={styles.headerTitle}>Sign In</ThemedText>
         </View>
 
-        <View style={commonStyles.content}>
-          <ThemedText style={commonStyles.subtitle}>
+        <View style={styles.content}>
+          <ThemedText style={styles.subtitle}>
             Sign in to continue using the app
           </ThemedText>
 
-          <View style={commonStyles.inputContainer}>
+          <View style={styles.inputContainer}>
             <Ionicons name="mail-outline" size={20} color={colors.secondary} style={{ marginRight: 8 }} />
             <TextInput
-              style={[commonStyles.input, emailError && { borderColor: 'red' }]}
+              style={[styles.input, emailError && { borderColor: colors.danger }]}
               placeholder="Type your email"
               value={email}
               onChangeText={(text) => {
@@ -193,15 +193,15 @@ export default function SignIn() {
             />
           </View>
           {emailError ? (
-            <Text style={{ color: 'red', marginLeft: 10, marginTop: -10, marginBottom: 10 }}>
+            <ThemedText style={styles.errorText}>
               {emailError}
-            </Text>
+            </ThemedText>
           ) : null}
 
-          <View style={commonStyles.inputContainer}>
+          <View style={styles.inputContainer}>
             <Ionicons name="lock-closed-outline" size={20} color={colors.secondary} style={{ marginRight: 8 }} />
             <TextInput
-              style={commonStyles.input}
+              style={styles.input}
               placeholder="Type your password"
               value={password}
               onChangeText={setPassword}
@@ -213,42 +213,42 @@ export default function SignIn() {
               autoCorrect={false}
               blurOnSubmit={true}
             />
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={commonStyles.eyeIcon}>
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
               <Ionicons name={showPassword ? "eye-outline" : "eye-off-outline"} size={20} color={colors.secondary} />
             </TouchableOpacity>
           </View>
 
           <TouchableOpacity 
-            style={[commonStyles.button, loading && { opacity: 0.7 }]} 
+            style={[styles.button, loading && { opacity: 0.7 }]} 
             onPress={handleSignIn}
             disabled={loading}
           >
-            <Text style={commonStyles.buttonText}>{loading ? 'Signing In...' : 'Sign In'}</Text>
+            <ThemedText style={styles.buttonText}>{loading ? 'Signing In...' : 'Sign In'}</ThemedText>
           </TouchableOpacity>
 
-          <View style={commonStyles.dividerContainer}>
-            <View style={commonStyles.divider} />
-            <ThemedText style={commonStyles.dividerText}>or continue with</ThemedText>
-            <View style={commonStyles.divider} />
+          <View style={styles.dividerContainer}>
+            <View style={styles.divider} />
+            <ThemedText style={styles.dividerText}>or continue with</ThemedText>
+            <View style={styles.divider} />
           </View>
 
-          <View style={commonStyles.socialButtonsContainer}>
-            <TouchableOpacity style={commonStyles.socialButton}>
-              <Image source={require('../../taskose/images/logo/fb.png')} style={commonStyles.socialIcon} />
+          <View style={styles.socialButtonsContainer}>
+            <TouchableOpacity style={styles.socialButton}>
+              <Image source={require('../../taskose/images/logo/fb.png')} style={styles.socialIcon} />
             </TouchableOpacity>
-            <TouchableOpacity style={commonStyles.socialButton}>
-              <Image source={require('../../taskose/images/logo/google.png')} style={commonStyles.socialIcon} />
+            <TouchableOpacity style={styles.socialButton}>
+              <Image source={require('../../taskose/images/logo/google.png')} style={styles.socialIcon} />
             </TouchableOpacity>
-            <TouchableOpacity style={commonStyles.socialButton}>
-              <Image source={require('../../taskose/images/logo/apple.png')} style={commonStyles.socialIcon} />
+            <TouchableOpacity style={styles.socialButton}>
+              <Image source={require('../../taskose/images/logo/apple.png')} style={styles.socialIcon} />
             </TouchableOpacity>
           </View>
 
-          <View style={commonStyles.bottomContainer}>
-            <ThemedText style={commonStyles.bottomText}>
+          <View style={styles.bottomContainer}>
+            <ThemedText style={styles.bottomText}>
               Don't have an account?{' '}
-              <Link href="/">
-                <Text style={commonStyles.bottomLink}>Sign Up</Text>
+              <Link href="/" style={styles.bottomLink}>
+                Sign Up
               </Link>
             </ThemedText>
           </View>

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { ThemedView } from '../../components/ThemedView';
+import { ThemedText } from '../../components/ThemedText';
 import { Footer } from '../../components/Footer';
-import { TasksTheme } from '../../constants/TasksTheme';
+import { colors, taskTheme as styles } from '../../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
 import { Calendar, DateData } from 'react-native-calendars';
 import { useRouter } from 'expo-router';
@@ -10,7 +11,7 @@ import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { format } from 'date-fns';
 import Toast from 'react-native-toast-message';
-import { Schedule, TaskStatus } from '../../types/Schedule';
+import { Schedule } from '../../types/Schedule';
 
 interface ApiResponse {
   data: any[];
@@ -35,45 +36,45 @@ const TaskSection = ({
   const hasTasks = tasks.length > 0;
 
   return (
-    <View style={TasksTheme.taskSection}>
-      <TouchableOpacity onPress={onToggle} style={TasksTheme.taskSectionHeader}>
-        <View style={TasksTheme.taskTitleContainer}>
-          <Text style={TasksTheme.taskSectionTitle}>{title}</Text>
-          <View style={[TasksTheme.taskCount, { 
-            backgroundColor: countType === 'type-1' ? '#7980FF' : // In Progress - Blue
-                           countType === 'type-2' ? '#54B24C' : // Done - Green
-                           '#F05A5A' // Not Started - Red
+    <View style={styles.taskSection}>
+      <TouchableOpacity onPress={onToggle} style={styles.taskSectionHeader}>
+        <View style={styles.taskTitleContainer}>
+          <ThemedText style={styles.taskSectionTitle}>{title}</ThemedText>
+          <View style={[styles.taskCount, { 
+            backgroundColor: countType === 'type-1' ? colors.primary : // In Progress - Blue
+                           countType === 'type-2' ? colors.success : // Done - Green
+                           colors.danger // Not Started - Red
           }]}>
-            <Text style={TasksTheme.taskCountText}>{count}</Text>
+            <ThemedText style={styles.taskCountText}>{count}</ThemedText>
           </View>
         </View>
         <Ionicons 
           name={isExpanded ? "chevron-down" : "chevron-forward"} 
           size={24} 
-          color="#31394F" 
+          color={colors.textPrimary} 
         />
       </TouchableOpacity>
 
       {isExpanded && hasTasks && (
         <>
-          <View style={TasksTheme.assignHeader}>
-            <Text style={TasksTheme.assignText}>Task Name</Text>
-            <Text style={TasksTheme.assignText}>Time</Text>
+          <View style={styles.assignHeader}>
+            <ThemedText style={styles.assignText}>Task Name</ThemedText>
+            <ThemedText style={styles.assignText}>Time</ThemedText>
           </View>
 
           {tasks.map((schedule) => (
             <TouchableOpacity 
               key={schedule.id} 
-              style={TasksTheme.taskItem}
+              style={styles.taskItem}
               onPress={() => router.push({
                 pathname: "/tasks/view",
                 params: { id: schedule.task.id }
               })}
             >
-              <Text style={TasksTheme.taskName}>{schedule.task.name}</Text>
-              <Text style={TasksTheme.taskDueDate}>
+              <ThemedText style={styles.taskName}>{schedule.task.name}</ThemedText>
+              <ThemedText style={styles.taskDueDate}>
                 {schedule.getFormattedStartTime()}
-              </Text>
+              </ThemedText>
             </TouchableOpacity>
           ))}
         </>
@@ -151,32 +152,24 @@ export default function Tasks() {
   const notStartedTasks = schedules.filter(schedule => schedule.status === 'Not-Started');
 
   return (
-    <ThemedView style={TasksTheme.container}>
-      <ScrollView style={TasksTheme.content}>
+    <ThemedView style={styles.container}>
+      <ScrollView style={styles.content}>
         <Calendar
-          style={{
-            marginBottom: 20,
-            borderRadius: 10,
-            elevation: 4,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-          }}
+          style={styles.calendar}
           theme={{
-            backgroundColor: '#ffffff',
-            calendarBackground: '#ffffff',
-            textSectionTitleColor: '#31394F',
-            selectedDayBackgroundColor: '#7980FF',
-            selectedDayTextColor: '#ffffff',
-            todayTextColor: '#7980FF',
-            dayTextColor: '#31394F',
-            textDisabledColor: '#d9e1e8',
-            dotColor: '#7980FF',
-            selectedDotColor: '#ffffff',
-            arrowColor: '#7980FF',
-            monthTextColor: '#31394F',
-            indicatorColor: '#7980FF',
+            backgroundColor: colors.white,
+            calendarBackground: colors.white,
+            textSectionTitleColor: colors.textPrimary,
+            selectedDayBackgroundColor: colors.primary,
+            selectedDayTextColor: colors.white,
+            todayTextColor: colors.primary,
+            dayTextColor: colors.textPrimary,
+            textDisabledColor: colors.line,
+            dotColor: colors.primary,
+            selectedDotColor: colors.white,
+            arrowColor: colors.primary,
+            monthTextColor: colors.textPrimary,
+            indicatorColor: colors.primary,
             textDayFontFamily: 'System',
             textMonthFontFamily: 'System',
             textDayHeaderFontFamily: 'System',
@@ -191,14 +184,14 @@ export default function Tasks() {
             [selectedDate]: {
               selected: true,
               disableTouchEvent: true,
-              selectedColor: '#7980FF'
+              selectedColor: colors.primary
             }
           }}
         />
 
         {loading ? (
-          <View style={TasksTheme.loadingContainer}>
-            <ActivityIndicator size="large" color="#7980FF" />
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={colors.primary} />
           </View>
         ) : (
           <>

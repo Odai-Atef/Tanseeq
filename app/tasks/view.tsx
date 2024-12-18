@@ -3,12 +3,11 @@ import { View, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
-import { TasksTheme } from '../../constants/TasksTheme';
+import { colors, taskTheme as styles } from '../../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { colors } from '../../constants/Theme';
 import Toast from 'react-native-toast-message';
 import { Task } from '../../types/Task';
 
@@ -131,9 +130,9 @@ export default function TaskView() {
 
   if (loading) {
     return (
-      <ThemedView style={TasksTheme.container}>
-        <View style={[TasksTheme.content, { justifyContent: 'center', alignItems: 'center' }]}>
-          <ActivityIndicator size="large" color="#7980FF" />
+      <ThemedView style={styles.container}>
+        <View style={[styles.content, { justifyContent: 'center', alignItems: 'center' }]}>
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       </ThemedView>
     );
@@ -141,44 +140,36 @@ export default function TaskView() {
 
   if (error || !task) {
     return (
-      <ThemedView style={TasksTheme.container}>
-        <View style={[TasksTheme.content, { justifyContent: 'center', alignItems: 'center' }]}>
-          <ThemedText style={{ color: '#F05A5A' }}>{error || 'Task not found'}</ThemedText>
+      <ThemedView style={styles.container}>
+        <View style={[styles.content, { justifyContent: 'center', alignItems: 'center' }]}>
+          <ThemedText style={{ color: colors.danger }}>{error || 'Task not found'}</ThemedText>
         </View>
       </ThemedView>
     );
   }
 
   return (
-    <ThemedView style={TasksTheme.container}>
-      <ScrollView style={TasksTheme.content}>
-        <View style={TasksTheme.section}>
-          <ThemedText style={TasksTheme.title}>{task.name}</ThemedText>
-          <ThemedText style={TasksTheme.description}>{task.description}</ThemedText>
+    <ThemedView style={styles.container}>
+      <ScrollView style={styles.content}>
+        <View style={styles.section}>
+          <ThemedText style={styles.title}>{task.name}</ThemedText>
+          <ThemedText style={styles.description}>{task.description}</ThemedText>
         </View>
 
-        <View style={TasksTheme.section}>
-          <ThemedText style={TasksTheme.subtitle}>Status</ThemedText>
-          <ThemedText style={TasksTheme.description}>
+        <View style={styles.section}>
+          <ThemedText style={styles.subtitle}>Status</ThemedText>
+          <ThemedText style={styles.description}>
             {task.status}
           </ThemedText>
         </View>
 
         {task.repeat_days.length > 0 && (
-          <View style={TasksTheme.section}>
-            <ThemedText style={TasksTheme.subtitle}>Repeat Days</ThemedText>
+          <View style={styles.section}>
+            <ThemedText style={styles.subtitle}>Repeat Days</ThemedText>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
               {task.getRepeatDayNames().map((dayName) => (
-                <View 
-                  key={dayName}
-                  style={{
-                    backgroundColor: '#F8F9FD',
-                    paddingHorizontal: 12,
-                    paddingVertical: 6,
-                    borderRadius: 8,
-                  }}
-                >
-                  <ThemedText style={{ color: '#31394F' }}>{dayName}</ThemedText>
+                <View key={dayName} style={styles.repeatDayChip}>
+                  <ThemedText style={styles.repeatDayText}>{dayName}</ThemedText>
                 </View>
               ))}
             </View>
@@ -186,73 +177,50 @@ export default function TaskView() {
         )}
 
         {task.repeat_monthly && (
-          <View style={TasksTheme.section}>
-            <ThemedText style={TasksTheme.subtitle}>Monthly Repeat</ThemedText>
-            <ThemedText style={TasksTheme.description}>
+          <View style={styles.section}>
+            <ThemedText style={styles.subtitle}>Monthly Repeat</ThemedText>
+            <ThemedText style={styles.description}>
               Day {task.repeat_monthly} of every month
             </ThemedText>
           </View>
         )}
 
-        <View style={TasksTheme.section}>
-          <ThemedText style={TasksTheme.subtitle}>Created</ThemedText>
-          <ThemedText style={TasksTheme.description}>
+        <View style={styles.section}>
+          <ThemedText style={styles.subtitle}>Created</ThemedText>
+          <ThemedText style={styles.description}>
             {task.getFormattedCreatedDate()}
           </ThemedText>
         </View>
 
         {task.date_updated && (
-          <View style={TasksTheme.section}>
-            <ThemedText style={TasksTheme.subtitle}>Last Updated</ThemedText>
-            <ThemedText style={TasksTheme.description}>
+          <View style={styles.section}>
+            <ThemedText style={styles.subtitle}>Last Updated</ThemedText>
+            <ThemedText style={styles.description}>
               {task.getFormattedUpdatedDate()}
             </ThemedText>
           </View>
         )}
       </ScrollView>
 
-      <View style={{
-        flexDirection: 'row',
-        padding: 16,
-        gap: 12,
-        borderTopWidth: 1,
-        borderTopColor: colors.line,
-        backgroundColor: colors.white,
-      }}>
+      <View style={styles.footer}>
         <TouchableOpacity
-          style={{
-            flex: 1,
-            backgroundColor: colors.primary,
-            padding: 16,
-            borderRadius: 8,
-            alignItems: 'center',
-            flexDirection: 'row',
-            justifyContent: 'center',
-          }}
+          style={[styles.footerButton, styles.footerButtonPrimary]}
           onPress={() => router.push({
             pathname: "/tasks/add",
             params: { id: task.id }
           })}
         >
-          <Ionicons name="pencil" size={20} color="white" style={{ marginRight: 8 }} />
-          <ThemedText style={{ color: 'white', fontSize: 16, fontWeight: '600' }}>Edit Task</ThemedText>
+          <Ionicons name="pencil" size={20} color="white" style={styles.footerButtonIcon} />
+          <ThemedText style={styles.footerButtonText}>Edit Task</ThemedText>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={{
-            flex: 1,
-            backgroundColor: colors.danger,
-            padding: 16,
-            borderRadius: 8,
-            alignItems: 'center',
-            flexDirection: 'row',
-            justifyContent: 'center',
-          }}
+          style={[styles.footerButton, styles.footerButtonDanger]}
           onPress={handleDelete}
           disabled={isDeleting}
         >
-          <Ionicons name="trash" size={20} color="white" style={{ marginRight: 8 }} />
-          <ThemedText style={{ color: 'white', fontSize: 16, fontWeight: '600' }}>
+          <Ionicons name="trash" size={20} color="white" style={styles.footerButtonIcon} />
+          <ThemedText style={styles.footerButtonText}>
             {isDeleting ? 'Deleting...' : 'Delete Task'}
           </ThemedText>
         </TouchableOpacity>

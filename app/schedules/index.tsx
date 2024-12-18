@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { ThemedView } from '../../components/ThemedView';
+import { ThemedText } from '../../components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '../../constants/Theme';
+import { colors, scheduleTheme as styles } from '../../constants/Theme';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { format } from 'date-fns';
@@ -110,7 +111,7 @@ export default function Schedules() {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Schedule</Text>
+        <ThemedText style={styles.headerTitle}>Schedule</ThemedText>
         <TouchableOpacity>
           <Ionicons name="calendar-outline" size={24} color={colors.primary} />
         </TouchableOpacity>
@@ -124,34 +125,34 @@ export default function Schedules() {
         <ScrollView style={styles.content}>
           {schedules.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>No schedules for this date</Text>
+              <ThemedText style={styles.emptyText}>No schedules for this date</ThemedText>
             </View>
           ) : (
             schedules.map((schedule) => (
               <View key={schedule.id} style={styles.scheduleItem}>
                 <View style={styles.timeContainer}>
-                  <Text style={styles.time}>
+                  <ThemedText style={styles.time}>
                     {format(new Date(`2000-01-01T${schedule.start_time}`), 'hh:mm a')}
-                  </Text>
-                  <Text style={styles.timeDivider}>-</Text>
-                  <Text style={styles.time}>
+                  </ThemedText>
+                  <ThemedText style={styles.timeDivider}>-</ThemedText>
+                  <ThemedText style={styles.time}>
                     {format(new Date(`2000-01-01T${schedule.end_time}`), 'hh:mm a')}
-                  </Text>
+                  </ThemedText>
                 </View>
 
                 <View style={styles.taskContainer}>
-                  <Text style={styles.taskTitle}>{schedule.task.title}</Text>
-                  <Text style={styles.taskDescription}>{schedule.task.description}</Text>
+                  <ThemedText style={styles.taskTitle}>{schedule.task.title}</ThemedText>
+                  <ThemedText style={styles.taskDescription}>{schedule.task.description}</ThemedText>
                   <View style={[
                     styles.statusBadge,
                     { backgroundColor: getStatusBgColor(schedule.task.status) }
                   ]}>
-                    <Text style={[
+                    <ThemedText style={[
                       styles.statusText,
                       { color: getStatusColor(schedule.task.status) }
                     ]}>
                       {schedule.task.status}
-                    </Text>
+                    </ThemedText>
                   </View>
                 </View>
               </View>
@@ -162,92 +163,3 @@ export default function Schedules() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: 'row' as const,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.line,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: colors.text,
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 32,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: colors.secondary,
-    textAlign: 'center',
-  },
-  scheduleItem: {
-    flexDirection: 'row' as const,
-    padding: 16,
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  timeContainer: {
-    marginRight: 16,
-    alignItems: 'center',
-  },
-  time: {
-    fontSize: 14,
-    color: colors.secondary,
-  },
-  timeDivider: {
-    fontSize: 14,
-    color: colors.secondary,
-    marginVertical: 4,
-  },
-  taskContainer: {
-    flex: 1,
-  },
-  taskTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 8,
-  },
-  taskDescription: {
-    fontSize: 14,
-    color: colors.secondary,
-    marginBottom: 8,
-  },
-  statusBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
-});

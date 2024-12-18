@@ -5,8 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
 import { Footer } from '../../components/Footer';
-import { dashboardStyles as styles, colors } from '../../constants/Theme';
-import { ProfileTheme } from '../../constants/ProfileTheme';
+import { colors, authProfileTheme as styles, baseTheme } from '../../constants/Theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 
@@ -34,13 +33,13 @@ const ProfileListItem = ({
 }) => (
   <TouchableOpacity 
     onPress={onPress}
-    style={ProfileTheme.listItem}
+    style={styles.listItem}
   >
-    <View style={ProfileTheme.iconContainer}>
+    <View style={styles.iconContainer}>
       <Ionicons name={icon} size={20} color={danger ? colors.danger : color} />
     </View>
     <ThemedText style={[
-      ProfileTheme.listItemText,
+      styles.listItemText,
       danger && { color: colors.danger }
     ]}>
       {title}
@@ -119,7 +118,7 @@ export default function Profile() {
 
   if (loading) {
     return (
-    <ThemedView style={[styles.container, { borderTopWidth: 44, borderTopColor: 'rgb(121, 128, 255)' }]}>
+    <ThemedView style={[baseTheme.container, { borderTopWidth: 44, borderTopColor: colors.primary }]}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
@@ -133,24 +132,24 @@ export default function Profile() {
     : 'User';
 
   return (
-    <ThemedView style={[styles.container, { borderTopWidth: 50, borderTopColor: 'rgb(121, 128, 255)' }]}>
+    <ThemedView style={[baseTheme.container, { borderTopWidth: 50, borderTopColor: colors.primary }]}>
       <ScrollView>
-        <View style={ProfileTheme.profileSection}>
-          <View style={ProfileTheme.avatarContainer}>
+        <View style={styles.profileSection}>
+          <View style={styles.avatarContainer}>
             <Image
               source={require('../../assets/images/avt4.jpg')}
-              style={ProfileTheme.avatar}
+              style={styles.avatar}
             />
           </View>
-          <ThemedText style={ProfileTheme.userName}>{displayName}</ThemedText>
-          <Text style={ProfileTheme.userEmail}>{userInfo?.email || 'No email'}</Text>
+          <ThemedText style={styles.userName}>{displayName}</ThemedText>
+          <Text style={styles.userEmail}>{userInfo?.email || 'No email'}</Text>
         </View>
 
         <TouchableOpacity
-          style={ProfileTheme.editButton}
+          style={styles.editButton}
           onPress={() => router.push('/(auth)/edit-profile' as any)}
         >
-          <Text style={ProfileTheme.editButtonText}>Edit Profile</Text>
+          <Text style={styles.editButtonText}>Edit Profile</Text>
         </TouchableOpacity>
 
         <View style={{ marginTop: 16 }}>
@@ -185,14 +184,14 @@ export default function Profile() {
       </ScrollView>
 
       {showLogoutModal && (
-        <View style={ProfileTheme.modal}>
-          <View style={ProfileTheme.modalContent}>
-            <ThemedText style={ProfileTheme.modalTitle}>
+        <View style={styles.modal}>
+          <View style={styles.modalContent}>
+            <ThemedText style={styles.modalTitle}>
               Are you sure you want to log out?
             </ThemedText>
             <TouchableOpacity
               onPress={handleLogout}
-              style={[ProfileTheme.modalButton, ProfileTheme.modalButtonBorder]}
+              style={[styles.modalButton, styles.modalButtonBorder]}
             >
               <Text style={{ color: colors.danger, fontSize: 16, fontWeight: '600' }}>
                 Log Out
@@ -200,7 +199,7 @@ export default function Profile() {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setShowLogoutModal(false)}
-              style={ProfileTheme.modalButton}
+              style={styles.modalButton}
             >
               <Text style={{ color: colors.textSecondary, fontSize: 16 }}>
                 Cancel

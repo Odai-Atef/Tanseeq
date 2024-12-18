@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
-import { colors, scheduleAddStyles as styles } from '../../constants/Theme';
+import { colors, scheduleTheme as styles, baseTheme } from '../../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -156,8 +156,8 @@ export default function ScheduleAdd() {
         display={Platform.OS === 'ios' ? "spinner" : "default"}
         onChange={handleDateChange}
         minimumDate={today}
-        textColor={colors.textPrimary} // Set text color for iOS
-        themeVariant="dark" // Ensure light theme for better visibility
+        textColor={colors.textPrimary}
+        themeVariant="dark"
       />
     );
 
@@ -231,12 +231,12 @@ export default function ScheduleAdd() {
         <View>
           <ThemedText style={styles.sectionTitle}>Select Task</ThemedText>
           {loading ? (
-            <View style={styles.loadingContainer}>
+            <View style={baseTheme.loadingContainer}>
               <ActivityIndicator size="large" color={colors.primary} />
             </View>
           ) : error ? (
-            <View style={styles.errorContainer}>
-              <ThemedText style={styles.errorText}>{error}</ThemedText>
+            <View style={baseTheme.errorContainer}>
+              <ThemedText style={baseTheme.errorText}>{error}</ThemedText>
             </View>
           ) : (
             <View style={styles.taskList}>
@@ -260,13 +260,13 @@ export default function ScheduleAdd() {
       <View style={styles.footer}>
         <TouchableOpacity
           style={[
-            styles.submitButton,
-            (loading || !!error || !selectedTaskId) && styles.submitButtonDisabled,
+            baseTheme.submitButton,
+            (loading || !!error || !selectedTaskId) && baseTheme.submitButtonDisabled,
           ]}
           onPress={handleSubmit}
           disabled={loading || !!error || !selectedTaskId}
         >
-          <ThemedText style={styles.submitButtonText}>Create Schedule</ThemedText>
+          <ThemedText style={baseTheme.submitButtonText}>Create Schedule</ThemedText>
         </TouchableOpacity>
       </View>
 

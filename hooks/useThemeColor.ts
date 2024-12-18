@@ -3,19 +3,25 @@
  * https://docs.expo.dev/guides/color-schemes/
  */
 
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { colors } from '../constants/Colors';
+import { useColorScheme } from 'react-native';
 
-export function useThemeColor(
-  props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark
-) {
+type ThemeProps = {
+  light?: string;
+  dark?: string;
+};
+
+type ColorName = keyof typeof colors;
+
+export function useThemeColor(props: ThemeProps, colorName: ColorName): string {
   const theme = useColorScheme() ?? 'light';
-  const colorFromProps = props[theme];
+  const colorFromProps = props[theme as keyof ThemeProps];
 
   if (colorFromProps) {
     return colorFromProps;
   } else {
-    return Colors[theme][colorName];
+    const color = colors[colorName];
+    // If color is an array (linear gradient), return the first color
+    return Array.isArray(color) ? color[0] : color;
   }
 }
