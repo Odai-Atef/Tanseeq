@@ -8,35 +8,24 @@ import CircularProgress from 'react-native-circular-progress-indicator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ENDPOINTS } from '../constants/api';
 import { router } from 'expo-router';
+import { Schedule } from '../types/Schedule';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-interface Task {
-  id: string;
-  task: {
-    name: string;
-    description: string;
-  };
-  description: string;
-  status: string;
-  start_at: string;
-  end_at: string;
-  date_updated: string;
-  date: string;
-}
-
-const TaskItem = ({ name, description, time, status }: { name: string, description: string, time: string, status: string }) => (
+const TaskItem = ({ schedule }: { schedule: Schedule }) => (
   <View style={styles.taskItem}>
     <View style={styles.taskHeader}>
-      <Text style={styles.taskTitle}>{name}</Text>
+      <Text style={styles.taskTitle}>{schedule.task.name}</Text>
       <Ionicons name="ellipsis-vertical" size={20} color="#464D61" />
     </View>
-    <Text style={styles.taskDescription}>{description}</Text>
+    <Text style={styles.taskDescription}>{schedule.task.description}</Text>
     <View style={styles.taskFooter}>
-      <Text style={styles.taskTime}>{time}</Text>
-      <View style={[styles.statusBadge, { backgroundColor: status === 'Done' ? '#E8F5E9' : '#E3F2FD' }]}>
-        <Text style={[styles.statusText, { color: status === 'Done' ? '#4CAF50' : '#2196F3' }]}>
-          {status}
+      <Text style={styles.taskTime}>
+        {schedule.getFormattedStartTime()} - {schedule.getFormattedEndTime()}
+      </Text>
+      <View style={[styles.statusBadge, { backgroundColor: schedule.status === 'Done' ? '#E8F5E9' : '#E3F2FD' }]}>
+        <Text style={[styles.statusText, { color: schedule.status === 'Done' ? '#4CAF50' : '#2196F3' }]}>
+          {schedule.status}
         </Text>
       </View>
     </View>
@@ -52,9 +41,9 @@ const EmptyState = ({ message }: { message: string }) => (
 
 export default function Dashboard() {
   const [userName, setUserName] = useState('User');
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [firstInProgressTask, setFirstInProgressTask] = useState<Task | null>(null);
-  const [recentCompletedTask, setRecentCompletedTask] = useState<Task | null>(null);
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [firstInProgressSchedule, setFirstInProgressSchedule] = useState<Schedule | null>(null);
+  const [recentCompletedSchedule, setRecentCompletedSchedule] = useState<Schedule | null>(null);
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -76,10 +65,10 @@ export default function Dashboard() {
     };
 
     getUserInfo();
-    fetchTodayTasks();
+    fetchTodaySchedules();
   }, []);
 
-  const fetchTodayTasks = async () => {
+  const fetchTodaySchedules = async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -97,37 +86,39 @@ export default function Dashboard() {
         }
       );
       
-      if (!response.ok) throw new Error('Failed to fetch tasks');
+      if (!response.ok) throw new Error('Failed to fetch schedules');
       
       const data = await response.json();
-      const todayTasks: Task[] = data.data || [];
-      setTasks(todayTasks);
+      const todaySchedules = (data.data || []).map((item: any) => Schedule.fromAPI(item));
+      setSchedules(todaySchedules);
 
-      // Find first in-progress task
-      const inProgressTask = todayTasks.find(task => task.status === 'In-progress');
-      setFirstInProgressTask(inProgressTask || null);
+      // Find first in-progress schedule
+      const inProgressSchedule = todaySchedules.find((schedule: Schedule) => schedule.status === 'In-progress');
+      setFirstInProgressSchedule(inProgressSchedule || null);
 
-      // Find most recent completed task
-      const completedTasks = todayTasks.filter(task => task.status === 'Done');
-      const mostRecentCompleted = completedTasks.sort((a, b) => 
-        new Date(b.date_updated).getTime() - new Date(a.date_updated).getTime()
-      )[0];
-      setRecentCompletedTask(mostRecentCompleted || null);
+      // Find most recent completed schedule
+      const completedSchedules = todaySchedules.filter((schedule: Schedule) => schedule.status === 'Done');
+      const mostRecentCompleted = completedSchedules.sort((a: Schedule, b: Schedule) => {
+        const dateA = a.task.date_updated ? new Date(a.task.date_updated).getTime() : 0;
+        const dateB = b.task.date_updated ? new Date(b.task.date_updated).getTime() : 0;
+        return dateB - dateA;
+      })[0];
+      setRecentCompletedSchedule(mostRecentCompleted || null);
 
       // Calculate progress percentage
-      const totalTasks = todayTasks.length;
-      const activeTasks = todayTasks.filter(task => 
-        ['Done', 'Cancelled'].includes(task.status)
+      const totalSchedules = todaySchedules.length;
+      const activeSchedules = todaySchedules.filter((schedule: Schedule) => 
+        ['Done', 'Cancelled'].includes(schedule.status)
       ).length;
       
-      const percentage = totalTasks > 0 
-        ? Math.round((activeTasks / totalTasks) * 100)
+      const percentage = totalSchedules > 0 
+        ? Math.round((activeSchedules / totalSchedules) * 100)
         : 0;
       
       setProgressPercentage(percentage);
     } catch (error) {
-      console.error('Error fetching today tasks:', error);
-      setError('Failed to load tasks. Please try again later.');
+      console.error('Error fetching today schedules:', error);
+      setError('Failed to load schedules. Please try again later.');
     } finally {
       setIsLoading(false);
     }
@@ -138,7 +129,7 @@ export default function Dashboard() {
       return (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={styles.loadingText}>Loading tasks...</Text>
+          <Text style={styles.loadingText}>Loading schedules...</Text>
         </View>
       );
     }
@@ -147,32 +138,22 @@ export default function Dashboard() {
       return <EmptyState message={error} />;
     }
 
-    if (tasks.length === 0) {
-      return <EmptyState message="No tasks scheduled for today" />;
+    if (schedules.length === 0) {
+      return <EmptyState message="No schedules for today" />;
     }
 
     return (
       <>
-        {firstInProgressTask && (
-          <TaskItem 
-            name={firstInProgressTask.task.name}
-            description={firstInProgressTask.task.description}
-            time={`${firstInProgressTask.start_at} - ${firstInProgressTask.end_at}`}
-            status={firstInProgressTask.status}
-          />
+        {firstInProgressSchedule && (
+          <TaskItem schedule={firstInProgressSchedule} />
         )}
         
-        {recentCompletedTask && (
-          <TaskItem 
-            name={recentCompletedTask.task.name}
-            description={recentCompletedTask.task.description}
-            time={`${recentCompletedTask.start_at} - ${recentCompletedTask.end_at}`}
-            status={recentCompletedTask.status}
-          />
+        {recentCompletedSchedule && (
+          <TaskItem schedule={recentCompletedSchedule} />
         )}
 
-        {!firstInProgressTask && !recentCompletedTask && (
-          <EmptyState message="No in-progress or completed tasks" />
+        {!firstInProgressSchedule && !recentCompletedSchedule && (
+          <EmptyState message="No in-progress or completed schedules" />
         )}
       </>
     );
@@ -206,9 +187,9 @@ export default function Dashboard() {
           <View style={styles.progressInfo}>
             <Text style={styles.progressTitle}>Progress Today Task</Text>
             <Text style={styles.progressSubtext}>
-              {tasks.filter(task => 
-                ['Done', 'Cancelled'].includes(task.status)
-              ).length}/{tasks.length} Tasks Completed
+              {schedules.filter((schedule: Schedule) => 
+                ['Done', 'Cancelled'].includes(schedule.status)
+              ).length}/{schedules.length} Tasks Completed
             </Text>
           </View>
         </View>
