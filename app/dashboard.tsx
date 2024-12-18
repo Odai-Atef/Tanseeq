@@ -9,28 +9,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ENDPOINTS } from '../constants/api';
 import { router } from 'expo-router';
 import { Schedule } from '../types/Schedule';
+import { TaskItem } from '../components/TaskItem';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
-const TaskItem = ({ schedule }: { schedule: Schedule }) => (
-  <View style={styles.taskItem}>
-    <View style={styles.taskHeader}>
-      <Text style={styles.taskTitle}>{schedule.task.name}</Text>
-      <Ionicons name="ellipsis-vertical" size={20} color="#464D61" />
-    </View>
-    <Text style={styles.taskDescription}>{schedule.task.description}</Text>
-    <View style={styles.taskFooter}>
-      <Text style={styles.taskTime}>
-        {schedule.getFormattedStartTime()} - {schedule.getFormattedEndTime()}
-      </Text>
-      <View style={[styles.statusBadge, { backgroundColor: schedule.status === 'Done' ? '#E8F5E9' : '#E3F2FD' }]}>
-        <Text style={[styles.statusText, { color: schedule.status === 'Done' ? '#4CAF50' : '#2196F3' }]}>
-          {schedule.status}
-        </Text>
-      </View>
-    </View>
-  </View>
-);
 
 const EmptyState = ({ message }: { message: string }) => (
   <View style={styles.emptyState}>
@@ -145,11 +126,11 @@ export default function Dashboard() {
     return (
       <>
         {firstInProgressSchedule && (
-          <TaskItem schedule={firstInProgressSchedule} />
+          <TaskItem item={firstInProgressSchedule} type="schedule" />
         )}
         
         {recentCompletedSchedule && (
-          <TaskItem schedule={recentCompletedSchedule} />
+          <TaskItem item={recentCompletedSchedule} type="schedule" />
         )}
 
         {!firstInProgressSchedule && !recentCompletedSchedule && (

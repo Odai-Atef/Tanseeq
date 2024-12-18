@@ -9,28 +9,20 @@ import { ThemedView } from '../../components/ThemedView';
 import { colors, taskTheme as styles } from '../../constants/Theme';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Task } from '../../types/Task';
+import { TaskItem } from '../../components/TaskItem';
 
-interface Task {
-  id: number;
-  status: string;
-  name: string;
-  description: string;
-  date_created: string;
-  date_updated: string;
+interface ApiResponse {
+  data: any[];
 }
 
-interface TaskCardProps {
+interface SwipeableTaskItemProps {
   task: Task;
-  onPress: () => void;
   onEdit: () => void;
   onDelete: () => void;
 }
 
-interface ApiResponse {
-  data: Task[];
-}
-
-const TaskCard: React.FC<TaskCardProps> = ({ task, onPress, onEdit, onDelete }) => {
+const SwipeableTaskItem: React.FC<SwipeableTaskItemProps> = ({ task, onEdit, onDelete }) => {
   const renderRightActions = () => {
     return (
       <View style={{ flexDirection: 'row', height: '100%', alignItems: 'stretch' }}>
@@ -58,13 +50,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onPress, onEdit, onDelete }) 
       overshootRight={false}
       containerStyle={styles.swipeableContainer}
     >
-      <TouchableOpacity 
-        onPress={onPress} 
-        style={[styles.taskItem, { minHeight: 80 }]}
-      >
-        <ThemedText style={styles.taskTitle}>{task.name}</ThemedText>
-        <ThemedText style={styles.taskTime}>{task.description}</ThemedText>
-      </TouchableOpacity>
+      <TaskItem item={task} type="task" />
     </Swipeable>
   );
 };
@@ -101,7 +87,7 @@ export default function TasksScreen() {
       }
 
       const result: ApiResponse = await response.json();
-      setTasks(result.data || []);
+      setTasks((result.data || []).map(item => Task.fromAPI(item)));
       setError('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load tasks');
@@ -170,13 +156,9 @@ export default function TasksScreen() {
 
           <View style={styles.taskList}>
             {tasks.map((task) => (
-              <TaskCard
+              <SwipeableTaskItem
                 key={task.id}
                 task={task}
-                onPress={() => router.push({
-                  pathname: "/tasks/view",
-                  params: { id: task.id }
-                })}
                 onEdit={() => handleEdit(task.id)}
                 onDelete={() => handleDelete(task.id)}
               />
