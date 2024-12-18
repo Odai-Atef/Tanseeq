@@ -67,8 +67,8 @@ const TaskSection = ({
               key={schedule.id} 
               style={styles.taskItem}
               onPress={() => router.push({
-                pathname: "/tasks/view",
-                params: { id: schedule.task.id }
+                pathname: "/schedules/view",
+                params: { id: schedule.id }
               })}
             >
               <ThemedText style={styles.taskName}>{schedule.task.name}</ThemedText>

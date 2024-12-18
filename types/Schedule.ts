@@ -21,10 +21,12 @@ export class Schedule {
 
   // Format time to AM/PM format
   getFormattedStartTime(): string {
+    if (!this.start_time) return '';
     return this.formatTime(this.start_time);
   }
 
   getFormattedEndTime(): string {
+    if (!this.end_time) return '';
     return this.formatTime(this.end_time);
   }
 
