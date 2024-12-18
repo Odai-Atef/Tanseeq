@@ -46,14 +46,21 @@ export const taskItemTheme = StyleSheet.create({
     fontWeight: '500',
   },
   // Menu Styles
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  menuWrapper: {
+    position: 'relative',
+  },
+  menuOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1000,
   },
   menuContainer: {
     position: 'absolute',
-    right: 16,
-    top: 50,
+    top: 25,
+    right: 0,
     backgroundColor: '#fff',
     borderRadius: 8,
     minWidth: 150,
@@ -65,7 +72,7 @@ export const taskItemTheme = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    zIndex: 1000,
+    zIndex: 1001,
   },
   menuItem: {
     flexDirection: 'row',
