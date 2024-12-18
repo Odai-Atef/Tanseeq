@@ -1,4 +1,6 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export const taskItemTheme = StyleSheet.create({
   taskItem: {
@@ -12,6 +14,7 @@ export const taskItemTheme = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
+    zIndex: 1,
   },
   taskTitle: {
     fontSize: 16,
@@ -48,20 +51,24 @@ export const taskItemTheme = StyleSheet.create({
   // Menu Styles
   menuWrapper: {
     position: 'relative',
+    zIndex: 2,
   },
-  menuOverlay: {
+  fullScreenOverlay: {
     position: 'absolute',
-    top: 0,
-    left: 0,
+    top: -SCREEN_HEIGHT,
+    left: -SCREEN_WIDTH,
     right: 0,
     bottom: 0,
-    zIndex: 1000,
+    width: SCREEN_WIDTH * 2,
+    height: SCREEN_HEIGHT * 2,
+    backgroundColor: 'transparent',
+    zIndex: 9998,
   },
   menuContainer: {
     position: 'absolute',
     top: 25,
     right: 0,
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
     borderRadius: 8,
     minWidth: 150,
     shadowColor: '#000',
@@ -72,13 +79,14 @@ export const taskItemTheme = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    zIndex: 1001,
+    zIndex: 9999,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
     borderRadius: 4,
+    backgroundColor: '#ffffff',
   },
   menuIcon: {
     marginRight: 12,

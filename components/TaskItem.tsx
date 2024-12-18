@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { taskItemTheme as styles } from '../constants/taskItemTheme';
@@ -16,18 +16,24 @@ const OptionsMenu = ({ visible, onClose, onView }: MenuProps) => {
   if (!visible) return null;
 
   return (
-    <View style={styles.menuContainer}>
-      <TouchableOpacity 
-        style={styles.menuItem}
-        onPress={() => {
-          onView();
-          onClose();
-        }}
-      >
-        <Ionicons name="eye-outline" size={20} color="#464D61" style={styles.menuIcon} />
-        <Text style={styles.menuText}>View</Text>
-      </TouchableOpacity>
-    </View>
+    <>
+      <Pressable 
+        style={styles.fullScreenOverlay}
+        onPress={onClose}
+      />
+      <View style={styles.menuContainer}>
+        <TouchableOpacity 
+          style={styles.menuItem}
+          onPress={() => {
+            onView();
+            onClose();
+          }}
+        >
+          <Ionicons name="eye-outline" size={20} color="#464D61" style={styles.menuIcon} />
+          <Text style={styles.menuText}>View</Text>
+        </TouchableOpacity>
+      </View>
+    </>
   );
 };
 
@@ -87,19 +93,11 @@ export const TaskItem = ({ item, type }: TaskItemProps) => {
           >
             <Ionicons name="ellipsis-vertical" size={20} color="#464D61" />
           </TouchableOpacity>
-          {menuVisible && (
-            <TouchableOpacity 
-              style={styles.menuOverlay} 
-              activeOpacity={1}
-              onPress={() => setMenuVisible(false)}
-            >
-              <OptionsMenu
-                visible={menuVisible}
-                onClose={() => setMenuVisible(false)}
-                onView={handleView}
-              />
-            </TouchableOpacity>
-          )}
+          <OptionsMenu
+            visible={menuVisible}
+            onClose={() => setMenuVisible(false)}
+            onView={handleView}
+          />
         </View>
       </View>
       <Text style={styles.taskDescription}>{getDescription()}</Text>
