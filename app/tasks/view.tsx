@@ -9,6 +9,7 @@ import { TouchableOpacity } from 'react-native';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors } from '../../constants/Theme';
+import Toast from 'react-native-toast-message';
 
 interface TaskImage {
   id: string;
@@ -59,6 +60,18 @@ export default function TaskView() {
   const [error, setError] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const showError = (message: string) => {
+    Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2: message,
+      position: 'top',
+      visibilityTime: 3000,
+      autoHide: true,
+      topOffset: 30
+    });
+  };
+
   useEffect(() => {
     const fetchTask = async () => {
       try {
@@ -88,7 +101,9 @@ export default function TaskView() {
           throw new Error('Task not found');
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load task');
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load task';
+        setError(errorMessage);
+        showError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -129,7 +144,7 @@ export default function TaskView() {
 
               router.replace('/tasks');
             } catch (error) {
-              Alert.alert('Error', 'Failed to delete task. Please try again.');
+              showError('Failed to delete task. Please try again.');
               console.error('Error deleting task:', error);
             } finally {
               setIsDeleting(false);
@@ -162,8 +177,6 @@ export default function TaskView() {
 
   return (
     <ThemedView style={TasksTheme.container}>
-      
-
       <ScrollView style={TasksTheme.content}>
         <View style={TasksTheme.section}>
           <ThemedText style={TasksTheme.title}>{task.name}</ThemedText>

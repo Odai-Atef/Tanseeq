@@ -6,6 +6,7 @@ import { colors } from '../../constants/Theme';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { format } from 'date-fns';
+import Toast from 'react-native-toast-message';
 
 interface TaskImage {
   id: string;
@@ -32,7 +33,18 @@ export default function Schedules() {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [error, setError] = useState('');
+
+  const showError = (message: string) => {
+    Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2: message,
+      position: 'top',
+      visibilityTime: 3000,
+      autoHide: true,
+      topOffset: 30
+    });
+  };
 
   const fetchSchedules = async (date: Date) => {
     try {
@@ -59,7 +71,7 @@ export default function Schedules() {
       const data = await response.json();
       setSchedules(data.data || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load schedules');
+      showError(err instanceof Error ? err.message : 'Failed to load schedules');
     } finally {
       setLoading(false);
     }
@@ -107,10 +119,6 @@ export default function Schedules() {
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-        </View>
-      ) : error ? (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error}</Text>
         </View>
       ) : (
         <ScrollView style={styles.content}>
@@ -181,16 +189,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
-  errorText: {
-    color: colors.danger,
-    textAlign: 'center',
   },
   emptyContainer: {
     flex: 1,

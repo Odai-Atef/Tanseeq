@@ -1,4 +1,4 @@
-export const API_HOST = 'http://192.168.1.164:8055';
+export const API_HOST = 'https://admin.tanseeq.pro';
 export const API_ENDPOINTS = {
     LOGIN: `${API_HOST}/auth/login`,
     USER_INFO: `${API_HOST}/users/me`,

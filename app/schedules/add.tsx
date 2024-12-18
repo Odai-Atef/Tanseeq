@@ -8,6 +8,7 @@ import { colors, scheduleAddStyles as styles } from '../../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 
 interface Task {
   id: number;
@@ -29,6 +30,18 @@ export default function ScheduleAdd() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
+
+  const showError = (message: string) => {
+    Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2: message,
+      position: 'top',
+      visibilityTime: 3000,
+      autoHide: true,
+      topOffset: 30
+    });
+  };
 
   useEffect(() => {
     fetchTasks();
@@ -62,7 +75,9 @@ export default function ScheduleAdd() {
         setTasks(result.data);
       }
     } catch (error) {
-      setError('Failed to load tasks. Please try again.');
+      const errorMessage = 'Failed to load tasks. Please try again.';
+      setError(errorMessage);
+      showError(errorMessage);
       console.error('Error fetching tasks:', error);
     } finally {
       setLoading(false);
@@ -115,9 +130,18 @@ export default function ScheduleAdd() {
       if (!response.ok) throw new Error('Failed to create schedule');
 
       const data = await response.json();
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Schedule created successfully',
+        position: 'top',
+        visibilityTime: 2000,
+        autoHide: true,
+        topOffset: 30
+      });
       router.back();
     } catch (error) {
-      Alert.alert('Error', 'Failed to create schedule. Please try again.');
+      showError('Failed to create schedule. Please try again.');
       console.error('Error creating schedule:', error);
     }
   };

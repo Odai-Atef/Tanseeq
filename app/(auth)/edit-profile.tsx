@@ -6,22 +6,50 @@ import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
 import { colors } from '../../constants/Theme';
 import { ProfileTheme } from '../../constants/ProfileTheme';
+import Toast from 'react-native-toast-message';
 
 export default function EditProfile() {
   const router = useRouter();
   const [name, setName] = useState('Jonathan Smith');
   const [email, setEmail] = useState('jonathansmith@workmail.com');
   const [phone, setPhone] = useState('+1 234 567 890');
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = () => {
-    // TODO: Implement save functionality
-    router.back();
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      // TODO: Implement API call to save profile changes
+      
+      // Show success message
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Profile updated successfully',
+        position: 'top',
+        visibilityTime: 2000,
+        autoHide: true,
+        topOffset: 30
+      });
+      
+      router.back();
+    } catch (error) {
+      // Show error message
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Failed to update profile. Please try again.',
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
     <ThemedView style={ProfileTheme.container}>
-    
-
       <ScrollView style={ProfileTheme.content}>
         <View style={ProfileTheme.profileSection}>
           <View style={ProfileTheme.avatarContainer}>
@@ -47,10 +75,9 @@ export default function EditProfile() {
               onChangeText={setName}
               placeholder="Enter your full name"
               placeholderTextColor={colors.textSecondary}
+              editable={!isSaving}
             />
           </View>
-
-       
 
           <View style={ProfileTheme.inputGroup}>
             <ThemedText style={ProfileTheme.label}>Phone Number</ThemedText>
@@ -61,13 +88,20 @@ export default function EditProfile() {
               placeholder="Enter your phone number"
               placeholderTextColor={colors.textSecondary}
               keyboardType="phone-pad"
+              editable={!isSaving}
             />
           </View>
         </View>
       </ScrollView>
 
-      <TouchableOpacity style={ProfileTheme.saveButton} onPress={handleSave}>
-        <ThemedText style={ProfileTheme.saveButtonText}>Save Changes</ThemedText>
+      <TouchableOpacity 
+        style={[ProfileTheme.saveButton, isSaving && { opacity: 0.7 }]} 
+        onPress={handleSave}
+        disabled={isSaving}
+      >
+        <ThemedText style={ProfileTheme.saveButtonText}>
+          {isSaving ? 'Saving...' : 'Save Changes'}
+        </ThemedText>
       </TouchableOpacity>
     </ThemedView>
   );

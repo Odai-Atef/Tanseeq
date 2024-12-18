@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { colors, commonStyles } from '../../constants/Theme';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 
 const validateEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -53,6 +54,18 @@ export default function SignIn() {
   const [emailError, setEmailError] = useState('');
   const router = useRouter();
 
+  const showError = (message: string) => {
+    Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2: message,
+      position: 'top',
+      visibilityTime: 3000,
+      autoHide: true,
+      topOffset: 30
+    });
+  };
+
   const fetchUserInfo = async (accessToken: string): Promise<void> => {
     try {
       const response = await fetch(API_ENDPOINTS.USER_INFO, {
@@ -76,6 +89,7 @@ export default function SignIn() {
       await AsyncStorage.setItem('userInfo', JSON.stringify(data.data));
     } catch (error) {
       console.error('Error fetching user info:', error);
+      showError('Failed to fetch user information');
     }
   };
 
@@ -92,7 +106,7 @@ export default function SignIn() {
     }
 
     if (!password) {
-      Alert.alert('Error', 'Password is required');
+      showError('Password is required');
       return;
     }
 
@@ -113,7 +127,7 @@ export default function SignIn() {
 
       if (data.errors) {
         const errorMessage = data.errors[0]?.message;
-        Alert.alert('Error', errorMessage);
+        showError(errorMessage || 'Login failed');
         return;
       }
 
@@ -128,10 +142,20 @@ export default function SignIn() {
 
       await fetchUserInfo(data.data.access_token);
 
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Signed in successfully',
+        position: 'top',
+        visibilityTime: 2000,
+        autoHide: true,
+        topOffset: 30
+      });
+
       router.replace('/dashboard');
     } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to sign in. Please try again.';
-      Alert.alert('Error', errorMessage);
+      showError(errorMessage);
     } finally {
       setLoading(false);
     }

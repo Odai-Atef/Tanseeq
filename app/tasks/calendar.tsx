@@ -9,6 +9,7 @@ import { useRouter } from 'expo-router';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { format } from 'date-fns';
+import Toast from 'react-native-toast-message';
 
 type TaskStatus = 'Done' | 'Not-Started' | 'In-progress';
 
@@ -105,7 +106,18 @@ export default function Tasks() {
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+
+  const showError = (message: string) => {
+    Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2: message,
+      position: 'top',
+      visibilityTime: 3000,
+      autoHide: true,
+      topOffset: 30
+    });
+  };
 
   const fetchSchedules = async (date: string) => {
     try {
@@ -130,9 +142,8 @@ export default function Tasks() {
 
       const result: ApiResponse = await response.json();
       setSchedules(result.data || []);
-      setError('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load schedules');
+      showError(err instanceof Error ? err.message : 'Failed to load schedules');
     } finally {
       setLoading(false);
     }
@@ -202,10 +213,6 @@ export default function Tasks() {
         {loading ? (
           <View style={TasksTheme.loadingContainer}>
             <ActivityIndicator size="large" color="#7980FF" />
-          </View>
-        ) : error ? (
-          <View style={TasksTheme.errorContainer}>
-            <Text style={TasksTheme.errorText}>{error}</Text>
           </View>
         ) : (
           <>

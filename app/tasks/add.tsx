@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Platform, Animated } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Toast from 'react-native-toast-message';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
 import { colors, taskAddStyles } from '../../constants/Theme';
@@ -38,9 +39,6 @@ export default function TaskAdd() {
   const [startDate, setStartDate] = useState(new Date());
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
-  const [toastType, setToastType] = useState<'success' | 'error'>('success');
   const [isLoading, setIsLoading] = useState(!!id);
 
   useEffect(() => {
@@ -69,7 +67,6 @@ export default function TaskAdd() {
       }
       const result = await response.json();
 
-
       const task: Task = result;
       setTaskName(task.name);
       setDescription(task.description);
@@ -84,12 +81,15 @@ export default function TaskAdd() {
   };
 
   const showNotification = (message: string, type: 'success' | 'error') => {
-    setToastMessage(message);
-    setToastType(type);
-    setShowToast(true);
-    setTimeout(() => {
-      setShowToast(false);
-    }, 3000);
+    Toast.show({
+      type: type,
+      text1: type === 'success' ? 'Success' : 'Error',
+      text2: message,
+      position: 'top',
+      visibilityTime: 3000,
+      autoHide: true,
+      topOffset: 30
+    });
   };
 
   const periodValues: PeriodValues = {
@@ -194,7 +194,6 @@ export default function TaskAdd() {
   }
 
   return (
-    
     <ThemedView style={taskAddStyles.container}>
       <ScrollView style={taskAddStyles.content}>
         <View style={taskAddStyles.section}>
@@ -296,32 +295,6 @@ export default function TaskAdd() {
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={handleStartDateChange}
         />
-      )}
-
-      {showToast && (
-        <View
-          style={{
-            position: 'absolute',
-            top: 20,
-            left: '50%',
-            transform: [{ translateX: -150 }],
-            backgroundColor: toastType === 'success' ? '#4CAF50' : '#f44336',
-            padding: 16,
-            borderRadius: 8,
-            width: 300,
-            alignItems: 'center',
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 0,
-              height: 2,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-        >
-          <Text style={{ color: '#fff', fontSize: 16 }}>{toastMessage}</Text>
-        </View>
       )}
     </ThemedView>
   );
