@@ -69,7 +69,7 @@ export default function TaskAdd() {
       }
 
       const result = await response.json();
-      setTask(Task.fromAPI(result));
+      setTask(Task.fromAPI(result.data));
     } catch (error) {
       showNotification('Failed to load task data', 'error');
       console.error('Error fetching task:', error);
