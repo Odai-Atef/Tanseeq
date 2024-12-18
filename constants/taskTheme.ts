@@ -6,6 +6,9 @@ export const taskTheme = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
+  container_trans: {
+    flex: 1,
+  },
   content: {
     flex: 1,
     padding: 16,

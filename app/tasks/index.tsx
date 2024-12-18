@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { Swipeable } from 'react-native-gesture-handler';
 import { Footer } from '../../components/Footer';
 import { ThemedText } from '../../components/ThemedText';
 import { ThemedView } from '../../components/ThemedView';
@@ -15,45 +13,6 @@ import { TaskItem } from '../../components/TaskItem';
 interface ApiResponse {
   data: any[];
 }
-
-interface SwipeableTaskItemProps {
-  task: Task;
-  onEdit: () => void;
-  onDelete: () => void;
-}
-
-const SwipeableTaskItem: React.FC<SwipeableTaskItemProps> = ({ task, onEdit, onDelete }) => {
-  const renderRightActions = () => {
-    return (
-      <View style={{ flexDirection: 'row', height: '100%', alignItems: 'stretch' }}>
-        <TouchableOpacity
-          onPress={onEdit}
-          style={styles.actionButton}
-        >
-          <Ionicons name="pencil" size={24} color="white" />
-          <ThemedText style={styles.actionButtonText}>Edit</ThemedText>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={onDelete}
-          style={[styles.actionButton, styles.actionButtonDanger]}
-        >
-          <Ionicons name="trash" size={24} color="white" />
-          <ThemedText style={styles.actionButtonText}>Delete</ThemedText>
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
-  return (
-    <Swipeable
-      renderRightActions={renderRightActions}
-      overshootRight={false}
-      containerStyle={styles.swipeableContainer}
-    >
-      <TaskItem item={task} type="task" />
-    </Swipeable>
-  );
-};
 
 export default function TasksScreen() {
   const router = useRouter();
@@ -96,34 +55,6 @@ export default function TasksScreen() {
     }
   };
 
-  const handleEdit = (taskId: number) => {
-    router.push({
-      pathname: "/tasks/add",
-      params: { id: taskId }
-    });
-  };
-
-  const handleDelete = async (taskId: number) => {
-    try {
-      const token = await AsyncStorage.getItem('access_token');
-      if (!token) throw new Error('No access token found');
-
-      const response = await fetch(`${API_ENDPOINTS.TASKS}/${taskId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) throw new Error('Failed to delete task');
-
-      setTasks(tasks.filter(task => task.id !== taskId));
-    } catch (error) {
-      console.error('Error deleting task:', error);
-    }
-  };
-
   if (loading) {
     return (
       <ThemedView style={styles.container}>
@@ -147,26 +78,18 @@ export default function TasksScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={styles.container_trans}>
       <ScrollView style={styles.content}>
-        <View style={styles.taskSection}>
-          <View style={styles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>Tasks ({tasks.length})</ThemedText>
-          </View>
-
-          <View style={styles.taskList}>
+          <View >
             {tasks.map((task) => (
-              <SwipeableTaskItem
+              <TaskItem
                 key={task.id}
-                task={task}
-                onEdit={() => handleEdit(task.id)}
-                onDelete={() => handleDelete(task.id)}
+                item={task}
+                type="task"
               />
             ))}
-          </View>
         </View>
       </ScrollView>
-
       <Footer activeTab="tasks" />
     </ThemedView>
   );
