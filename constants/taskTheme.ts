@@ -31,35 +31,31 @@ export const taskTheme = StyleSheet.create({
     marginBottom: 24,
   },
   taskSection: {
-    marginBottom: 20,
+    marginBottom: 10,
     backgroundColor: colors.white,
     borderRadius: 10,
-    padding: 16,
+    padding: 10,
     elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+ 
   },
   taskSectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 0,
   },
   taskTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   taskSectionTitle: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: '600',
     color: colors.textPrimary,
     marginRight: 8,
   },
   taskCount: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: 3,
     borderRadius: 12,
     minWidth: 24,
     alignItems: 'center',
@@ -112,7 +108,7 @@ export const taskTheme = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 0,
     fontWeight: '700',
     color: colors.textPrimary,
   },
@@ -302,9 +298,6 @@ export const taskTheme = StyleSheet.create({
     marginBottom: 20,
     borderRadius: 10,
     elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+  
   },
 });

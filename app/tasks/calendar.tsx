@@ -152,7 +152,7 @@ export default function Tasks() {
   const notStartedTasks = schedules.filter(schedule => schedule.status === 'Not-Started');
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={styles.container_trans}>
       <ScrollView style={styles.content}>
         <Calendar
           style={styles.calendar}
