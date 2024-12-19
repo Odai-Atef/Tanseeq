@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import { View, TextInput, TouchableOpacity, ScrollView, Platform, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -10,6 +10,7 @@ import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import { Task } from '../../types/Task';
+import * as ImagePicker from 'expo-image-picker';
 
 type PeriodValues = {
   'Every Day': string;
@@ -42,6 +43,7 @@ export default function TaskAdd() {
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(!!id);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -70,6 +72,9 @@ export default function TaskAdd() {
 
       const result = await response.json();
       setTask(Task.fromAPI(result.data));
+      if (result.data.images) {
+        setSelectedImage(result.data.images);
+      }
     } catch (error) {
       showNotification('Failed to load task data', 'error');
       console.error('Error fetching task:', error);
@@ -125,6 +130,35 @@ export default function TaskAdd() {
     setTask(newTask);
   };
 
+  const pickImage = async () => {
+    try {
+      // Request permissions
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        showNotification('Permission to access media library is required!', 'error');
+        return;
+      }
+
+      // Launch image picker
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+        base64: true,
+      });
+
+      if (!result.canceled && result.assets && result.assets[0]) {
+        const asset = result.assets[0];
+        setSelectedImage(asset.uri);
+        updateTaskField('images', asset.uri);
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
+      showNotification('Failed to pick image', 'error');
+    }
+  };
+
   const handleSubmit = async () => {
     const validation = task.validate();
     if (!validation.isValid) {
@@ -147,13 +181,38 @@ export default function TaskAdd() {
       const endpoint = id ? `${API_ENDPOINTS.TASKS}/${id}` : API_ENDPOINTS.TASKS;
       const method = id ? 'PATCH' : 'POST';
 
+      // Create form data for multipart/form-data request
+      const formData = new FormData();
+      const taskData = task.toAPI();
+      
+      // Add task data
+      Object.keys(taskData).forEach(key => {
+        if (key !== 'images') {
+          formData.append(key, taskData[key]);
+        }
+      });
+
+      // Add image if selected
+      if (selectedImage) {
+        const imageUri = selectedImage;
+        const filename = imageUri.split('/').pop();
+        const match = /\.(\w+)$/.exec(filename || '');
+        const type = match ? `image/${match[1]}` : 'image';
+        
+        formData.append('images', {
+          uri: imageUri,
+          name: filename,
+          type
+        } as any);
+      }
+
       const response = await fetch(endpoint, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
         },
-        body: JSON.stringify(task.toAPI())
+        body: formData
       });
 
       if (!response.ok) {
@@ -213,10 +272,24 @@ export default function TaskAdd() {
 
         <View style={styles.section}>
           <ThemedText style={styles.label}>Images (Optional)</ThemedText>
-          <TouchableOpacity style={styles.uploadButton}>
+          <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
             <Feather name="upload" size={24} color={colors.textPrimary} />
             <ThemedText style={styles.uploadText}>Upload Image</ThemedText>
           </TouchableOpacity>
+          {selectedImage && (
+            <View style={styles.imagePreview}>
+              <Image source={{ uri: selectedImage }} style={styles.previewImage} />
+              <TouchableOpacity 
+                style={styles.removeImageButton}
+                onPress={() => {
+                  setSelectedImage(null);
+                  updateTaskField('images', null);
+                }}
+              >
+                <Ionicons name="close-circle" size={24} color={colors.danger} />
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
         <View style={styles.section}>

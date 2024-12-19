@@ -184,6 +184,25 @@ export const taskTheme = StyleSheet.create({
     marginLeft: 8,
     fontSize: 16,
   },
+  imagePreview: {
+    marginTop: 16,
+    borderRadius: 8,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  previewImage: {
+    width: '100%',
+    height: 200,
+    resizeMode: 'cover',
+  },
+  removeImageButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    padding: 4,
+  },
   radioGroup: {
     gap: 10,
   },
@@ -298,6 +317,5 @@ export const taskTheme = StyleSheet.create({
     marginBottom: 20,
     borderRadius: 10,
     elevation: 4,
-  
   },
 });
