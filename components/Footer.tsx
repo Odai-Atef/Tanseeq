@@ -80,9 +80,8 @@ export function Footer({ activeTab }: FooterProps) {
                 router.push('/tasks/add');
               }}
             >
-              <Ionicons name="add-circle-outline" size={24} color={colors.primary} />
+              <Ionicons name="create-outline" size={20} color={colors.primary} />
               <View style={styles.optionText}>
-                <Ionicons name="create-outline" size={24} color={colors.primary} />
                 <View style={styles.textContainer}>
                   <Text style={styles.optionTitle}>Create a Task</Text>
                 </View>
@@ -96,9 +95,8 @@ export function Footer({ activeTab }: FooterProps) {
                 router.push('/schedules/add');
               }}
             >
-              <Ionicons name="time-outline" size={24} color={colors.primary} />
+              <Ionicons name="calendar-outline" size={20} color={colors.primary} />
               <View style={styles.optionText}>
-                <Ionicons name="calendar-outline" size={24} color={colors.primary} />
                 <View style={styles.textContainer}>
                   <Text style={styles.optionTitle}>Schedule current task</Text>
                 </View>
