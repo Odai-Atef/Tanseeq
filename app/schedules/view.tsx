@@ -23,7 +23,6 @@ export default function ScheduleView() {
   const [schedule, setSchedule] = useState<Schedule | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
 
   const showError = (message: string) => {
@@ -54,7 +53,7 @@ export default function ScheduleView() {
         if (!response.ok) throw new Error('Failed to fetch user info');
 
         const userData = await response.json();
-        setUserRole(userData.role);
+        setUserRole(userData.data.role);
       } catch (err) {
         console.error('Error fetching user info:', err);
       }
@@ -104,57 +103,6 @@ export default function ScheduleView() {
       fetchSchedule();
     }
   }, [id]);
-
-  const handleDelete = async () => {
-    Alert.alert(
-      "Delete Schedule",
-      "Are you sure you want to delete this schedule?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              setIsDeleting(true);
-              const token = await AsyncStorage.getItem('access_token');
-              if (!token) throw new Error('No access token found');
-
-              const response = await fetch(`${API_ENDPOINTS.SCHEDULE}/${id}`, {
-                method: 'DELETE',
-                headers: {
-                  'Authorization': `Bearer ${token}`,
-                  'Content-Type': 'application/json',
-                },
-              });
-
-              if (!response.ok) throw new Error('Failed to delete schedule');
-
-              Toast.show({
-                type: 'success',
-                text1: 'Success',
-                text2: 'Schedule deleted successfully',
-                position: 'top',
-                visibilityTime: 2000,
-                autoHide: true,
-                topOffset: 30
-              });
-
-              router.replace('/schedules');
-            } catch (error) {
-              showError('Failed to delete schedule. Please try again.');
-              console.error('Error deleting schedule:', error);
-            } finally {
-              setIsDeleting(false);
-            }
-          }
-        }
-      ]
-    );
-  };
 
   const handleCancel = async () => {
     Alert.alert(
@@ -333,7 +281,6 @@ export default function ScheduleView() {
     if (schedule.status === 'Done') {
       return null;
     }
-
     if (schedule.status === 'Not-Started') {
       if (userRole === ADMIN_ROLE) {
         return (
@@ -379,7 +326,7 @@ export default function ScheduleView() {
     return (
       <View style={styles.footer}>
         <TouchableOpacity
-          style={[styles.footerButton, styles.footerButtonPrimary]}
+          style={[styles.footerButton, styles.footerButtonPrimary, { flex: 1 }]}
           onPress={() => router.push({
             pathname: "/schedules/add",
             params: { id: schedule.id }
@@ -387,17 +334,6 @@ export default function ScheduleView() {
         >
           <Ionicons name="pencil" size={20} color="white" style={styles.footerButtonIcon} />
           <ThemedText style={styles.footerButtonText}>Edit Schedule</ThemedText>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.footerButton, styles.footerButtonDanger]}
-          onPress={handleDelete}
-          disabled={isDeleting}
-        >
-          <Ionicons name="trash" size={20} color="white" style={styles.footerButtonIcon} />
-          <ThemedText style={styles.footerButtonText}>
-            {isDeleting ? 'Deleting...' : 'Delete Schedule'}
-          </ThemedText>
         </TouchableOpacity>
       </View>
     );

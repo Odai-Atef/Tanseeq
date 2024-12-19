@@ -44,7 +44,7 @@ export function Footer({ activeTab }: FooterProps) {
       <Link href="/tasks" asChild>
         <TouchableOpacity style={styles.tab}>
           <Ionicons
-            name={activeTab === 'tasks' ? 'checkmark' : 'checkmark-outline'}
+            name={activeTab === 'tasks' ? 'clipboard' : 'clipboard-outline'}
             size={24}
             color={activeTab === 'tasks' ? colors.primary : colors.textSecondary}
           />

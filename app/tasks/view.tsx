@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { View, ScrollView, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
@@ -21,7 +21,6 @@ export default function TaskView() {
   const [task, setTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const showError = (message: string) => {
     Toast.show({
@@ -76,57 +75,6 @@ export default function TaskView() {
       fetchTask();
     }
   }, [id]);
-
-  const handleDelete = async () => {
-    Alert.alert(
-      "Delete Task",
-      "Are you sure you want to delete this task?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              setIsDeleting(true);
-              const token = await AsyncStorage.getItem('access_token');
-              if (!token) throw new Error('No access token found');
-
-              const response = await fetch(`${API_ENDPOINTS.TASKS}/${id}`, {
-                method: 'DELETE',
-                headers: {
-                  'Authorization': `Bearer ${token}`,
-                  'Content-Type': 'application/json',
-                },
-              });
-
-              if (!response.ok) throw new Error('Failed to delete task');
-
-              Toast.show({
-                type: 'success',
-                text1: 'Success',
-                text2: 'Task deleted successfully',
-                position: 'top',
-                visibilityTime: 2000,
-                autoHide: true,
-                topOffset: 30
-              });
-
-              router.replace('/tasks');
-            } catch (error) {
-              showError('Failed to delete task. Please try again.');
-              console.error('Error deleting task:', error);
-            } finally {
-              setIsDeleting(false);
-            }
-          }
-        }
-      ]
-    );
-  };
 
   if (loading) {
     return (
@@ -212,17 +160,6 @@ export default function TaskView() {
         >
           <Ionicons name="pencil" size={20} color="white" style={styles.footerButtonIcon} />
           <ThemedText style={styles.footerButtonText}>Edit Task</ThemedText>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.footerButton, styles.footerButtonDanger]}
-          onPress={handleDelete}
-          disabled={isDeleting}
-        >
-          <Ionicons name="trash" size={20} color="white" style={styles.footerButtonIcon} />
-          <ThemedText style={styles.footerButtonText}>
-            {isDeleting ? 'Deleting...' : 'Delete Task'}
-          </ThemedText>
         </TouchableOpacity>
       </View>
     </ThemedView>
