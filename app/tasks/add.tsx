@@ -26,7 +26,7 @@ export default function TaskAdd() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const id = params.id as string | undefined;
-  const [task, setTask] = useState<Task>(new Task({
+  const initialTask = new Task({
     id: undefined,
     name: '',
     description: '',
@@ -38,7 +38,8 @@ export default function TaskAdd() {
     user_updated: null,
     date_updated: null,
     images: null
-  }));
+  });
+  const [task, setTask] = useState<Task>(initialTask);
   const [startDate, setStartDate] = useState(new Date());
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -159,6 +160,34 @@ export default function TaskAdd() {
     }
   };
 
+  const takePhoto = async () => {
+    try {
+      // Request camera permissions
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== 'granted') {
+        showNotification('Permission to access camera is required!', 'error');
+        return;
+      }
+
+      // Launch camera
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+        base64: true,
+      });
+
+      if (!result.canceled && result.assets && result.assets[0]) {
+        const asset = result.assets[0];
+        setSelectedImage(asset.uri);
+        updateTaskField('images', asset.uri);
+      }
+    } catch (error) {
+      console.error('Error taking photo:', error);
+      showNotification('Failed to take photo', 'error');
+    }
+  };
+
   const handleSubmit = async () => {
     const validation = task.validate();
     if (!validation.isValid) {
@@ -181,38 +210,22 @@ export default function TaskAdd() {
       const endpoint = id ? `${API_ENDPOINTS.TASKS}/${id}` : API_ENDPOINTS.TASKS;
       const method = id ? 'PATCH' : 'POST';
 
-      // Create form data for multipart/form-data request
-      const formData = new FormData();
-      const taskData = task.toAPI();
-      
-      // Add task data
-      Object.keys(taskData).forEach(key => {
-        if (key !== 'images') {
-          formData.append(key, taskData[key]);
-        }
-      });
-
-      // Add image if selected
-      if (selectedImage) {
-        const imageUri = selectedImage;
-        const filename = imageUri.split('/').pop();
-        const match = /\.(\w+)$/.exec(filename || '');
-        const type = match ? `image/${match[1]}` : 'image';
-        
-        formData.append('images', {
-          uri: imageUri,
-          name: filename,
-          type
-        } as any);
-      }
+      const taskData = {
+        status: task.status,
+        name: task.name,
+        description: task.description,
+        images: task.images,
+        repeat_days: task.repeat_days,
+        repeat_monthly: task.repeat_monthly
+      };
 
       const response = await fetch(endpoint, {
         method,
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
         },
-        body: formData
+        body: JSON.stringify(taskData)
       });
 
       if (!response.ok) {
@@ -223,9 +236,15 @@ export default function TaskAdd() {
       setIsSubmitting(false);
       showNotification(`Task ${id ? 'updated' : 'created'} successfully`, 'success');
       
+      // Clear form after successful submission
+      if (!id) {
+        setTask(initialTask);
+        setSelectedImage(null);
+      }
+      
       // Navigate after a brief delay to allow the toast to be seen
       setTimeout(() => {
-        router.push(`/tasks/view?id=${id || data.id}`);
+        router.push('/tasks');
       }, 1000);
 
     } catch (error) {
@@ -250,7 +269,7 @@ export default function TaskAdd() {
           <ThemedText style={styles.label}>Title *</ThemedText>
           <TextInput
             style={styles.input}
-            placeholder="Wireframe for NFT Landing Page"
+            placeholder="Task name"
             placeholderTextColor="rgba(49, 57, 79, 0.6)"
             value={task.name}
             onChangeText={name => updateTaskField('name', name)}
@@ -258,7 +277,7 @@ export default function TaskAdd() {
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.label}>Description *</ThemedText>
+          <ThemedText style={styles.label}>Description</ThemedText>
           <TextInput
             style={[styles.input, styles.textArea]}
             placeholder="Write your description"
@@ -272,10 +291,16 @@ export default function TaskAdd() {
 
         <View style={styles.section}>
           <ThemedText style={styles.label}>Images (Optional)</ThemedText>
-          <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
-            <Feather name="upload" size={24} color={colors.textPrimary} />
-            <ThemedText style={styles.uploadText}>Upload Image</ThemedText>
-          </TouchableOpacity>
+          <View style={styles.imageButtonsContainer}>
+            <TouchableOpacity style={[styles.uploadButton, { marginRight: 10 }]} onPress={pickImage}>
+              <Feather name="image" size={24} color={colors.textPrimary} />
+              <ThemedText style={styles.uploadText}>Choose Image</ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.uploadButton} onPress={takePhoto}>
+              <Feather name="camera" size={24} color={colors.textPrimary} />
+              <ThemedText style={styles.uploadText}>Take Photo</ThemedText>
+            </TouchableOpacity>
+          </View>
           {selectedImage && (
             <View style={styles.imagePreview}>
               <Image source={{ uri: selectedImage }} style={styles.previewImage} />

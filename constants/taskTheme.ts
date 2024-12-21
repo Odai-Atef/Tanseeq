@@ -170,6 +170,11 @@ export const taskTheme = StyleSheet.create({
     height: 140,
     textAlignVertical: 'top',
   },
+  imageButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
   uploadButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -179,6 +184,7 @@ export const taskTheme = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     borderStyle: 'dashed',
+    flex: 1,
   },
   uploadText: {
     marginLeft: 8,
