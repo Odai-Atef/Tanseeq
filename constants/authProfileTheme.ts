@@ -13,6 +13,7 @@ export const authProfileTheme = StyleSheet.create({
   profileSection: {
     alignItems: 'center',
     marginBottom: 32,
+    marginTop:20
   },
   avatarContainer: {
     position: 'relative',

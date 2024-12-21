@@ -91,7 +91,7 @@ export const baseTheme = StyleSheet.create({
   },
   submitButton: {
     backgroundColor: colors.primary,
-    padding: 16,
+    padding: 10,
     borderRadius: 8,
     alignItems: 'center',
   },
@@ -101,6 +101,5 @@ export const baseTheme = StyleSheet.create({
   submitButtonText: {
     color: colors.white,
     fontSize: 16,
-    fontWeight: '600',
   },
 });

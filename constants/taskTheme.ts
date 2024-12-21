@@ -257,7 +257,7 @@ export const taskTheme = StyleSheet.create({
   },
   footerButton: {
     flex: 1,
-    padding: 16,
+    padding: 10,
     borderRadius: 8,
     alignItems: 'center',
     flexDirection: 'row',
@@ -272,7 +272,6 @@ export const taskTheme = StyleSheet.create({
   footerButtonText: {
     color: colors.white,
     fontSize: 16,
-    fontWeight: '600',
   },
   footerButtonIcon: {
     marginRight: 8,
@@ -303,7 +302,7 @@ export const taskTheme = StyleSheet.create({
   },
   submitButton: {
     backgroundColor: colors.primary,
-    padding: 16,
+    padding: 10,
     borderRadius: 8,
     alignItems: 'center',
     width: '100%',
@@ -311,7 +310,6 @@ export const taskTheme = StyleSheet.create({
   submitButtonText: {
     color: colors.white,
     fontSize: 16,
-    fontWeight: '600',
   },
   calendar: {
     marginBottom: 20,

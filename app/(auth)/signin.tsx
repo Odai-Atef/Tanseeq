@@ -234,13 +234,13 @@ export default function SignIn() {
 
           <View style={styles.socialButtonsContainer}>
             <TouchableOpacity style={styles.socialButton}>
-              <Image source={require('../../taskose/images/logo/fb.png')} style={styles.socialIcon} />
+              <Image source={require('../../assets/images/logo/fb.png')} style={styles.socialIcon} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.socialButton}>
-              <Image source={require('../../taskose/images/logo/google.png')} style={styles.socialIcon} />
+              <Image source={require('../../assets/images/logo/google.png')} style={styles.socialIcon} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.socialButton}>
-              <Image source={require('../../taskose/images/logo/apple.png')} style={styles.socialIcon} />
+              <Image source={require('../../assets/images/logo/apple.png')} style={styles.socialIcon} />
             </TouchableOpacity>
           </View>
 
