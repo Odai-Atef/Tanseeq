@@ -322,4 +322,9 @@ export const taskTheme = StyleSheet.create({
     borderRadius: 10,
     elevation: 4,
   },
+  imageContainer: {
+    marginBottom: 16,
+    marginHorizontal: -16, // Compensate for parent padding to make image full width
+    backgroundColor: colors.background,
+  },
 });

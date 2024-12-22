@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, ActivityIndicator } from 'react-native';
+import { View, ScrollView, ActivityIndicator, Image, Dimensions } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
@@ -21,6 +21,7 @@ export default function TaskView() {
   const [task, setTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [token, setToken] = useState<string | null>(null);
 
   const showError = (message: string) => {
     Toast.show({
@@ -37,8 +38,8 @@ export default function TaskView() {
   useEffect(() => {
     const fetchTask = async () => {
       try {
-        const token = await AsyncStorage.getItem('access_token');
-        if (!token) {
+        const accessToken = await AsyncStorage.getItem('access_token');
+        if (!accessToken) {
           throw new Error('No access token found');
         }
 
@@ -46,7 +47,7 @@ export default function TaskView() {
           `${API_ENDPOINTS.TASKS}?fields=*,task.*,task.images.*&filter[id][_eq]=${id}`,
           {
             headers: {
-              'Authorization': `Bearer ${token}`,
+              'Authorization': `Bearer ${accessToken}`,
               'Content-Type': 'application/json',
             },
           }
@@ -59,6 +60,7 @@ export default function TaskView() {
         const result: ApiResponse = await response.json();
         if (result.data && result.data.length > 0) {
           setTask(Task.fromAPI(result.data[0]));
+          setToken(accessToken);
         } else {
           throw new Error('Task not found');
         }
@@ -99,6 +101,18 @@ export default function TaskView() {
   return (
     <ThemedView style={styles.container}>
       <ScrollView style={styles.content}>
+        {task.images && task.images.length > 0 && token && (
+          <View style={styles.imageContainer}>
+            <Image
+              source={{ uri: `${API_ENDPOINTS.BASE_URL}/assets/${task.images}?access_token=${token}` }}
+              style={{
+                width: Dimensions.get('window').width,
+                height: 250,
+                resizeMode: 'cover'
+              }}
+            />
+          </View>
+        )}
         <View style={styles.section}>
           <ThemedText style={styles.title}>{task.name}</ThemedText>
           <ThemedText style={styles.description}>{task.description}</ThemedText>
