@@ -35,9 +35,9 @@ export const taskItemTheme = StyleSheet.create({
     alignItems: 'center',
   },
   taskTime: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#464D61',
-    opacity: 0.7,
+    opacity: 0.5,
   },
   statusBadge: {
     paddingHorizontal: 8,

@@ -117,6 +117,30 @@ export class Task {
     return parseInt(this.repeat_monthly, 10);
   }
 
+  // Get formatted repeat schedule
+  getRepeatFormat(): string {
+    const monthlyValue = parseInt(this.repeat_monthly, 10);
+    
+    if (monthlyValue === 1) {
+      return "Every day";
+    }
+
+    const repeatMapping: { [key: number]: string } = {
+      7: "Every week at",
+      14: "Every two weeks at",
+      28: "Every month at",
+      90: "Every three months at",
+      180: "Every six months at",
+      360: "Every year at"
+    };
+
+    const prefix = repeatMapping[monthlyValue] || "";
+    if (!prefix) return "";
+
+    const dayNames = this.getRepeatDayNames();
+    return `${prefix} ${dayNames.join(', ')}`;
+  }
+
   // Validate task data
   validate(): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
