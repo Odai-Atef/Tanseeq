@@ -75,7 +75,7 @@ export default function TaskAdd() {
       const result = await response.json();
       setTask(Task.fromAPI(result.data));
       if (result.data.images) {
-        setSelectedImage(result.data.images);
+        setSelectedImage(`${API_ENDPOINTS.BASE_URL}/assets/${result.data.images}?access_token=${token}` );
       }
     } catch (error) {
       showNotification('Failed to load task data', 'error');
