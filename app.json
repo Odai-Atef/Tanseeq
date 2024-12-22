@@ -10,14 +10,14 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.Tanseeq"
+      "bundleIdentifier": "pro.tanseeq.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.Tanseeq"
+      "package": "pro.tanseeq.app"
     },
     "web": {
       "bundler": "metro",
