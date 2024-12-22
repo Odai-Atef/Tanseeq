@@ -87,12 +87,12 @@ export default function RootLayout() {
       <Stack>
       <Stack.Screen name="index" options={{ headerBackTitle: '',headerShown: false }} />
         <Stack.Screen name="dashboard" options={{ headerBackTitle: '',headerShown: false }} />
-        <Stack.Screen name="tasks/calendar" options={{ headerBackTitle: '',title: 'Calendar', headerShown: true }} />
-        <Stack.Screen name="tasks/index" options={{ title: 'Tasks', headerShown: true }} />
+        <Stack.Screen name="tasks/calendar" options={{ headerBackTitleVisible: false ,headerBackTitle: '',title: 'Calendar', headerShown: true }} />
+        <Stack.Screen name="tasks/index" options={{ headerBackTitleVisible: false ,title: 'Tasks', headerShown: true }} />
        
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="tasks/view" options={{ title:'Task Details',headerShown: true }} />
-        <Stack.Screen name="tasks/add" options={{ headerBackTitle:'',headerShown: true, title: 'Add Task' }} />
+        <Stack.Screen name="tasks/view" options={{ headerBackTitleVisible: false ,title:'Task Details',headerShown: true }} />
+        <Stack.Screen name="tasks/add" options={{ headerBackTitleVisible: false ,headerBackTitle:'',headerShown: true, title: 'Add Task' }} />
         <Stack.Screen name="schedules/add" options={{ headerShown: true, title: 'Assign Task to Schedule' }} />
         <Stack.Screen name="schedules/view" options={{  title: 'View Schedule Task' }} />
 
@@ -101,7 +101,7 @@ export default function RootLayout() {
           name="(auth)" 
           options={{ headerShown: false }} 
         />
-        <Stack.Screen name="+not-found" options={{ title: 'Oops!' }} />
+        <Stack.Screen name="+not-found" options={{headerBackTitleVisible: false , title: 'Oops!' }} />
       </Stack>
       <StatusBar style="auto" />
       <Toast />
