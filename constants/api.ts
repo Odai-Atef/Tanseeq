@@ -4,4 +4,5 @@ export const API_ENDPOINTS = {
     USER_INFO: `${API_HOST}/users/me`,
     SCHEDULE: `${API_HOST}/items/schedule`,
     TASKS: `${API_HOST}/items/tasks`,
+    FILES: `${API_HOST}/files`,
 };

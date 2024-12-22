@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import { Task } from '../../types/Task';
 import * as ImagePicker from 'expo-image-picker';
+import { uploadFile } from '../../utils/fileUpload';
 
 type PeriodValues = {
   'Every Day': string;
@@ -146,13 +147,12 @@ export default function TaskAdd() {
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
-        base64: true,
       });
 
       if (!result.canceled && result.assets && result.assets[0]) {
         const asset = result.assets[0];
         setSelectedImage(asset.uri);
-        updateTaskField('images', asset.uri);
+        updateTaskField('images', null); // Set to null initially, will be updated with ID after upload
       }
     } catch (error) {
       console.error('Error picking image:', error);
@@ -174,13 +174,12 @@ export default function TaskAdd() {
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
-        base64: true,
       });
 
       if (!result.canceled && result.assets && result.assets[0]) {
         const asset = result.assets[0];
         setSelectedImage(asset.uri);
-        updateTaskField('images', asset.uri);
+        updateTaskField('images', null); // Set to null initially, will be updated with ID after upload
       }
     } catch (error) {
       console.error('Error taking photo:', error);
@@ -207,6 +206,17 @@ export default function TaskAdd() {
         return;
       }
 
+      // Upload image first if selected
+      let imageId = null;
+      if (selectedImage) {
+        imageId = await uploadFile(selectedImage, token);
+        if (!imageId) {
+          showNotification('Failed to upload image', 'error');
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
       const endpoint = id ? `${API_ENDPOINTS.TASKS}/${id}` : API_ENDPOINTS.TASKS;
       const method = id ? 'PATCH' : 'POST';
 
@@ -214,7 +224,7 @@ export default function TaskAdd() {
         status: task.status,
         name: task.name,
         description: task.description,
-        images: task.images,
+        images: imageId, // Use the uploaded image ID
         repeat_days: task.repeat_days,
         repeat_monthly: task.repeat_monthly
       };
