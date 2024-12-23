@@ -2,7 +2,9 @@ import { View, TouchableOpacity, StyleSheet, Modal, Text } from 'react-native';
 import { Link, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../constants/Theme';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ADMIN_ROLE } from '../constants/roles';
 
 type FooterProps = {
   activeTab: 'home' | 'tasks' | 'profile' | 'calendar' | 'tasks/calendar';
@@ -10,101 +12,154 @@ type FooterProps = {
 
 export function Footer({ activeTab }: FooterProps) {
   const [showModal, setShowModal] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        const userInfoStr = await AsyncStorage.getItem('userInfo');
+        if (userInfoStr) {
+          const userInfo = JSON.parse(userInfoStr);
+          setUserRole(userInfo.role);
+        }
+      } catch (error) {
+        console.error('Error fetching user role:', error);
+      }
+    };
+    fetchUserRole();
+  }, []);
 
   return (
     <View style={styles.footer}>
-      <Link href="/dashboard" asChild>
-        <TouchableOpacity style={styles.tab}>
-          <Ionicons
-            name={activeTab === 'home' ? 'grid' : 'grid-outline'}
-            size={24}
-            color={activeTab === 'home' ? colors.primary : colors.textSecondary}
-          />
-        </TouchableOpacity>
-      </Link>
+      {userRole === ADMIN_ROLE ? (
+        // Admin Footer
+        <>
+          <Link href="/dashboard" asChild>
+            <TouchableOpacity style={styles.tab}>
+              <Ionicons
+                name={activeTab === 'home' ? 'grid' : 'grid-outline'}
+                size={24}
+                color={activeTab === 'home' ? colors.primary : colors.textSecondary}
+              />
+            </TouchableOpacity>
+          </Link>
 
-     
-      <Link href="/tasks/calendar" asChild>
-        <TouchableOpacity style={styles.tab}>
-          <Ionicons
-            name={activeTab === 'tasks/calendar' ? 'calendar' : 'calendar-outline'}
-            size={24}
-            color={activeTab === 'tasks/calendar' ? colors.primary : colors.textSecondary}
-          />
-        </TouchableOpacity>
-      </Link>
+          <Link href="/tasks/calendar" asChild>
+            <TouchableOpacity style={styles.tab}>
+              <Ionicons
+                name={activeTab === 'tasks/calendar' ? 'calendar' : 'calendar-outline'}
+                size={24}
+                color={activeTab === 'tasks/calendar' ? colors.primary : colors.textSecondary}
+              />
+            </TouchableOpacity>
+          </Link>
 
-      <TouchableOpacity 
-        style={styles.addButton}
-        onPress={() => setShowModal(true)}
-      >
-        <Ionicons name="add" size={24} color="white" />
-      </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.addButton}
+            onPress={() => setShowModal(true)}
+          >
+            <Ionicons name="add" size={24} color="white" />
+          </TouchableOpacity>
 
-      <Link href="/tasks" asChild>
-        <TouchableOpacity style={styles.tab}>
-          <Ionicons
-            name={activeTab === 'tasks' ? 'clipboard' : 'clipboard-outline'}
-            size={24}
-            color={activeTab === 'tasks' ? colors.primary : colors.textSecondary}
-          />
-        </TouchableOpacity>
-      </Link>
+          <Link href="/tasks" asChild>
+            <TouchableOpacity style={styles.tab}>
+              <Ionicons
+                name={activeTab === 'tasks' ? 'clipboard' : 'clipboard-outline'}
+                size={24}
+                color={activeTab === 'tasks' ? colors.primary : colors.textSecondary}
+              />
+            </TouchableOpacity>
+          </Link>
 
-      <Link href="/profile" asChild>
-        <TouchableOpacity style={styles.tab}>
-          <Ionicons
-            name={activeTab === 'profile' ? 'person' : 'person-outline'}
-            size={24}
-            color={activeTab === 'profile' ? colors.primary : colors.textSecondary}
-          />
-        </TouchableOpacity>
-      </Link>
+          <Link href="/profile" asChild>
+            <TouchableOpacity style={styles.tab}>
+              <Ionicons
+                name={activeTab === 'profile' ? 'person' : 'person-outline'}
+                size={24}
+                color={activeTab === 'profile' ? colors.primary : colors.textSecondary}
+              />
+            </TouchableOpacity>
+          </Link>
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={showModal}
-        onRequestClose={() => setShowModal(false)}
-      >
-        <TouchableOpacity 
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setShowModal(false)}
-        >
-          <View style={styles.modalContent}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={showModal}
+            onRequestClose={() => setShowModal(false)}
+          >
             <TouchableOpacity 
-              style={styles.modalOption}
-              onPress={() => {
-                setShowModal(false);
-                router.push('/tasks/add');
-              }}
+              style={styles.modalOverlay}
+              activeOpacity={1}
+              onPress={() => setShowModal(false)}
             >
-              <Ionicons name="create-outline" size={20} color={colors.primary} />
-              <View style={styles.optionText}>
-                <View style={styles.textContainer}>
-                  <Text style={styles.optionTitle}>Create a Task</Text>
-                </View>
+              <View style={styles.modalContent}>
+                <TouchableOpacity 
+                  style={styles.modalOption}
+                  onPress={() => {
+                    setShowModal(false);
+                    router.push('/tasks/add');
+                  }}
+                >
+                  <Ionicons name="create-outline" size={20} color={colors.primary} />
+                  <View style={styles.optionText}>
+                    <View style={styles.textContainer}>
+                      <Text style={styles.optionTitle}>Create a Task</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity 
+                  style={styles.modalOption}
+                  onPress={() => {
+                    setShowModal(false);
+                    router.push('/schedules/add');
+                  }}
+                >
+                  <Ionicons name="calendar-outline" size={20} color={colors.primary} />
+                  <View style={styles.optionText}>
+                    <View style={styles.textContainer}>
+                      <Text style={styles.optionTitle}>Schedule current task</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
               </View>
             </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={styles.modalOption}
-              onPress={() => {
-                setShowModal(false);
-                router.push('/schedules/add');
-              }}
-            >
-              <Ionicons name="calendar-outline" size={20} color={colors.primary} />
-              <View style={styles.optionText}>
-                <View style={styles.textContainer}>
-                  <Text style={styles.optionTitle}>Schedule current task</Text>
-                </View>
-              </View>
+          </Modal>
+        </>
+      ) : (
+        // Non-admin Footer
+        <>
+          <Link href="/tasks/calendar" asChild>
+            <TouchableOpacity style={styles.tab}>
+              <Ionicons
+                name={activeTab === 'tasks/calendar' ? 'calendar' : 'calendar-outline'}
+                size={24}
+                color={activeTab === 'tasks/calendar' ? colors.primary : colors.textSecondary}
+              />
             </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+          </Link>
+
+          <Link href="/dashboard" asChild>
+            <TouchableOpacity style={styles.tab}>
+              <Ionicons
+                name={activeTab === 'home' ? 'grid' : 'grid-outline'}
+                size={24}
+                color={activeTab === 'home' ? colors.primary : colors.textSecondary}
+              />
+            </TouchableOpacity>
+          </Link>
+
+          <Link href="/profile" asChild>
+            <TouchableOpacity style={styles.tab}>
+              <Ionicons
+                name={activeTab === 'profile' ? 'person' : 'person-outline'}
+                size={24}
+                color={activeTab === 'profile' ? colors.primary : colors.textSecondary}
+              />
+            </TouchableOpacity>
+          </Link>
+        </>
+      )}
     </View>
   );
 }
