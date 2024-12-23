@@ -10,12 +10,11 @@ import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import { Schedule } from '../../types/Schedule';
+import { ADMIN_ROLE } from '../../constants/roles';
 
 interface ApiResponse {
   data: any[];
 }
-
-const ADMIN_ROLE = "5e81b539-8401-4106-9e8f-a076f881453b";
 
 export default function ScheduleView() {
   const router = useRouter();
