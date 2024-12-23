@@ -142,7 +142,7 @@ export default function TaskView() {
           <View style={styles.section}>
             <ThemedText style={styles.subtitle}>Monthly Repeat</ThemedText>
             <ThemedText style={styles.description}>
-              Day {task.repeat_monthly} of every month
+               {task.getRepeatFormat()}
             </ThemedText>
           </View>
         )}
