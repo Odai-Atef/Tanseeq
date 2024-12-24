@@ -121,6 +121,10 @@ export class Task {
   getRepeatFormat(): string {
     const monthlyValue = parseInt(this.repeat_monthly, 10);
     
+    if (monthlyValue === -1) {
+      return "No Schedule";
+    }
+    
     if (monthlyValue === 1) {
       return "Every day";
     }
@@ -149,12 +153,11 @@ export class Task {
       errors.push('Task name is required');
     }
 
-    if (this.repeat_days.length === 0) {
-      errors.push('At least one repeat day is required');
-    }
-
     if (!this.repeat_monthly) {
       errors.push('Monthly repeat day is required');
+    } else if (this.repeat_monthly !== '1' && this.repeat_monthly !== '-1' && this.repeat_days.length === 0) {
+      // Only require repeat days if not set to "Every Day" or "No Schedule"
+      errors.push('At least one repeat day is required');
     }
 
     return {

@@ -14,13 +14,14 @@ import * as ImagePicker from 'expo-image-picker';
 import { uploadFile } from '../../utils/fileUpload';
 
 type PeriodValues = {
+  'Manual Assignment (No Schedule)': string;
   'Every Day': string;
   'Weekly': string;
   'Bi Weekly': string;
   'Monthly': string;
   'Every 3 Months': string;
   'Every 6 Months': string;
-  'Every Year': string;
+  'Annually': string;
 };
 
 export default function TaskAdd() {
@@ -98,13 +99,14 @@ export default function TaskAdd() {
   };
 
   const periodValues: PeriodValues = {
+    'Manual Assignment (No Schedule)': '-1',
     'Every Day': '1',
     'Weekly': '7',
     'Bi Weekly': '14',
     'Monthly': '28',
     'Every 3 Months': '90',
     'Every 6 Months': '180',
-    'Every Year': '360'
+    'Annually': '360'
   };
 
   const periods = Object.keys(periodValues) as (keyof PeriodValues)[];
@@ -328,7 +330,7 @@ export default function TaskAdd() {
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.label}>Period *</ThemedText>
+          <ThemedText style={styles.label}>Select Recurrence Schedule *</ThemedText>
           <View style={styles.radioGroup}>
             {periods.map((period) => (
               <TouchableOpacity
@@ -349,9 +351,10 @@ export default function TaskAdd() {
           </View>
         </View>
 
-        <View style={styles.section}>
-          <ThemedText style={styles.label}>Days *</ThemedText>
-          <View style={styles.radioGroup}>
+        {task.repeat_monthly !== periodValues['Every Day'] && task.repeat_monthly !== periodValues['Manual Assignment (No Schedule)'] && (
+          <View style={styles.section}>
+            <ThemedText style={styles.label}>Select Scheduled Days *</ThemedText>
+            <View style={styles.radioGroup}>
             {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day, index) => (
               <TouchableOpacity
                 key={index}
@@ -368,8 +371,9 @@ export default function TaskAdd() {
                 <ThemedText style={styles.checkboxText}>{day}</ThemedText>
               </TouchableOpacity>
             ))}
+            </View>
           </View>
-        </View>
+        )}
       </ScrollView>
 
       <View style={styles.footer}>
