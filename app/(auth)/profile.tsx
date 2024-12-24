@@ -145,12 +145,12 @@ export default function Profile() {
           <Text style={styles.userEmail}>{userInfo?.email || 'No email'}</Text>
         </View>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.editButton}
           onPress={() => router.push('/(auth)/edit-profile' as any)}
         >
           <Text style={styles.editButtonText}>Edit Profile</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <View style={{ marginTop: 16 }}>
           <ProfileListItem

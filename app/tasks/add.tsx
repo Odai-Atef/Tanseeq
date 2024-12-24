@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, ScrollView, Platform, Image } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -32,7 +33,7 @@ export default function TaskAdd() {
     id: undefined,
     name: '',
     description: '',
-    repeat_monthly: '',
+    repeat_monthly: '-1',
     repeat_days: [],
     status: 'Active',
     user_created: '',
@@ -47,6 +48,7 @@ export default function TaskAdd() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(!!id);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showPicker, setShowPicker] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -331,24 +333,14 @@ export default function TaskAdd() {
 
         <View style={styles.section}>
           <ThemedText style={styles.label}>Select Recurrence Schedule *</ThemedText>
-          <View style={styles.radioGroup}>
-            {periods.map((period) => (
-              <TouchableOpacity
-                key={period}
-                style={[
-                  styles.radioButton,
-                  task.repeat_monthly === periodValues[period] && styles.radioButtonActive
-                ]}
-                onPress={() => updateTaskField('repeat_monthly', periodValues[period])}
-              >
-                <View style={[
-                  styles.checkbox,
-                  task.repeat_monthly === periodValues[period] && styles.checkboxChecked
-                ]} />
-                <ThemedText style={styles.checkboxText}>{period}</ThemedText>
-              </TouchableOpacity>
-            ))}
-          </View>
+          <TouchableOpacity 
+            style={[styles.input, { paddingHorizontal: 10 }]}
+            onPress={() => setShowPicker(true)}
+          >
+            <ThemedText style={{ color: colors.textPrimary, fontSize: 16 }}>
+              {periods.find(p => periodValues[p] === task.repeat_monthly) || 'Select Schedule'}
+            </ThemedText>
+          </TouchableOpacity>
         </View>
 
         {task.repeat_monthly !== periodValues['Every Day'] && task.repeat_monthly !== periodValues['Manual Assignment (No Schedule)'] && (
@@ -390,6 +382,32 @@ export default function TaskAdd() {
           </ThemedText>
         </TouchableOpacity>
       </View>
+
+      {showPicker && (
+        <Picker
+          selectedValue={task.repeat_monthly}
+          onValueChange={(itemValue: string) => {
+            updateTaskField('repeat_monthly', itemValue);
+            setShowPicker(false);
+          }}
+          style={{ 
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: colors.background
+          }}
+        >
+          {periods.map((period) => (
+            <Picker.Item 
+              key={period} 
+              label={period} 
+              value={periodValues[period]}
+              color={colors.textPrimary}
+            />
+          ))}
+        </Picker>
+      )}
 
       {showStartPicker && (
         <DateTimePicker
