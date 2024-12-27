@@ -165,13 +165,25 @@ export default function SignIn() {
     <ThemedView style={[styles.container, { borderTopWidth: 50, borderTopColor: colors.primary }]}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <ThemedText style={styles.headerTitle}>Sign In</ThemedText>
+          <Image 
+            source={require('../../assets/images/logo/logo-1.png')} 
+            style={{ 
+              width: 100, 
+              height: 100, 
+              alignSelf: 'center',
+              marginBottom: 20,
+              resizeMode: 'contain'
+            }} 
+          />
+        
         </View>
-
-        <View style={styles.content}>
-          <ThemedText style={styles.subtitle}>
-            Sign in to continue using the app
+<View>
+<ThemedText style={styles.headerTitle}>
+            Welcome in Tanseeq 
           </ThemedText>
+</View>
+        <View style={styles.content}>
+          
 
           <View style={styles.inputContainer}>
             <Ionicons name="mail-outline" size={20} color={colors.secondary} style={{ marginRight: 8 }} />
@@ -234,24 +246,13 @@ export default function SignIn() {
 
           <View style={styles.socialButtonsContainer}>
             <TouchableOpacity style={styles.socialButton}>
-              <Image source={require('../../assets/images/logo/fb.png')} style={styles.socialIcon} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
               <Image source={require('../../assets/images/logo/google.png')} style={styles.socialIcon} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.socialButton}>
               <Image source={require('../../assets/images/logo/apple.png')} style={styles.socialIcon} />
             </TouchableOpacity>
           </View>
-
-          <View style={styles.bottomContainer}>
-            <ThemedText style={styles.bottomText}>
-              Don't have an account?{' '}
-              <Link href="/" style={styles.bottomLink}>
-                Sign Up
-              </Link>
-            </ThemedText>
-          </View>
+        
         </View>
       </ScrollView>
     </ThemedView>

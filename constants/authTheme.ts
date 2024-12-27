@@ -10,12 +10,11 @@ export const authTheme = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 16,
-    borderBottomWidth: 1,
     borderBottomColor: colors.line,
     justifyContent: 'center',
   },
   headerTitle: {
-    color: colors.dark,
+    color: colors.secondary,
     fontSize: 18,
     lineHeight: 28,
     fontWeight: '700',
