@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, TouchableOpacity, Image, ScrollView, Platform } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
@@ -8,6 +8,12 @@ import { colors, authTheme as styles } from '../../constants/Theme';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
+import { makeRedirectUri } from 'expo-auth-session';
+import * as AppleAuthentication from 'expo-apple-authentication';
+
+WebBrowser.maybeCompleteAuthSession();
 
 const validateEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -54,6 +60,43 @@ export default function SignIn() {
   const [emailError, setEmailError] = useState('');
   const router = useRouter();
 
+  // Note: To get the client IDs:
+  // 1. Go to Google Cloud Console (https://console.cloud.google.com)
+  // 2. Create a project or select existing one
+  // 3. Enable Google Sign-In API
+  // 4. Create OAuth 2.0 credentials
+  // 5. Add your app's bundle ID and OAuth redirect URI
+  // Configure Google Sign-In
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId: '971482339745-13626slrfdkbjdatcirbl2lftl65dpha.apps.googleusercontent.com',
+    iosClientId: 'YOUR_IOS_CLIENT_ID',
+    clientId: '971482339745-6opbc4ijqapscv98muma2u326ed1lq5g.apps.googleusercontent.com', // For web/Expo client
+    scopes: ['profile', 'email']
+  });
+
+  // Log auth configuration for debugging
+  useEffect(() => {
+    const getRedirectUri = async () => {
+      const redirectUri = makeRedirectUri({
+        scheme: 'tanseeq',
+        path: 'auth/google-redirect',
+      });
+      console.log('Auth Configuration:', {
+        redirectUri,
+        nativeRedirect: 'tanseeq://auth/google-redirect',
+        platform: Platform.OS
+      });
+    };
+    getRedirectUri();
+  }, []);
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { authentication } = response;
+      handleGoogleSuccess(authentication?.accessToken);
+    }
+  }, [response]);
+
   const showError = (message: string) => {
     Toast.show({
       type: 'error',
@@ -90,6 +133,131 @@ export default function SignIn() {
     } catch (error) {
       console.error('Error fetching user info:', error);
       showError('Failed to fetch user information');
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setLoading(true);
+      await promptAsync();
+    } catch (error) {
+      console.error('Google Sign-In Error:', error);
+      showError('Failed to sign in with Google');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (accessToken: string | undefined) => {
+    console.log(accessToken)
+    if (!accessToken) {
+      showError('Failed to get access token from Google');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await fetch(API_ENDPOINTS.GOOGLE_LOGIN, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token: accessToken,
+        }),
+      });
+
+      const data: LoginResponse = await response.json();
+
+      if (data.errors) {
+        throw new Error(data.errors[0]?.message || 'Google login failed');
+      }
+
+      if (!data.data) {
+        throw new Error('Invalid response from server');
+      }
+
+      await Promise.all([
+        AsyncStorage.setItem('access_token', data.data.access_token),
+        AsyncStorage.setItem('refresh_token', data.data.refresh_token),
+      ]);
+
+      await fetchUserInfo(data.data.access_token);
+
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Signed in with Google successfully',
+        position: 'top',
+        visibilityTime: 2000,
+        autoHide: true,
+        topOffset: 30
+      });
+
+      router.replace('/dashboard');
+    } catch (error: any) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to sign in with Google';
+      showError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAppleSignIn = async () => {
+    try {
+      setLoading(true);
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+
+      const response = await fetch(API_ENDPOINTS.APPLE_LOGIN, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          identityToken: credential.identityToken,
+          fullName: credential.fullName,
+          email: credential.email,
+        }),
+      });
+
+      const data: LoginResponse = await response.json();
+
+      if (data.errors) {
+        throw new Error(data.errors[0]?.message || 'Apple login failed');
+      }
+
+      if (!data.data) {
+        throw new Error('Invalid response from server');
+      }
+
+      await Promise.all([
+        AsyncStorage.setItem('access_token', data.data.access_token),
+        AsyncStorage.setItem('refresh_token', data.data.refresh_token),
+      ]);
+
+      await fetchUserInfo(data.data.access_token);
+
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Signed in with Apple successfully',
+        position: 'top',
+        visibilityTime: 2000,
+        autoHide: true,
+        topOffset: 30
+      });
+
+      router.replace('/dashboard');
+    } catch (error: any) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to sign in with Apple';
+      showError(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -175,16 +343,13 @@ export default function SignIn() {
               resizeMode: 'contain'
             }} 
           />
-        
         </View>
-<View>
-<ThemedText style={styles.headerTitle}>
+        <View>
+          <ThemedText style={styles.headerTitle}>
             Welcome in Tanseeq 
           </ThemedText>
-</View>
+        </View>
         <View style={styles.content}>
-          
-
           <View style={styles.inputContainer}>
             <Ionicons name="mail-outline" size={20} color={colors.secondary} style={{ marginRight: 8 }} />
             <TextInput
@@ -245,14 +410,23 @@ export default function SignIn() {
           </View>
 
           <View style={styles.socialButtonsContainer}>
-            <TouchableOpacity style={styles.socialButton}>
+            <TouchableOpacity 
+              style={styles.socialButton}
+              onPress={handleGoogleSignIn}
+              disabled={loading}
+            >
               <Image source={require('../../assets/images/logo/google.png')} style={styles.socialIcon} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
-              <Image source={require('../../assets/images/logo/apple.png')} style={styles.socialIcon} />
-            </TouchableOpacity>
+            {Platform.OS === 'ios' && (
+              <AppleAuthentication.AppleAuthenticationButton
+                buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+                buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE_OUTLINE}
+                cornerRadius={5}
+                style={[styles.socialButton, { width: 50, height: 50 }]}
+                onPress={handleAppleSignIn}
+              />
+            )}
           </View>
-        
         </View>
       </ScrollView>
     </ThemedView>
