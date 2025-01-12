@@ -1,55 +1,31 @@
 import { StyleSheet } from 'react-native';
 import { colors } from './Colors';
+import { baseTheme } from './baseTheme';
 
 export const scheduleTheme = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.line,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: colors.text,
-  },
-  backButton: {
-    padding: 8,
-  },
+  ...baseTheme,
+
+
   section: {
-    marginBottom: 24,
+    marginBottom: 4,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
+    ...baseTheme.headerTitle,
     marginBottom: 8,
     color: colors.textPrimary,
   },
   dateButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    ...baseTheme.inputContainer,
     padding: 12,
-    borderWidth: 1,
-    borderColor: colors.line,
+    backgroundColor: colors.white,
     borderRadius: 8,
-    backgroundColor: colors.background,
   },
   dateIcon: {
     marginRight: 8,
   },
   dateText: {
-    fontSize: 16,
-    color: colors.textPrimary,
+    ...baseTheme.subtitle,
+    marginBottom: 0,
   },
   loadingContainer: {
     flex: 1,
@@ -63,9 +39,7 @@ export const scheduleTheme = StyleSheet.create({
     padding: 32,
   },
   emptyText: {
-    fontSize: 16,
-    color: colors.secondary,
-    textAlign: 'center',
+    ...baseTheme.errorText,
   },
   scheduleItem: {
     flexDirection: 'row',
@@ -84,27 +58,18 @@ export const scheduleTheme = StyleSheet.create({
     alignItems: 'center',
   },
   time: {
+    ...baseTheme.subtitle,
     fontSize: 14,
-    color: colors.secondary,
+    marginBottom: 0,
   },
   timeDivider: {
+    ...baseTheme.subtitle,
     fontSize: 14,
-    color: colors.secondary,
+    marginBottom: 0,
     marginVertical: 4,
   },
   taskContainer: {
     flex: 1,
-  },
-  taskTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 8,
-  },
-  taskDescription: {
-    fontSize: 14,
-    color: colors.secondary,
-    marginBottom: 8,
   },
   statusBadge: {
     alignSelf: 'flex-start',
@@ -113,8 +78,10 @@ export const scheduleTheme = StyleSheet.create({
     borderRadius: 12,
   },
   statusText: {
+    ...baseTheme.subtitle,
     fontSize: 12,
     fontWeight: '500',
+    marginBottom: 0,
   },
   footer: {
     padding: 16,
@@ -123,21 +90,20 @@ export const scheduleTheme = StyleSheet.create({
     backgroundColor: colors.white,
   },
   taskList: {
-    gap: 12,
+    gap: 0,
   },
   taskItem: {
-    padding: 16,
-    borderRadius: 8,
-    backgroundColor: colors.background,
-    borderWidth: 1,
-    borderColor: colors.line,
+    ...baseTheme.inputContainer,
+    padding: 10,
+    backgroundColor: colors.white,
   },
   taskItemSelected: {
     backgroundColor: 'rgba(121, 128, 255, 0.1)',
     borderColor: colors.primary,
   },
   taskItemText: {
-    fontSize: 16,
+    ...baseTheme.subtitle,
     color: colors.textPrimary,
+    marginBottom: 0,
   },
 });

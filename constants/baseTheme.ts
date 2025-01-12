@@ -4,7 +4,7 @@ import { colors } from './Colors';
 export const baseTheme = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -19,7 +19,7 @@ export const baseTheme = StyleSheet.create({
     fontSize: 18,
     lineHeight: 28,
     fontWeight: '700',
-    textAlign: 'center',
+    textAlign: 'left',
   },
   content: {
     padding: 16,
@@ -33,7 +33,6 @@ export const baseTheme = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
     borderColor: colors.line,
     borderRadius: 12,
     marginBottom: 16,
@@ -44,6 +43,8 @@ export const baseTheme = StyleSheet.create({
     height: 48,
     fontSize: 16,
     color: colors.secondary,
+    borderRadius: 4,
+    padding:12
   },
   button: {
     backgroundColor: colors.primary,
