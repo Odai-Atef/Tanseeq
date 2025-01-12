@@ -9,6 +9,7 @@ import { router } from 'expo-router';
 import { Schedule } from '../types/Schedule';
 import { TaskItem } from '../components/TaskItem';
 import { useDashboard } from '../hooks/dashboardHooks';
+import { useTranslation } from '../contexts/LanguageContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -30,12 +31,14 @@ export default function Dashboard() {
     error
   } = useDashboard();
 
+  const { t, isRTL } = useTranslation();
+
   const renderTaskContent = () => {
     if (isLoading) {
       return (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={styles.loadingText}>Loading schedules...</Text>
+          <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
       );
     }
@@ -45,7 +48,7 @@ export default function Dashboard() {
     }
 
     if (schedules.length === 0) {
-      return <EmptyState message="No schedules for today" />;
+      return <EmptyState message={t('dashboard.noTasks')} />;
     }
 
     return (
@@ -59,7 +62,7 @@ export default function Dashboard() {
         )}
 
         {!firstInProgressSchedule && !recentCompletedSchedule && (
-          <EmptyState message="No in-progress or completed schedules" />
+          <EmptyState message={t('dashboard.noInProgress')} />
         )}
       </>
     );
@@ -67,10 +70,14 @@ export default function Dashboard() {
 
   return (
     <ThemedView style={[styles.container, { borderTopWidth: 50, borderTopColor: 'rgb(121, 128, 255)' }]}>
-      <View style={styles.header}>
+      <View style={[styles.header, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
         <View>
-          <Text style={styles.greeting}>Hello, {userName}!</Text>
-          <Text style={styles.subGreeting}>Let's complete your tasks</Text>
+          <Text style={[styles.greeting, { textAlign: isRTL ? 'right' : 'left' }]}>
+            {t('dashboard.greeting', { name: userName })}
+          </Text>
+          <Text style={[styles.subGreeting, { textAlign: isRTL ? 'right' : 'left' }]}>
+            {t('dashboard.subGreeting')}
+          </Text>
         </View>
       </View>
 
@@ -91,19 +98,26 @@ export default function Dashboard() {
             />
           </View>
           <View style={styles.progressInfo}>
-            <Text style={styles.progressTitle}>Progress Today Task</Text>
-            <Text style={styles.progressSubtext}>
-              {schedules.filter((schedule: Schedule) => 
-                ['Done', 'Cancelled'].includes(schedule.status)
-              ).length}/{schedules.length} Tasks Completed
+            <Text style={[styles.progressTitle, { textAlign: isRTL ? 'right' : 'left' }]}>
+              {t('dashboard.progressTitle')}
+            </Text>
+            <Text style={[styles.progressSubtext, { textAlign: isRTL ? 'right' : 'left' }]}>
+              {t('dashboard.tasksCompleted', {
+                completed: schedules.filter((schedule: Schedule) => 
+                  ['Done', 'Cancelled'].includes(schedule.status)
+                ).length.toString(),
+                total: schedules.length.toString()
+              })}
             </Text>
           </View>
         </View>
 
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Today Tasks</Text>
+        <View style={[styles.sectionHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+          <Text style={[styles.sectionTitle, { textAlign: isRTL ? 'right' : 'left' }]}>
+            {t('dashboard.todayTasks')}
+          </Text>
           <TouchableOpacity onPress={() => router.push('/tasks/calendar')}>
-            <Text style={styles.viewAll}>View All</Text>
+            <Text style={styles.viewAll}>{t('common.buttons.viewAll')}</Text>
           </TouchableOpacity>
         </View>
 

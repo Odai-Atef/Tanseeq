@@ -6,6 +6,7 @@ import { ThemedText } from '../../components/ThemedText';
 import { colors, scheduleTheme as styles, baseTheme } from '../../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useScheduleAdd } from '../../hooks/schedules/addHook';
+import { useTranslation } from '../../contexts/LanguageContext';
 
 export default function ScheduleAdd() {
   const {
@@ -18,9 +19,10 @@ export default function ScheduleAdd() {
     setShowDatePicker,
     setSelectedTaskId,
     handleDateChange,
-    handleSubmit,
-    today
+    handleSubmit
   } = useScheduleAdd();
+
+  const { t, isRTL } = useTranslation();
 
   const renderDatePicker = () => {
     if (!showDatePicker) return null;
@@ -31,7 +33,7 @@ export default function ScheduleAdd() {
         mode="date"
         display={Platform.OS === 'ios' ? "spinner" : "default"}
         onChange={handleDateChange}
-        minimumDate={today}
+        minimumDate={new Date()}
         textColor={colors.textPrimary}
         themeVariant="dark"
       />
@@ -57,15 +59,19 @@ export default function ScheduleAdd() {
               padding: 16,
             }}>
               <View style={{
-                flexDirection: 'row',
+                flexDirection: isRTL ? 'row-reverse' : 'row',
                 justifyContent: 'space-between',
                 marginBottom: 16,
               }}>
                 <TouchableOpacity onPress={() => setShowDatePicker(false)}>
-                  <ThemedText style={{ color: colors.textSecondary }}>Cancel</ThemedText>
+                  <ThemedText style={{ color: colors.textSecondary }}>
+                    {t('common.buttons.cancel')}
+                  </ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setShowDatePicker(false)}>
-                  <ThemedText style={{ color: colors.primary }}>Done</ThemedText>
+                  <ThemedText style={{ color: colors.primary }}>
+                    {t('common.buttons.done')}
+                  </ThemedText>
                 </TouchableOpacity>
               </View>
               {pickerElement}
@@ -81,20 +87,22 @@ export default function ScheduleAdd() {
   return (
     <ThemedView style={styles.container}>
       <ScrollView style={styles.content}>
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Date</ThemedText>
+        <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+          <ThemedText style={[styles.sectionTitle, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
+            {t('schedules.add.selectDate')}
+          </ThemedText>
           <TouchableOpacity
             onPress={() => setShowDatePicker(true)}
-            style={styles.dateButton}
+            style={[styles.dateButton, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}
           >
             <Ionicons 
               name="calendar-outline" 
               size={20} 
               color={colors.textSecondary} 
-              style={styles.dateIcon} 
+              style={[styles.dateIcon, isRTL ? { marginLeft: 8 } : { marginRight: 8 }]} 
             />
-            <ThemedText style={styles.dateText}>
-              {date.toLocaleDateString('en-US', {
+            <ThemedText style={[styles.dateText, { textAlign: isRTL ? 'right' : 'left' }]}>
+              {date.toLocaleDateString(isRTL ? 'ar-SA' : 'en-US', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -105,14 +113,18 @@ export default function ScheduleAdd() {
         </View>
 
         <View>
-          <ThemedText style={styles.sectionTitle}>Select Task</ThemedText>
+          <ThemedText style={[styles.sectionTitle, { textAlign: isRTL ? 'right' : 'left' }]}>
+            {t('schedules.add.selectTask')}
+          </ThemedText>
           {loading ? (
             <View style={baseTheme.loadingContainer}>
               <ActivityIndicator size="large" color={colors.primary} />
             </View>
           ) : error ? (
             <View style={baseTheme.errorContainer}>
-              <ThemedText style={baseTheme.errorText}>{error}</ThemedText>
+              <ThemedText style={[baseTheme.errorText, { textAlign: isRTL ? 'right' : 'left' }]}>
+                {error}
+              </ThemedText>
             </View>
           ) : (
             <View style={styles.taskList}>
@@ -125,7 +137,9 @@ export default function ScheduleAdd() {
                   ]}
                   onPress={() => setSelectedTaskId(task.id)}
                 >
-                  <ThemedText style={styles.taskItemText}>{task.name}</ThemedText>
+                  <ThemedText style={[styles.taskItemText, { textAlign: isRTL ? 'right' : 'left' }]}>
+                    {task.name}
+                  </ThemedText>
                 </TouchableOpacity>
               ))}
             </View>
@@ -142,7 +156,9 @@ export default function ScheduleAdd() {
           onPress={handleSubmit}
           disabled={loading || !!error || !selectedTaskId}
         >
-          <ThemedText style={baseTheme.submitButtonText}>Create Schedule</ThemedText>
+          <ThemedText style={baseTheme.submitButtonText}>
+            {t('schedules.add.createSchedule')}
+          </ThemedText>
         </TouchableOpacity>
       </View>
 

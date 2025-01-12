@@ -8,10 +8,15 @@ import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
 import { colors, taskTheme as styles } from '../../constants/Theme';
 import { useTaskAdd } from '../../hooks/tasks/addHook';
+import { useTranslation } from '../../contexts/LanguageContext';
+
+const DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 export default function TaskAdd() {
   const params = useLocalSearchParams();
   const id = params.id as string | undefined;
+  const { t, isRTL } = useTranslation();
+
   const {
     task,
     startDate,
@@ -36,7 +41,7 @@ export default function TaskAdd() {
   if (isLoading) {
     return (
       <ThemedView style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ThemedText>Loading...</ThemedText>
+        <ThemedText>{t('common.loading')}</ThemedText>
       </ThemedView>
     );
   }
@@ -44,22 +49,26 @@ export default function TaskAdd() {
   return (
     <ThemedView style={styles.container}>
       <ScrollView style={styles.content}>
-        <View style={styles.section}>
-          <ThemedText style={styles.label}>Title *</ThemedText>
+        <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+          <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
+            {t('tasks.add.name')} *
+          </ThemedText>
           <TextInput
-            style={styles.input}
-            placeholder="Task name"
+            style={[styles.input, { textAlign: isRTL ? 'right' : 'left' }]}
+            placeholder={t('tasks.add.namePlaceholder')}
             placeholderTextColor="rgba(49, 57, 79, 0.6)"
             value={task.name}
             onChangeText={name => updateTaskField('name', name)}
           />
         </View>
 
-        <View style={styles.section}>
-          <ThemedText style={styles.label}>Description</ThemedText>
+        <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+          <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
+            {t('tasks.add.description')}
+          </ThemedText>
           <TextInput
-            style={[styles.input, styles.textArea]}
-            placeholder="Write your description"
+            style={[styles.input, styles.textArea, { textAlign: isRTL ? 'right' : 'left' }]}
+            placeholder={t('tasks.add.descriptionPlaceholder')}
             placeholderTextColor="rgba(49, 57, 79, 0.6)"
             multiline
             numberOfLines={4}
@@ -68,16 +77,21 @@ export default function TaskAdd() {
           />
         </View>
 
-        <View style={styles.section}>
-          <ThemedText style={styles.label}>Images (Optional)</ThemedText>
-          <View style={styles.imageButtonsContainer}>
-            <TouchableOpacity style={[styles.uploadButton, { marginRight: 10 }]} onPress={pickImage}>
+        <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+          <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
+            {t('tasks.add.images')}
+          </ThemedText>
+          <View style={[styles.imageButtonsContainer, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+            <TouchableOpacity 
+              style={[styles.uploadButton, isRTL ? { marginLeft: 10 } : { marginRight: 10 }]} 
+              onPress={pickImage}
+            >
               <Feather name="image" size={24} color={colors.textPrimary} />
-              <ThemedText style={styles.uploadText}>Choose Image</ThemedText>
+              <ThemedText style={styles.uploadText}>{t('tasks.add.chooseImage')}</ThemedText>
             </TouchableOpacity>
             <TouchableOpacity style={styles.uploadButton} onPress={takePhoto}>
               <Feather name="camera" size={24} color={colors.textPrimary} />
-              <ThemedText style={styles.uploadText}>Take Photo</ThemedText>
+              <ThemedText style={styles.uploadText}>{t('tasks.add.takePhoto')}</ThemedText>
             </TouchableOpacity>
           </View>
           {selectedImage && (
@@ -96,38 +110,46 @@ export default function TaskAdd() {
           )}
         </View>
 
-        <View style={styles.section}>
-          <ThemedText style={styles.label}>Select Recurrence Schedule *</ThemedText>
+        <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+          <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
+            {t('tasks.add.schedule')} *
+          </ThemedText>
           <TouchableOpacity 
             style={[styles.input, { paddingHorizontal: 10 }]}
             onPress={() => setShowPicker(true)}
           >
-            <ThemedText style={{ color: colors.textPrimary, fontSize: 16 }}>
-              {periods.find(p => periodValues[p] === task.repeat_monthly) || 'Select Schedule'}
+            <ThemedText style={[{ color: colors.textPrimary, fontSize: 16, textAlign: isRTL ? 'right' : 'left' }]}>
+              {periods.find(p => periodValues[p] === task.repeat_monthly) 
+                ? t(`tasks.add.periods.${periods.find(p => periodValues[p] === task.repeat_monthly)?.toLowerCase()}`)
+                : t('tasks.add.schedule')}
             </ThemedText>
           </TouchableOpacity>
         </View>
 
         {task.repeat_monthly !== periodValues['Every Day'] && task.repeat_monthly !== periodValues['Manual Assignment (No Schedule)'] && (
-          <View style={styles.section}>
-            <ThemedText style={styles.label}>Select Scheduled Days *</ThemedText>
-            <View style={styles.radioGroup}>
-            {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.checkboxContainer,
-                  task.repeatsOnDay((index + 1).toString()) && styles.checkboxActive
-                ]}
-                onPress={() => toggleDaySelection((index + 1).toString())}
-              >
-                <View style={[
-                  styles.checkbox,
-                  task.repeatsOnDay((index + 1).toString()) && styles.checkboxChecked
-                ]} />
-                <ThemedText style={styles.checkboxText}>{day}</ThemedText>
-              </TouchableOpacity>
-            ))}
+          <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+            <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
+              {t('tasks.add.scheduleDays')} *
+            </ThemedText>
+            <View style={[styles.radioGroup, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+              {DAYS.map((day, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.checkboxContainer,
+                    task.repeatsOnDay((index + 1).toString()) && styles.checkboxActive
+                  ]}
+                  onPress={() => toggleDaySelection((index + 1).toString())}
+                >
+                  <View style={[
+                    styles.checkbox,
+                    task.repeatsOnDay((index + 1).toString()) && styles.checkboxChecked
+                  ]} />
+                  <ThemedText style={styles.checkboxText}>
+                    {t(`tasks.add.days.${day}`)}
+                  </ThemedText>
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
         )}
@@ -143,7 +165,12 @@ export default function TaskAdd() {
           disabled={isSubmitting}
         >
           <ThemedText style={styles.submitButtonText}>
-            {isSubmitting ? 'Submitting...' : id ? 'Update' : 'Create'}
+            {isSubmitting 
+              ? t('common.loading')
+              : id 
+                ? t('common.buttons.update')
+                : t('common.buttons.create')
+            }
           </ThemedText>
         </TouchableOpacity>
       </View>
@@ -166,7 +193,7 @@ export default function TaskAdd() {
           {periods.map((period) => (
             <Picker.Item 
               key={period} 
-              label={period} 
+              label={t(`tasks.add.periods.${period.toLowerCase()}`)}
               value={periodValues[period]}
               color={colors.textPrimary}
             />
@@ -178,7 +205,7 @@ export default function TaskAdd() {
         <DateTimePicker
           value={startDate}
           mode="date"
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+          display={Platform.OS === 'ios' ? "spinner" : "default"}
           onChange={handleStartDateChange}
         />
       )}

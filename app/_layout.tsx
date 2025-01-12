@@ -1,80 +1,90 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
+import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { LanguageProvider } from '../contexts/LanguageContext';
 import Toast from 'react-native-toast-message';
-import OneSignal, {
-  NotificationReceivedEvent,
-  OpenedEvent,
-  OSNotification
-} from 'react-native-onesignal';
+import { useFonts } from 'expo-font';
+import { useColorScheme } from 'react-native';
+import { DarkTheme, DefaultTheme, Theme, NavigationContainer } from '@react-navigation/native';
+import { colors } from '../constants/Theme';
+import * as SplashScreen from 'expo-splash-screen';
+import OneSignal from 'react-native-onesignal';
 import { ONESIGNAL_APP_ID } from '../constants/OneSignal';
 
-import { useColorScheme } from '../hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+// Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+const navigationTheme = {
+  light: {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: colors.primary,
+      background: colors.light,
+      card: colors.white,
+      text: colors.textPrimary,
+      border: colors.secondary,
+      notification: colors.primary,
+    },
+  },
+  dark: {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme.colors,
+      primary: colors.primary,
+      background: colors.dark,
+      card: colors.secondary,
+      text: colors.white,
+      border: colors.secondary,
+      notification: colors.primary,
+    },
+  },
+};
+
+export default function Layout() {
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    'SpaceMono': require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
+  const colorScheme = useColorScheme();
+
   useEffect(() => {
-    const initializeOneSignal = () => {
-      // Initialize OneSignal
-      OneSignal.setLogLevel(6, 0);
-      OneSignal.setAppId(ONESIGNAL_APP_ID);
-
-      // Handle notification received when app is in foreground
-      OneSignal.setNotificationWillShowInForegroundHandler((event: NotificationReceivedEvent) => {
-        const notification = event.getNotification();
-        
-        Toast.show({
-          type: 'info',
-          text1: notification.title || 'New Notification',
-          text2: notification.body || '',
-          position: 'top',
-          visibilityTime: 3000,
-          autoHide: true,
-          topOffset: 30
-        });
-
-        // Complete with notification to show it
-        event.complete(notification);
+    // Initialize OneSignal
+    OneSignal.setAppId(ONESIGNAL_APP_ID);
+    OneSignal.setNotificationWillShowInForegroundHandler(notificationReceivedEvent => {
+      const notification = notificationReceivedEvent.getNotification();
+      
+      // Show Toast notification
+      Toast.show({
+        type: 'info',
+        text1: notification.title || 'New Notification',
+        text2: notification.body || '',
+        position: 'top',
+        visibilityTime: 4000,
+        autoHide: true,
+        topOffset: 30,
+        onPress: () => {
+          // Handle notification tap if needed
+          notificationReceivedEvent.complete(notification);
+        }
       });
 
-      // Handle notification opened
-      OneSignal.setNotificationOpenedHandler((event: OpenedEvent) => {
-        console.log('OneSignal: notification opened:', event);
-      });
+      // Complete the notification
+      notificationReceivedEvent.complete(notification);
+    });
 
-      // Request push notification permission
-      OneSignal.promptForPushNotificationsWithUserResponse(response => {
-        console.log('OneSignal: permission response:', response);
-      });
-    };
+    OneSignal.setNotificationOpenedHandler(notification => {
+      console.log("OneSignal: notification opened:", notification);
+    });
 
+    OneSignal.promptForPushNotificationsWithUserResponse(response => {
+      console.log("OneSignal: user response:", response);
+    });
+  }, []);
+
+  useEffect(() => {
     if (loaded) {
+      // Hide splash screen once fonts are loaded
       SplashScreen.hideAsync();
-      try {
-        initializeOneSignal();
-      } catch (error) {
-        console.error('Failed to initialize OneSignal:', error);
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2: 'Failed to initialize notifications',
-          position: 'top',
-          visibilityTime: 3000,
-          autoHide: true,
-          topOffset: 30
-        });
-      }
     }
   }, [loaded]);
 
@@ -83,27 +93,16 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'light' ? DefaultTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerBackTitle: '', headerShown: false }} />
-        <Stack.Screen name="tasks/calendar" options={{ headerBackTitleVisible: false, title: 'Calendar', headerShown: true }} />
-        <Stack.Screen name="dashboard" options={{ headerBackTitle: '', headerShown: false }} />
-        <Stack.Screen name="tasks/index" options={{ headerBackTitleVisible: false, title: 'Tasks', headerShown: true }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="tasks/view" options={{ headerBackTitleVisible: false ,title:'Task Details',headerShown: true }} />
-        <Stack.Screen name="tasks/add" options={{ headerBackTitleVisible: false ,headerBackTitle:'',headerShown: true, title: 'Add Task' }} />
-        <Stack.Screen name="schedules/add" options={{ headerShown: true, title: 'Assign Task to Schedule' }} />
-        <Stack.Screen name="schedules/view" options={{  title: 'View Schedule Task' }} />
-
-        <Stack.Screen name="profile" options={{ headerShown: false }} />
-        <Stack.Screen 
-          name="(auth)" 
-          options={{ headerShown: false }} 
-        />
-        <Stack.Screen name="+not-found" options={{headerBackTitleVisible: false , title: 'Oops!' }} />
-      </Stack>
-      <StatusBar style="auto" />
-      <Toast />
-    </ThemeProvider>
+    <LanguageProvider>
+      <NavigationContainer theme={navigationTheme[colorScheme ?? 'light']}>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="dashboard" options={{ headerShown: false }} />
+          <Stack.Screen name="tasks" options={{ headerShown: false }} />
+          <Stack.Screen name="schedules" options={{ headerShown: false }} />
+        </Stack>
+        <Toast />
+      </NavigationContainer>
+    </LanguageProvider>
   );
 }
