@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { ScrollView, View, Text, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
 import { ThemedView } from '../components/ThemedView';
 import { Ionicons } from '@expo/vector-icons';
 import { dashboardTheme as styles, colors } from '../constants/Theme';
 import { Footer } from '../components/Footer';
 import CircularProgress from 'react-native-circular-progress-indicator';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_ENDPOINTS } from '../constants/api';
 import { router } from 'expo-router';
 import { Schedule } from '../types/Schedule';
 import { TaskItem } from '../components/TaskItem';
+import { useDashboard } from '../hooks/dashboardHooks';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -21,89 +20,15 @@ const EmptyState = ({ message }: { message: string }) => (
 );
 
 export default function Dashboard() {
-  const [userName, setUserName] = useState('User');
-  const [schedules, setSchedules] = useState<Schedule[]>([]);
-  const [firstInProgressSchedule, setFirstInProgressSchedule] = useState<Schedule | null>(null);
-  const [recentCompletedSchedule, setRecentCompletedSchedule] = useState<Schedule | null>(null);
-  const [progressPercentage, setProgressPercentage] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const getUserInfo = async () => {
-      try {
-        const userInfoString = await AsyncStorage.getItem('userInfo');
-        if (userInfoString) {
-          const userInfo = JSON.parse(userInfoString);
-          const fullName = [userInfo.first_name, userInfo.last_name]
-            .filter(Boolean)
-            .join(' ');
-          setUserName(fullName || 'User');
-        }
-      } catch (error) {
-        console.error('Error fetching user info:', error);
-      }
-    };
-
-    getUserInfo();
-    fetchTodaySchedules();
-  }, []);
-
-  const fetchTodaySchedules = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      const token = await AsyncStorage.getItem('access_token');
-      const today = new Date().toISOString().split('T')[0];
-      
-      const response = await fetch(
-        `${API_ENDPOINTS.SCHEDULE}?fields=*,task.*&filter[day][_eq]=${today}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      
-      if (!response.ok) throw new Error('Failed to fetch schedules');
-      
-      const data = await response.json();
-      const todaySchedules = (data.data || []).map((item: any) => Schedule.fromAPI(item));
-      setSchedules(todaySchedules);
-
-      // Find first in-progress schedule
-      const inProgressSchedule = todaySchedules.find((schedule: Schedule) => schedule.status === 'In-progress');
-      setFirstInProgressSchedule(inProgressSchedule || null);
-
-      // Find most recent completed schedule
-      const completedSchedules = todaySchedules.filter((schedule: Schedule) => schedule.status === 'Done');
-      const mostRecentCompleted = completedSchedules.sort((a: Schedule, b: Schedule) => {
-        const dateA = a.task.date_updated ? new Date(a.task.date_updated).getTime() : 0;
-        const dateB = b.task.date_updated ? new Date(b.task.date_updated).getTime() : 0;
-        return dateB - dateA;
-      })[0];
-      setRecentCompletedSchedule(mostRecentCompleted || null);
-
-      // Calculate progress percentage
-      const totalSchedules = todaySchedules.length;
-      const activeSchedules = todaySchedules.filter((schedule: Schedule) => 
-        ['Done', 'Cancelled'].includes(schedule.status)
-      ).length;
-      
-      const percentage = totalSchedules > 0 
-        ? Math.round((activeSchedules / totalSchedules) * 100)
-        : 0;
-      
-      setProgressPercentage(percentage);
-    } catch (error) {
-      console.error('Error fetching today schedules:', error);
-      setError('Failed to load schedules. Please try again later.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    userName,
+    schedules,
+    firstInProgressSchedule,
+    recentCompletedSchedule,
+    progressPercentage,
+    isLoading,
+    error
+  } = useDashboard();
 
   const renderTaskContent = () => {
     if (isLoading) {
