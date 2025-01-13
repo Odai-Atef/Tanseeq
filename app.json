@@ -2,7 +2,7 @@
   "expo": {
     "name": "Tanseeq",
     "slug": "Tanseeq",
-    "version": "1.0.3",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "tanseeq",
@@ -10,7 +10,11 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "pro.tanseeq.app"
+      "bundleIdentifier": "pro.tanseeq.app",
+      "usesAppleSignIn": true,
+      "entitlements": {
+        "com.apple.developer.applesignin": ["Default"]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -26,6 +30,9 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-apple-authentication"
+      ],
       [
         "expo-splash-screen",
         {
