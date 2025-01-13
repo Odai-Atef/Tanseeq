@@ -1,15 +1,9 @@
 import { StyleSheet } from 'react-native';
 import { colors } from './Colors';
+import { baseTheme } from './baseTheme';
 
 export const dashboardTheme = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
+  ...baseTheme,
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -18,16 +12,14 @@ export const dashboardTheme = StyleSheet.create({
     backgroundColor: colors.white,
   },
   greeting: {
+    ...baseTheme.headerTitle,
     fontSize: 20,
-    lineHeight: 28,
-    fontWeight: '700',
     color: colors.textPrimary,
   },
   subGreeting: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: colors.textSecondary,
+    ...baseTheme.subtitle,
     marginTop: 4,
+    marginBottom: 0,
   },
   progressSection: {
     flexDirection: 'row',
@@ -50,15 +42,15 @@ export const dashboardTheme = StyleSheet.create({
     justifyContent: 'center',
   },
   progressTitle: {
+    ...baseTheme.headerTitle,
     color: colors.white,
     fontSize: 16,
-    lineHeight: 24,
-    fontWeight: '700',
   },
   progressSubtext: {
+    ...baseTheme.subtitle,
     color: colors.white,
     fontSize: 12,
-    lineHeight: 20,
+    marginBottom: 0,
     marginTop: 4,
   },
   sectionHeader: {
@@ -68,19 +60,18 @@ export const dashboardTheme = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: {
+    ...baseTheme.headerTitle,
     fontSize: 18,
-    lineHeight: 28,
-    fontWeight: '700',
     color: colors.textPrimary,
   },
   viewAll: {
+    ...baseTheme.subtitle,
     fontSize: 12,
     lineHeight: 20,
-    color: colors.textSecondary,
+    marginBottom: 0,
   },
   taskItem: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
+    ...baseTheme.inputContainer,
     padding: 16,
     marginBottom: 16,
   },
@@ -91,15 +82,13 @@ export const dashboardTheme = StyleSheet.create({
     marginBottom: 8,
   },
   taskTitle: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: '700',
+    ...baseTheme.headerTitle,
     color: colors.textPrimary,
   },
   taskDescription: {
+    ...baseTheme.subtitle,
     fontSize: 12,
     lineHeight: 20,
-    color: colors.textSecondary,
     marginBottom: 12,
   },
   taskFooter: {
@@ -108,9 +97,10 @@ export const dashboardTheme = StyleSheet.create({
     alignItems: 'center',
   },
   taskTime: {
+    ...baseTheme.subtitle,
     fontSize: 11,
     lineHeight: 16,
-    color: colors.textSecondary,
+    marginBottom: 0,
   },
   statusBadge: {
     paddingHorizontal: 8,
@@ -118,17 +108,14 @@ export const dashboardTheme = StyleSheet.create({
     borderRadius: 4,
   },
   statusText: {
+    ...baseTheme.subtitle,
     fontSize: 11,
     lineHeight: 16,
+    marginBottom: 0,
     textTransform: 'capitalize',
   },
   emptyState: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: colors.white,
-    borderRadius: 12,
+    ...baseTheme.errorContainer,
     marginTop: 16,
   },
   emptyStateIcon: {
@@ -136,24 +123,6 @@ export const dashboardTheme = StyleSheet.create({
     color: colors.textSecondary,
   },
   emptyStateText: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    marginTop: 16,
-  },
-  loadingText: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: colors.textSecondary,
-    marginTop: 12,
+    ...baseTheme.errorText,
   },
 });

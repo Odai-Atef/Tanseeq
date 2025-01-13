@@ -1,150 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, Platform, ActivityIndicator, Alert, Modal } from 'react-native';
-import { useRouter } from 'expo-router';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import React from 'react';
+import { View, ScrollView, TouchableOpacity, Platform, ActivityIndicator, Modal } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
 import { colors, scheduleTheme as styles, baseTheme } from '../../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
-import { API_ENDPOINTS } from '../../constants/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast from 'react-native-toast-message';
-
-interface Task {
-  id: number;
-  name: string;
-}
-
-interface ApiResponse {
-  data: Task[];
-}
+import { useScheduleAdd } from '../../hooks/schedules/addHook';
+import { useTranslation } from '../../contexts/LanguageContext';
 
 export default function ScheduleAdd() {
-  const router = useRouter();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  
-  const [date, setDate] = useState(today);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
+  const {
+    date,
+    showDatePicker,
+    tasks,
+    loading,
+    error,
+    selectedTaskId,
+    setShowDatePicker,
+    setSelectedTaskId,
+    handleDateChange,
+    handleSubmit
+  } = useScheduleAdd();
 
-  const showError = (message: string) => {
-    Toast.show({
-      type: 'error',
-      text1: 'Error',
-      text2: message,
-      position: 'top',
-      visibilityTime: 3000,
-      autoHide: true,
-      topOffset: 30
-    });
-  };
-
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  const fetchTasks = async () => {
-    try {
-      const token = await AsyncStorage.getItem('access_token');
-      if (!token) {
-        throw new Error('No access token found');
-      }
-
-      const response = await fetch(
-        `${API_ENDPOINTS.TASKS}?fields=id,name`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch tasks');
-      }
-
-      const result: ApiResponse = await response.json();
-      if (!result.data || result.data.length === 0) {
-        setError('No tasks available. Please create a task first.');
-      } else {
-        setTasks(result.data);
-      }
-    } catch (error) {
-      const errorMessage = 'Failed to load tasks. Please try again.';
-      setError(errorMessage);
-      showError(errorMessage);
-      console.error('Error fetching tasks:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
-    if (Platform.OS === 'android') {
-      setShowDatePicker(false);
-    }
-    
-    if (selectedDate) {
-      const newDate = new Date(selectedDate);
-      newDate.setHours(0, 0, 0, 0);
-      
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      if (newDate < today) {
-        Alert.alert('Invalid Date', 'Please select today or a future date');
-        return;
-      }
-      
-      setDate(newDate);
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!selectedTaskId) {
-      Alert.alert('Error', 'Please select a task');
-      return;
-    }
-
-    try {
-      const token = await AsyncStorage.getItem('access_token');
-      if (!token) throw new Error('No access token found');
-
-      const response = await fetch(API_ENDPOINTS.SCHEDULE, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          task: selectedTaskId,
-          day: date.toISOString(),
-        }),
-      });
-
-      if (!response.ok) throw new Error('Failed to create schedule');
-
-      const data = await response.json();
-      Toast.show({
-        type: 'success',
-        text1: 'Success',
-        text2: 'Schedule created successfully',
-        position: 'top',
-        visibilityTime: 2000,
-        autoHide: true,
-        topOffset: 30
-      });
-      router.back();
-    } catch (error) {
-      showError('Failed to create schedule. Please try again.');
-      console.error('Error creating schedule:', error);
-    }
-  };
+  const { t, isRTL } = useTranslation();
 
   const renderDatePicker = () => {
     if (!showDatePicker) return null;
@@ -155,7 +33,7 @@ export default function ScheduleAdd() {
         mode="date"
         display={Platform.OS === 'ios' ? "spinner" : "default"}
         onChange={handleDateChange}
-        minimumDate={today}
+        minimumDate={new Date()}
         textColor={colors.textPrimary}
         themeVariant="dark"
       />
@@ -181,15 +59,19 @@ export default function ScheduleAdd() {
               padding: 16,
             }}>
               <View style={{
-                flexDirection: 'row',
+                flexDirection: isRTL ? 'row-reverse' : 'row',
                 justifyContent: 'space-between',
                 marginBottom: 16,
               }}>
                 <TouchableOpacity onPress={() => setShowDatePicker(false)}>
-                  <ThemedText style={{ color: colors.textSecondary }}>Cancel</ThemedText>
+                  <ThemedText style={{ color: colors.textSecondary }}>
+                    {t('common.buttons.cancel')}
+                  </ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setShowDatePicker(false)}>
-                  <ThemedText style={{ color: colors.primary }}>Done</ThemedText>
+                  <ThemedText style={{ color: colors.primary }}>
+                    {t('common.buttons.done')}
+                  </ThemedText>
                 </TouchableOpacity>
               </View>
               {pickerElement}
@@ -205,20 +87,22 @@ export default function ScheduleAdd() {
   return (
     <ThemedView style={styles.container}>
       <ScrollView style={styles.content}>
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Date</ThemedText>
+        <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+          <ThemedText style={[styles.sectionTitle, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
+            {t('schedules.add.selectDate')}
+          </ThemedText>
           <TouchableOpacity
             onPress={() => setShowDatePicker(true)}
-            style={styles.dateButton}
+            style={[styles.dateButton, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}
           >
             <Ionicons 
               name="calendar-outline" 
               size={20} 
               color={colors.textSecondary} 
-              style={styles.dateIcon} 
+              style={[styles.dateIcon, isRTL ? { marginLeft: 8 } : { marginRight: 8 }]} 
             />
-            <ThemedText style={styles.dateText}>
-              {date.toLocaleDateString('en-US', {
+            <ThemedText style={[styles.dateText, { textAlign: isRTL ? 'right' : 'left' }]}>
+              {date.toLocaleDateString(isRTL ? 'ar-SA' : 'en-US', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -229,14 +113,18 @@ export default function ScheduleAdd() {
         </View>
 
         <View>
-          <ThemedText style={styles.sectionTitle}>Select Task</ThemedText>
+          <ThemedText style={[styles.sectionTitle, { textAlign: isRTL ? 'right' : 'left' }]}>
+            {t('schedules.add.selectTask')}
+          </ThemedText>
           {loading ? (
             <View style={baseTheme.loadingContainer}>
               <ActivityIndicator size="large" color={colors.primary} />
             </View>
           ) : error ? (
             <View style={baseTheme.errorContainer}>
-              <ThemedText style={baseTheme.errorText}>{error}</ThemedText>
+              <ThemedText style={[baseTheme.errorText, { textAlign: isRTL ? 'right' : 'left' }]}>
+                {error}
+              </ThemedText>
             </View>
           ) : (
             <View style={styles.taskList}>
@@ -249,7 +137,9 @@ export default function ScheduleAdd() {
                   ]}
                   onPress={() => setSelectedTaskId(task.id)}
                 >
-                  <ThemedText style={styles.taskItemText}>{task.name}</ThemedText>
+                  <ThemedText style={[styles.taskItemText, { textAlign: isRTL ? 'right' : 'left' }]}>
+                    {task.name}
+                  </ThemedText>
                 </TouchableOpacity>
               ))}
             </View>
@@ -266,7 +156,9 @@ export default function ScheduleAdd() {
           onPress={handleSubmit}
           disabled={loading || !!error || !selectedTaskId}
         >
-          <ThemedText style={baseTheme.submitButtonText}>Create Schedule</ThemedText>
+          <ThemedText style={baseTheme.submitButtonText}>
+            {t('schedules.add.createSchedule')}
+          </ThemedText>
         </TouchableOpacity>
       </View>
 
