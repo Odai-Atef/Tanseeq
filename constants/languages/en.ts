@@ -32,7 +32,8 @@ export const en = {
       done: 'Done',
       back: 'Back',
       next: 'Next',
-      viewAll: 'View All'
+      viewAll: 'View All',
+      confirm: 'Yes'
     }
   },
   auth: {
@@ -83,6 +84,15 @@ export const en = {
         quarterly: 'Every 3 Months',
         biAnnually: 'Every 6 Months',
         annually: 'Annually'
+      },
+      days: {
+        sunday: 'Sun',
+        monday: 'Mon',
+        tuesday: 'Tue',
+        wednesday: 'Wed',
+        thursday: 'Thu',
+        friday: 'Fri',
+        saturday: 'Sat'
       }
     },
     view: {
@@ -93,7 +103,12 @@ export const en = {
     },
     calendar: {
       title: 'Calendar',
-      noEvents: 'No events for selected date'
+      noEvents: 'No events for selected date',
+      taskName: 'Task Name',
+      time: 'Time',
+      inProgress: 'In Progress',
+      done: 'Done',
+      notStarted: 'Not Started'
     }
   },
   schedules: {
@@ -109,7 +124,40 @@ export const en = {
       title: 'Schedule Details',
       task: 'Task',
       date: 'Date',
-      status: 'Status'
+      status: 'Status',
+      day: 'Day',
+      time: 'Time',
+      notFound: 'Schedule not found',
+      actions: {
+        cancel: 'Cancel Schedule',
+        start: 'Start this task',
+        close: 'Close the task',
+        edit: 'Edit Schedule'
+      },
+      confirmations: {
+        cancel: {
+          title: 'Cancel Schedule',
+          message: 'Are you sure you want to cancel this schedule?'
+        },
+        start: {
+          title: 'Start Task',
+          message: 'Are you sure you want to start this task?'
+        },
+        close: {
+          title: 'Close Task',
+          message: 'Are you sure you want to close this task?'
+        }
+      },
+      success: {
+        cancelled: 'Schedule cancelled successfully',
+        started: 'Task started successfully',
+        closed: 'Task closed successfully'
+      },
+      error: {
+        cancel: 'Failed to cancel schedule. Please try again.',
+        start: 'Failed to start task. Please try again.',
+        close: 'Failed to close task. Please try again.'
+      }
     }
   },
   footer: {

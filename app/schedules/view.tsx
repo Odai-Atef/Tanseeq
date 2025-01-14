@@ -1,260 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { View, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import React from 'react';
+import { View, ScrollView, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
 import { colors, taskTheme as styles } from '../../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
-import { API_ENDPOINTS } from '../../constants/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast from 'react-native-toast-message';
-import { Schedule } from '../../types/Schedule';
-import { ADMIN_ROLE } from '../../constants/roles';
-
-interface ApiResponse {
-  data: any[];
-}
+import { useScheduleView } from '../../hooks/schedules/viewHook';
+import { useTranslation } from '../../contexts/LanguageContext';
 
 export default function ScheduleView() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
-  const [schedule, setSchedule] = useState<Schedule | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [userRole, setUserRole] = useState<string | null>(null);
-
-  const showError = (message: string) => {
-    Toast.show({
-      type: 'error',
-      text1: 'Error',
-      text2: message,
-      position: 'top',
-      visibilityTime: 3000,
-      autoHide: true,
-      topOffset: 30
-    });
-  };
-
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const token = await AsyncStorage.getItem('access_token');
-        if (!token) throw new Error('No access token found');
-
-        const response = await fetch(API_ENDPOINTS.USER_INFO, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) throw new Error('Failed to fetch user info');
-
-        const userData = await response.json();
-        setUserRole(userData.data.role);
-      } catch (err) {
-        console.error('Error fetching user info:', err);
-      }
-    };
-
-    fetchUserInfo();
-  }, []);
-
-  useEffect(() => {
-    const fetchSchedule = async () => {
-      try {
-        const token = await AsyncStorage.getItem('access_token');
-        if (!token) {
-          throw new Error('No access token found');
-        }
-
-        const response = await fetch(
-          `${API_ENDPOINTS.SCHEDULE}?fields=*,task.*&filter[id][_eq]=${id}`,
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch schedule');
-        }
-
-        const result: ApiResponse = await response.json();
-        if (result.data && result.data.length > 0) {
-          setSchedule(Schedule.fromAPI(result.data[0]));
-        } else {
-          throw new Error('Schedule not found');
-        }
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load schedule';
-        setError(errorMessage);
-        showError(errorMessage);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (id) {
-      fetchSchedule();
-    }
-  }, [id]);
-
-  const handleCancel = async () => {
-    Alert.alert(
-      "Cancel Schedule",
-      "Are you sure you want to cancel this schedule?",
-      [
-        {
-          text: "No",
-          style: "cancel"
-        },
-        {
-          text: "Yes",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              const token = await AsyncStorage.getItem('access_token');
-              if (!token) throw new Error('No access token found');
-
-              const response = await fetch(`${API_ENDPOINTS.SCHEDULE}/${id}`, {
-                method: 'PATCH',
-                headers: {
-                  'Authorization': `Bearer ${token}`,
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  status: 'Cancelled'
-                })
-              });
-
-              if (!response.ok) throw new Error('Failed to cancel schedule');
-
-              Toast.show({
-                type: 'success',
-                text1: 'Success',
-                text2: 'Schedule cancelled successfully',
-                position: 'top',
-                visibilityTime: 2000,
-                autoHide: true,
-                topOffset: 30
-              });
-
-              router.replace('/schedules');
-            } catch (error) {
-              showError('Failed to cancel schedule. Please try again.');
-              console.error('Error cancelling schedule:', error);
-            }
-          }
-        }
-      ]
-    );
-  };
-
-  const handleStartTask = async () => {
-    Alert.alert(
-      "Start Task",
-      "Are you sure you want to start this task?",
-      [
-        {
-          text: "No",
-          style: "cancel"
-        },
-        {
-          text: "Yes",
-          onPress: async () => {
-            try {
-              const token = await AsyncStorage.getItem('access_token');
-              if (!token) throw new Error('No access token found');
-
-              const response = await fetch(`${API_ENDPOINTS.SCHEDULE}/${id}`, {
-                method: 'PATCH',
-                headers: {
-                  'Authorization': `Bearer ${token}`,
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  status: 'In-progress',
-                  start_at: new Date().toISOString()
-                })
-              });
-
-              if (!response.ok) throw new Error('Failed to start task');
-
-              Toast.show({
-                type: 'success',
-                text1: 'Success',
-                text2: 'Task started successfully',
-                position: 'top',
-                visibilityTime: 2000,
-                autoHide: true,
-                topOffset: 30
-              });
-
-              router.replace('/tasks/calendar');
-            } catch (error) {
-              showError('Failed to start task. Please try again.');
-              console.error('Error starting task:', error);
-            }
-          }
-        }
-      ]
-    );
-  };
-
-  const handleCloseTask = async () => {
-    Alert.alert(
-      "Close Task",
-      "Are you sure you want to close this task?",
-      [
-        {
-          text: "No",
-          style: "cancel"
-        },
-        {
-          text: "Yes",
-          onPress: async () => {
-            try {
-              const token = await AsyncStorage.getItem('access_token');
-              if (!token) throw new Error('No access token found');
-
-              const response = await fetch(`${API_ENDPOINTS.SCHEDULE}/${id}`, {
-                method: 'PATCH',
-                headers: {
-                  'Authorization': `Bearer ${token}`,
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  status: 'Done',
-                  end_at: new Date().toISOString()
-                })
-              });
-
-              if (!response.ok) throw new Error('Failed to close task');
-
-              Toast.show({
-                type: 'success',
-                text1: 'Success',
-                text2: 'Task closed successfully',
-                position: 'top',
-                visibilityTime: 2000,
-                autoHide: true,
-                topOffset: 30
-              });
-
-              router.replace('/tasks/calendar');
-            } catch (error) {
-              showError('Failed to close task. Please try again.');
-              console.error('Error closing task:', error);
-            }
-          }
-        }
-      ]
-    );
-  };
+  const { t } = useTranslation();
+  const {
+    schedule,
+    loading,
+    error,
+    isAdmin,
+    handleCancel,
+    handleStartTask,
+    handleCloseTask
+  } = useScheduleView(id);
 
   if (loading) {
     return (
@@ -270,7 +37,7 @@ export default function ScheduleView() {
     return (
       <ThemedView style={styles.container}>
         <View style={[styles.content, { justifyContent: 'center', alignItems: 'center' }]}>
-          <ThemedText style={{ color: colors.danger }}>{error || 'Schedule not found'}</ThemedText>
+          <ThemedText style={{ color: colors.danger }}>{error || t('schedules.view.notFound')}</ThemedText>
         </View>
       </ThemedView>
     );
@@ -281,15 +48,14 @@ export default function ScheduleView() {
       return null;
     }
     if (schedule.status === 'Not-Started') {
-      if (userRole === ADMIN_ROLE) {
+      if (isAdmin) {
         return (
           <View style={styles.footer}>
             <TouchableOpacity
-              style={[styles.footerButton, styles.footerButtonDanger, { flex: 1 }]}
+            style={[styles.submitButton, styles.footerButtonDanger]}
               onPress={handleCancel}
             >
-              <Ionicons name="close-circle" size={20} color="white" style={styles.footerButtonIcon} />
-              <ThemedText style={styles.footerButtonText}>Cancel Schedule</ThemedText>
+              <ThemedText style={styles.footerButtonText}>{t('schedules.view.actions.cancel')}</ThemedText>
             </TouchableOpacity>
           </View>
         );
@@ -297,26 +63,25 @@ export default function ScheduleView() {
         return (
           <View style={styles.footer}>
             <TouchableOpacity
-              style={[styles.footerButton, styles.footerButtonPrimary, { flex: 1 }]}
+            style={[styles.submitButton, styles.footerButtonPrimary]}
               onPress={handleStartTask}
             >
-              <Ionicons name="play" size={20} color="white" style={styles.footerButtonIcon} />
-              <ThemedText style={styles.footerButtonText}>Start this task</ThemedText>
+              <ThemedText style={styles.footerButtonText}>{t('schedules.view.actions.start')}</ThemedText>
             </TouchableOpacity>
           </View>
         );
       }
     }
 
-    if (schedule.status === 'In-progress' && userRole !== ADMIN_ROLE) {
+    if (schedule.status === 'In-progress' && !isAdmin) {
       return (
         <View style={styles.footer}>
           <TouchableOpacity
-            style={[styles.footerButton, styles.footerButtonPrimary, { flex: 1 }]}
+                       style={[styles.submitButton, styles.footerButtonPrimary]}
+
             onPress={handleCloseTask}
           >
-            <Ionicons name="checkmark-circle" size={20} color="white" style={styles.footerButtonIcon} />
-            <ThemedText style={styles.footerButtonText}>Close the task</ThemedText>
+            <ThemedText style={styles.footerButtonText}>{t('schedules.view.actions.close')}</ThemedText>
           </TouchableOpacity>
         </View>
       );
@@ -332,7 +97,7 @@ export default function ScheduleView() {
           })}
         >
           <Ionicons name="pencil" size={20} color="white" style={styles.footerButtonIcon} />
-          <ThemedText style={styles.footerButtonText}>Edit Schedule</ThemedText>
+          <ThemedText style={styles.footerButtonText}>{t('schedules.view.actions.edit')}</ThemedText>
         </TouchableOpacity>
       </View>
     );
@@ -347,19 +112,19 @@ export default function ScheduleView() {
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.subtitle}>Day</ThemedText>
+          <ThemedText style={styles.subtitle}>{t('schedules.view.day')}</ThemedText>
           <ThemedText style={styles.description}>{schedule.day}</ThemedText>
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.subtitle}>Time</ThemedText>
+          <ThemedText style={styles.subtitle}>{t('schedules.view.time')}</ThemedText>
           <ThemedText style={styles.description}>
             {schedule.getFormattedStartTime()} - {schedule.getFormattedEndTime()}
           </ThemedText>
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.subtitle}>Status</ThemedText>
+          <ThemedText style={styles.subtitle}>{t('schedules.view.status')}</ThemedText>
           <ThemedText style={styles.description}>{schedule.status}</ThemedText>
         </View>
       </ScrollView>

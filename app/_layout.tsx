@@ -100,6 +100,12 @@ export default function Layout() {
           <Stack.Screen name="dashboard" options={{ headerShown: false }} />
           <Stack.Screen name="tasks" options={{ headerShown: false }} />
           <Stack.Screen name="schedules" options={{ headerShown: false }} />
+          <Stack.Screen name="tasks/calendar" options={{ headerBackTitleVisible: false, title: 'Calendar', headerShown: true }} />
+          <Stack.Screen name="tasks/index" options={{ headerBackTitleVisible: false, title: 'Tasks', headerShown: true }} />
+          <Stack.Screen name="tasks/view" options={{ headerBackTitleVisible: false ,title:'Task Details',headerShown: true }} />
+          <Stack.Screen name="tasks/add" options={{ headerBackTitleVisible: false ,headerBackTitle:'',headerShown: true, title: 'Add Task' }} />
+          <Stack.Screen name="schedules/view" options={{ headerBackTitleVisible: false ,headerBackTitle:'',headerShown: true, title: 'Schedule View' }} />
+
         </Stack>
         <Toast />
       </NavigationContainer>

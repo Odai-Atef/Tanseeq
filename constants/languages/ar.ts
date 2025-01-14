@@ -32,7 +32,8 @@ export const ar = {
       done: 'تم',
       back: 'رجوع',
       next: 'التالي',
-      viewAll: 'عرض الكل'
+      viewAll: 'عرض الكل',
+      confirm: 'نعم'
     }
   },
   auth: {
@@ -83,6 +84,15 @@ export const ar = {
         quarterly: 'كل 3 أشهر',
         biAnnually: 'كل 6 أشهر',
         annually: 'سنوياً'
+      },
+      days: {
+        sunday: 'أحد',
+        monday: 'إثن',
+        tuesday: 'ثلا',
+        wednesday: 'أرب',
+        thursday: 'خمي',
+        friday: 'جمع',
+        saturday: 'سبت'
       }
     },
     view: {
@@ -93,7 +103,12 @@ export const ar = {
     },
     calendar: {
       title: 'التقويم',
-      noEvents: 'لا توجد أحداث للتاريخ المحدد'
+      noEvents: 'لا توجد أحداث للتاريخ المحدد',
+      taskName: 'اسم المهمة',
+      time: 'الوقت',
+      inProgress: 'قيد التنفيذ',
+      done: 'مكتمل',
+      notStarted: 'لم يبدأ'
     }
   },
   schedules: {
@@ -109,7 +124,40 @@ export const ar = {
       title: 'تفاصيل الجدول',
       task: 'المهمة',
       date: 'التاريخ',
-      status: 'الحالة'
+      status: 'الحالة',
+      day: 'اليوم',
+      time: 'الوقت',
+      notFound: 'لم يتم العثور على الجدول',
+      actions: {
+        cancel: 'إلغاء الجدول',
+        start: 'بدء هذه المهمة',
+        close: 'إنهاء المهمة',
+        edit: 'تعديل الجدول'
+      },
+      confirmations: {
+        cancel: {
+          title: 'إلغاء الجدول',
+          message: 'هل أنت متأكد من إلغاء هذا الجدول؟'
+        },
+        start: {
+          title: 'بدء المهمة',
+          message: 'هل أنت متأكد من بدء هذه المهمة؟'
+        },
+        close: {
+          title: 'إنهاء المهمة',
+          message: 'هل أنت متأكد من إنهاء هذه المهمة؟'
+        }
+      },
+      success: {
+        cancelled: 'تم إلغاء الجدول بنجاح',
+        started: 'تم بدء المهمة بنجاح',
+        closed: 'تم إنهاء المهمة بنجاح'
+      },
+      error: {
+        cancel: 'فشل إلغاء الجدول. يرجى المحاولة مرة أخرى.',
+        start: 'فشل بدء المهمة. يرجى المحاولة مرة أخرى.',
+        close: 'فشل إنهاء المهمة. يرجى المحاولة مرة أخرى.'
+      }
     }
   },
   footer: {
