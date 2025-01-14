@@ -34,8 +34,8 @@ export default function JoinHome() {
   }
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.content}>
+    <ThemedView style={baseTheme.container}>
+      <View style={baseTheme.content}>
         <View style={styles.section}>
           <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left' }]}>
             {t('home.join.homeId')}
@@ -75,13 +75,22 @@ export default function JoinHome() {
           </ThemedText>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[baseTheme.submitButton, isSubmitting && baseTheme.submitButtonDisabled]}
+      </View>
+
+      <View style={styles.footer}>
+        <TouchableOpacity 
+          style={[
+            styles.submitButton,
+            isSubmitting && { opacity: 0.5 }
+          ]} 
           onPress={handleSubmit}
           disabled={isSubmitting}
         >
-          <ThemedText style={baseTheme.submitButtonText}>
-            {isSubmitting ? t('common.loading') : t('home.join.submit')}
+          <ThemedText style={styles.submitButtonText}>
+            {isSubmitting 
+              ? t('common.loading')
+              : t('home.join.submit')
+            }
           </ThemedText>
         </TouchableOpacity>
       </View>
@@ -90,13 +99,23 @@ export default function JoinHome() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
+  footer: {
     padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: colors.line,
   },
+  submitButton: {
+    backgroundColor: colors.primary,
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+ 
   section: {
     marginBottom: 20,
   },
