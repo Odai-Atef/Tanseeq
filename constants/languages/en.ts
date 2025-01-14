@@ -165,5 +165,22 @@ export const en = {
     tasks: 'Tasks',
     schedules: 'Schedules',
     profile: 'Profile'
+  },
+  home: {
+    invite: {
+      title: 'Home Invite',
+      homeId: 'Home ID',
+      homePassword: 'Home Password',
+      instruction: 'Show the QR code or share the home ID and password to invite the housemaid to join'
+    },
+    join: {
+      title: 'Join Home',
+      homeId: 'Home ID',
+      homePassword: 'Home Password',
+      homeIdPlaceholder: 'Enter 6-digit Home ID',
+      homePasswordPlaceholder: 'Enter 6-digit Home Password',
+      scanQrCode: 'Scan QR Code',
+      submit: 'Join Home'
+    }
   }
 };

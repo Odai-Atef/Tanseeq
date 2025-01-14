@@ -108,6 +108,11 @@ export function Footer({ activeTab }: FooterProps) {
                   </View>
                 </TouchableOpacity>
 
+
+               
+
+
+
                 <TouchableOpacity 
                   style={styles.modalOption}
                   onPress={() => {
@@ -119,6 +124,36 @@ export function Footer({ activeTab }: FooterProps) {
                   <View style={styles.optionText}>
                     <View style={styles.textContainer}>
                       <Text style={styles.optionTitle}>Schedule current task</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity 
+                  style={styles.modalOption}
+                  onPress={() => {
+                    setShowModal(false);
+                    router.push('/home/join');
+                  }}
+                >
+                  <Ionicons name="woman-outline" size={20} color={colors.primary} />
+                  <View style={styles.optionText}>
+                    <View style={styles.textContainer}>
+                      <Text style={styles.optionTitle}>Join a Home as Housemaid</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity 
+                  style={styles.modalOption}
+                  onPress={() => {
+                    setShowModal(false);
+                    router.push('/home/invite');
+                  }}
+                >
+                  <Ionicons name="person-add-outline" size={20} color={colors.primary} />
+                  <View style={styles.optionText}>
+                    <View style={styles.textContainer}>
+                      <Text style={styles.optionTitle}>Invite Housemaid</Text>
                     </View>
                   </View>
                 </TouchableOpacity>

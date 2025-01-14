@@ -105,6 +105,8 @@ export default function Layout() {
           <Stack.Screen name="tasks/view" options={{ headerBackTitleVisible: false ,title:'Task Details',headerShown: true }} />
           <Stack.Screen name="tasks/add" options={{ headerBackTitleVisible: false ,headerBackTitle:'',headerShown: true, title: 'Add Task' }} />
           <Stack.Screen name="schedules/view" options={{ headerBackTitleVisible: false ,headerBackTitle:'',headerShown: true, title: 'Schedule View' }} />
+          <Stack.Screen name="home/invite" options={{ headerBackTitleVisible: false ,headerBackTitle:'',headerShown: true, title: 'Invite Housemaid' }} />
+          <Stack.Screen name="home/join" options={{ headerBackTitleVisible: false ,headerBackTitle:'',headerShown: true, title: 'Join House' }} />
 
         </Stack>
         <Toast />
