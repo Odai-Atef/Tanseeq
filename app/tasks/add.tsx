@@ -12,6 +12,29 @@ import { useTranslation } from '../../contexts/LanguageContext';
 
 const DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
+const getPeriodKey = (period: string): string => {
+  switch (period) {
+    case 'Manual Assignment (No Schedule)':
+      return 'manual';
+    case 'Every Day':
+      return 'daily';
+    case 'Weekly':
+      return 'weekly';
+    case 'Bi Weekly':
+      return 'biWeekly';
+    case 'Monthly':
+      return 'monthly';
+    case 'Every 3 Months':
+      return 'quarterly';
+    case 'Every 6 Months':
+      return 'biAnnually';
+    case 'Annually':
+      return 'annually';
+    default:
+      return period.toLowerCase();
+  }
+};
+
 export default function TaskAdd() {
   const params = useLocalSearchParams();
   const id = params.id as string | undefined;
@@ -120,7 +143,7 @@ export default function TaskAdd() {
           >
             <ThemedText style={[{ color: colors.textPrimary, fontSize: 16, textAlign: isRTL ? 'right' : 'left' }]}>
               {periods.find(p => periodValues[p] === task.repeat_monthly) 
-                ? t(`tasks.add.periods.${periods.find(p => periodValues[p] === task.repeat_monthly)?.toLowerCase()}`)
+                ? t(`tasks.add.periods.${getPeriodKey(periods.find(p => periodValues[p] === task.repeat_monthly) || '')}`)
                 : t('tasks.add.schedule')}
             </ThemedText>
           </TouchableOpacity>
@@ -193,7 +216,7 @@ export default function TaskAdd() {
           {periods.map((period) => (
             <Picker.Item 
               key={period} 
-              label={t(`tasks.add.periods.${period.toLowerCase()}`)}
+              label={t(`tasks.add.periods.${getPeriodKey(period)}`)}
               value={periodValues[period]}
               color={colors.textPrimary}
             />

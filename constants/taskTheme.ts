@@ -72,6 +72,7 @@ export const taskTheme = StyleSheet.create({
   },
   assignText: {
     ...baseTheme.subtitle,
+    fontWeight:"600",
     fontSize: 14,
     marginBottom: 0,
   },

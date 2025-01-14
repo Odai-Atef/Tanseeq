@@ -36,7 +36,7 @@ export const baseTheme = StyleSheet.create({
     borderColor: colors.line,
     borderRadius: 12,
     marginBottom: 16,
-    paddingHorizontal: 12,
+    paddingHorizontal: 0,
   },
   input: {
     flex: 1,
