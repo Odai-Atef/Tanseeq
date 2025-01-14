@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
-import { colors, baseTheme } from '../../constants/Theme';
+import { colors, baseTheme  as styles } from '../../constants/Theme';
 import { useJoinHome } from '../../hooks/home/joinHook';
 import { useTranslation } from '../../contexts/LanguageContext';
 
@@ -34,14 +34,14 @@ export default function JoinHome() {
   }
 
   return (
-    <ThemedView style={baseTheme.container}>
-      <View style={baseTheme.content}>
-        <View style={styles.section}>
-          <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left' }]}>
+    <ThemedView style={styles.container}>
+      <ScrollView style={styles.content}>
+        <View style={[stylesC.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+          <ThemedText style={[styles.headerTitle, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
             {t('home.join.homeId')}
           </ThemedText>
           <TextInput
-            style={[baseTheme.input, { textAlign: isRTL ? 'right' : 'left' }]}
+            style={[styles.input, { textAlign: isRTL ? 'right' : 'left' }]}
             placeholder={t('home.join.homeIdPlaceholder')}
             placeholderTextColor={colors.textSecondary}
             value={homeId}
@@ -51,12 +51,12 @@ export default function JoinHome() {
           />
         </View>
 
-        <View style={styles.section}>
-          <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left' }]}>
+        <View style={[stylesC.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+          <ThemedText style={[styles.headerTitle, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
             {t('home.join.homePassword')}
           </ThemedText>
           <TextInput
-            style={[baseTheme.input, { textAlign: isRTL ? 'right' : 'left' }]}
+            style={[styles.input, { textAlign: isRTL ? 'right' : 'left' }]}
             placeholder={t('home.join.homePasswordPlaceholder')}
             placeholderTextColor={colors.textSecondary}
             value={homePassword}
@@ -67,21 +67,20 @@ export default function JoinHome() {
         </View>
 
         <TouchableOpacity
-          style={styles.scanButton}
+          style={stylesC.scanButton}
           onPress={requestCameraPermission}
         >
-          <ThemedText style={styles.scanButtonText}>
+          <ThemedText style={stylesC.scanButtonText}>
             {t('home.join.scanQrCode')}
           </ThemedText>
         </TouchableOpacity>
+      </ScrollView>
 
-      </View>
-
-      <View style={styles.footer}>
+      <View style={stylesC.footer}>
         <TouchableOpacity 
           style={[
             styles.submitButton,
-            isSubmitting && { opacity: 0.5 }
+            isSubmitting && styles.submitButtonDisabled
           ]} 
           onPress={handleSubmit}
           disabled={isSubmitting}
@@ -98,24 +97,8 @@ export default function JoinHome() {
   );
 }
 
-const styles = StyleSheet.create({
-  footer: {
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: colors.line,
-  },
-  submitButton: {
-    backgroundColor: colors.primary,
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  submitButtonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: '600',
-  },
- 
+const stylesC = StyleSheet.create({
+
   section: {
     marginBottom: 20,
   },
@@ -138,5 +121,10 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: 16,
     fontWeight: '500',
+  },
+  footer: {
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: colors.line,
   },
 });
