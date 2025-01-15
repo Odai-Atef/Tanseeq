@@ -8,4 +8,6 @@ export const API_ENDPOINTS = {
     SCHEDULE: `${API_HOST}/items/schedule`,
     TASKS: `${API_HOST}/items/tasks`,
     FILES: `${API_HOST}/files`,
+    HOME: `${API_HOST}/items/properties`,
+    PROPERTY_USERS: `${API_HOST}/items/property_users`,
 };

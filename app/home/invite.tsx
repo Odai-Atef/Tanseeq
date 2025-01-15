@@ -1,25 +1,27 @@
-import React, { useMemo } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
 import { colors } from '../../constants/Theme';
 import { useTranslation } from '../../contexts/LanguageContext';
+import { useInviteHome } from '../../hooks/home/inviteHook';
 
 export default function HomeInvite() {
   const { t } = useTranslation();
+  const { homeId, homePassword, qrData, isSubmitting, createOrUpdateHome } = useInviteHome();
 
-  // Generate random 6-digit numbers for home ID and password
-  // Using useMemo to keep values stable across re-renders
-  const { homeId, homePassword, qrData } = useMemo(() => {
-    const id = Math.floor(100000 + Math.random() * 900000).toString();
-    const password = Math.floor(100000 + Math.random() * 900000).toString();
-    return {
-      homeId: id,
-      homePassword: password,
-      qrData: `${id},${password}`
-    };
+  useEffect(() => {
+    createOrUpdateHome();
   }, []);
+
+  if (isSubmitting) {
+    return (
+      <ThemedView style={[styles.container, styles.centered]}>
+        <ActivityIndicator size="large" />
+      </ThemedView>
+    );
+  }
 
   return (
     <ThemedView style={styles.container}>
@@ -52,6 +54,10 @@ export default function HomeInvite() {
 }
 
 const styles = StyleSheet.create({
+  centered: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   instruction: {
     textAlign: 'center',
     fontSize: 16,

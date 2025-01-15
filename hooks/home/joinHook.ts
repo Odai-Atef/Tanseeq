@@ -84,8 +84,14 @@ export const useJoinHome = () => {
 
     setIsSubmitting(true);
     try {
+      var user;
       const token = await AsyncStorage.getItem('access_token');
-      if (!token) {
+      const userInfoStr = await AsyncStorage.getItem('userInfo');
+      if (userInfoStr) {
+         user =JSON.parse(userInfoStr);
+      }
+      const userId=user.id;
+      if (!token || !userId) {
         Toast.show({
           type: 'error',
           text1: 'Authentication Required',
@@ -98,19 +104,59 @@ export const useJoinHome = () => {
         return;
       }
 
-      const response = await fetch(`${API_ENDPOINTS.HOMES}/join`, {
+      // First get the home by auth credentials
+      const getHomeResponse = await fetch(`${API_ENDPOINTS.HOME}?filter[auth_id][_eq]=${homeId}&filter[auth_token][_eq]=${homePassword}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      });
+
+      const homeData = await getHomeResponse.json();
+      
+      if (!getHomeResponse.ok || !homeData.data?.[0]?.id) {
+        Toast.show({
+          type: 'error',
+          text1: 'Authentication Failed',
+          text2: 'Invalid home ID or password',
+          position: 'top',
+          visibilityTime: 3000,
+          autoHide: true,
+          topOffset: 30
+        });
+        return;
+      }
+
+      const propertyId = homeData.data[0].id;
+
+      // Create property_users entry
+      const joinResponse = await fetch(API_ENDPOINTS.PROPERTY_USERS, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          homeId,
-          password: homePassword
+          user: userId,
+          property: propertyId
         })
       });
 
-      if (!response.ok) {
+      if (!joinResponse.ok) {
+        const errorData = await joinResponse.json();
+        if (errorData.errors?.[0]?.extensions?.code === 'RECORD_NOT_UNIQUE') {
+          Toast.show({
+            type: 'info',
+            text1: 'Already Joined',
+            text2: 'You are already part of this home',
+            position: 'top',
+            visibilityTime: 3000,
+            autoHide: true,
+            topOffset: 30
+          });
+          router.replace('/dashboard');
+          return;
+        }
         throw new Error('Failed to join home');
       }
 
