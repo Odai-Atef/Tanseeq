@@ -165,5 +165,22 @@ export const ar = {
     tasks: 'المهام',
     schedules: 'الجداول',
     profile: 'الملف الشخصي'
+  },
+  home: {
+    invite: {
+      title: 'دعوة للمنزل',
+      homeId: 'معرف المنزل',
+      homePassword: 'كلمة مرور المنزل',
+      instruction: 'اعرض رمز QR أو شارك معرف المنزل وكلمة المرور لدعوة العاملة للانضمام'
+    },
+    join: {
+      title: 'الانضمام للمنزل',
+      homeId: 'معرف المنزل',
+      homePassword: 'كلمة مرور المنزل',
+      homeIdPlaceholder: 'أدخل معرف المنزل المكون من 6 أرقام',
+      homePasswordPlaceholder: 'أدخل كلمة المرور المكونة من 6 أرقام',
+      scanQrCode: 'مسح رمز QR',
+      submit: 'انضمام للمنزل'
+    }
   }
 };

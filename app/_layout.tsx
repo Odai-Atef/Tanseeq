@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
-import { LanguageProvider } from '../contexts/LanguageContext';
+import { LanguageProvider, useTranslation } from '../contexts/LanguageContext';
 import Toast from 'react-native-toast-message';
 import { useFonts } from 'expo-font';
 import { useColorScheme } from 'react-native';
@@ -95,22 +95,29 @@ export default function Layout() {
   return (
     <LanguageProvider>
       <NavigationContainer theme={navigationTheme[colorScheme ?? 'light']}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="dashboard" options={{ headerShown: false }} />
-          <Stack.Screen name="tasks" options={{ headerShown: false }} />
-          <Stack.Screen name="schedules" options={{ headerShown: false }} />
-          <Stack.Screen name="tasks/calendar" options={{ headerBackTitleVisible: false, title: 'Calendar', headerShown: true }} />
-          <Stack.Screen name="tasks/index" options={{ headerBackTitleVisible: false, title: 'Tasks', headerShown: true }} />
-          <Stack.Screen name="tasks/view" options={{ headerBackTitleVisible: false ,title:'Task Details',headerShown: true }} />
-          <Stack.Screen name="tasks/add" options={{ headerBackTitleVisible: false ,headerBackTitle:'',headerShown: true, title: 'Add Task' }} />
-          <Stack.Screen name="schedules/view" options={{ headerBackTitleVisible: false ,headerBackTitle:'',headerShown: true, title: 'Schedule View' }} />
-          <Stack.Screen name="home/invite" options={{ headerBackTitleVisible: false ,headerBackTitle:'',headerShown: true, title: 'Invite Housemaid' }} />
-          <Stack.Screen name="home/join" options={{ headerBackTitleVisible: false ,headerBackTitle:'',headerShown: true, title: 'Join House' }} />
-
-        </Stack>
+        <StackNavigator />
         <Toast />
       </NavigationContainer>
     </LanguageProvider>
+  );
+}
+
+function StackNavigator() {
+  const { t } = useTranslation();
+  
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen name="dashboard" options={{ headerShown: false }} />
+      <Stack.Screen name="tasks" options={{ headerShown: false }} />
+      <Stack.Screen name="schedules" options={{ headerShown: false }} />
+      <Stack.Screen name="tasks/calendar" options={{ headerBackTitleVisible: false, title: t('tasks.calendar.title'), headerShown: true }} />
+      <Stack.Screen name="tasks/index" options={{ headerBackTitleVisible: false, title: t('tasks.title'), headerShown: true }} />
+      <Stack.Screen name="tasks/view" options={{ headerBackTitleVisible: false, title: t('tasks.view.title'), headerShown: true }} />
+      <Stack.Screen name="tasks/add" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: true, title: t('tasks.add.title') }} />
+      <Stack.Screen name="schedules/view" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: true, title: t('schedules.view.title') }} />
+      <Stack.Screen name="home/invite" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: true, title: t('home.invite.title') }} />
+      <Stack.Screen name="home/join" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: true, title: t('home.join.title') }} />
+    </Stack>
   );
 }
