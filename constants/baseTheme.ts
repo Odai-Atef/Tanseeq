@@ -24,6 +24,12 @@ export const baseTheme = StyleSheet.create({
   content: {
     padding: 16,
   },
+  label: {
+    fontSize: 16,
+    marginBottom: 8,
+    color: colors.textPrimary,
+    opacity: 0.8,
+  },
   subtitle: {
     fontSize: 16,
     lineHeight: 24,

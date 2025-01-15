@@ -3,9 +3,10 @@ import { View, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
-import { colors, baseTheme  as styles } from '../../constants/Theme';
+import { colors, homeTheme as styles } from '../../constants/Theme';
 import { useJoinHome } from '../../hooks/home/joinHook';
 import { useTranslation } from '../../contexts/LanguageContext';
+import { Feather } from '@expo/vector-icons';
 
 export default function JoinHome() {
   const { t, isRTL } = useTranslation();
@@ -36,14 +37,14 @@ export default function JoinHome() {
   return (
     <ThemedView style={styles.container}>
       <ScrollView style={styles.content}>
-        <View style={[stylesC.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
-          <ThemedText style={[styles.headerTitle, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
-            {t('home.join.homeId')}
+        <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+          <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
+            {t('home.join.homeId')} *
           </ThemedText>
           <TextInput
             style={[styles.input, { textAlign: isRTL ? 'right' : 'left' }]}
             placeholder={t('home.join.homeIdPlaceholder')}
-            placeholderTextColor={colors.textSecondary}
+            placeholderTextColor="rgba(49, 57, 79, 0.6)"
             value={homeId}
             onChangeText={setHomeId}
             keyboardType="number-pad"
@@ -51,36 +52,38 @@ export default function JoinHome() {
           />
         </View>
 
-        <View style={[stylesC.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
-          <ThemedText style={[styles.headerTitle, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
-            {t('home.join.homePassword')}
+        <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+          <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
+            {t('home.join.homePassword')} *
           </ThemedText>
           <TextInput
             style={[styles.input, { textAlign: isRTL ? 'right' : 'left' }]}
             placeholder={t('home.join.homePasswordPlaceholder')}
-            placeholderTextColor={colors.textSecondary}
+            placeholderTextColor="rgba(49, 57, 79, 0.6)"
             value={homePassword}
             onChangeText={setHomePassword}
             keyboardType="number-pad"
             maxLength={6}
+            secureTextEntry
           />
         </View>
 
         <TouchableOpacity
-          style={stylesC.scanButton}
+          style={styles.scanButton}
           onPress={requestCameraPermission}
         >
-          <ThemedText style={stylesC.scanButtonText}>
+          <Feather name="camera" size={24} color={colors.primary} style={{ marginRight: 8 }} />
+          <ThemedText style={styles.scanButtonText}>
             {t('home.join.scanQrCode')}
           </ThemedText>
         </TouchableOpacity>
       </ScrollView>
 
-      <View style={stylesC.footer}>
+      <View style={styles.footer}>
         <TouchableOpacity 
           style={[
             styles.submitButton,
-            isSubmitting && styles.submitButtonDisabled
+            isSubmitting && { opacity: 0.5 }
           ]} 
           onPress={handleSubmit}
           disabled={isSubmitting}
@@ -96,35 +99,3 @@ export default function JoinHome() {
     </ThemedView>
   );
 }
-
-const stylesC = StyleSheet.create({
-
-  section: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-    opacity: 0.8,
-  },
-  scanButton: {
-    backgroundColor: colors.background,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    alignItems: 'center',
-  },
-  scanButtonText: {
-    color: colors.primary,
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  footer: {
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: colors.line,
-  },
-});

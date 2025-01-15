@@ -145,10 +145,10 @@ export const taskTheme = StyleSheet.create({
     marginBottom: 0,
   },
   label: {
-    ...baseTheme.headerTitle,
     fontSize: 16,
-    marginBottom: 16,
-    textAlign: 'left',
+    marginBottom: 8,
+    color: colors.textPrimary,
+    opacity: 0.8,
   },
   input: {
     ...baseTheme.input,

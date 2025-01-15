@@ -88,7 +88,7 @@ export default function ScheduleAdd() {
     <ThemedView style={styles.container}>
       <ScrollView style={styles.content}>
         <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
-          <ThemedText style={[styles.sectionTitle, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
+          <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
             {t('schedules.add.selectDate')}
           </ThemedText>
           <TouchableOpacity
@@ -113,7 +113,7 @@ export default function ScheduleAdd() {
         </View>
 
         <View>
-          <ThemedText style={[styles.sectionTitle, { textAlign: isRTL ? 'right' : 'left' }]}>
+          <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left' }]}>
             {t('schedules.add.selectTask')}
           </ThemedText>
           {loading ? (
