@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import Toast from 'react-native-toast-message';
 import { API_ENDPOINTS } from '../../constants/api';
+import { useTranslation } from '../../contexts/LanguageContext';
 
 interface Task {
   id: number;
@@ -17,6 +18,7 @@ interface ApiResponse {
 
 export const useScheduleAdd = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   
@@ -30,8 +32,8 @@ export const useScheduleAdd = () => {
   const showError = (message: string) => {
     Toast.show({
       type: 'error',
-      text1: 'Error',
-      text2: message,
+      text1: t('common.error.general'),
+      text2: t(message),
       position: 'top',
       visibilityTime: 3000,
       autoHide: true,
@@ -42,8 +44,8 @@ export const useScheduleAdd = () => {
   const showSuccess = (message: string) => {
     Toast.show({
       type: 'success',
-      text1: 'Success',
-      text2: message,
+      text1: t('common.success.created'),
+      text2: t(message),
       position: 'top',
       visibilityTime: 2000,
       autoHide: true,
@@ -78,12 +80,12 @@ export const useScheduleAdd = () => {
 
       const result: ApiResponse = await response.json();
       if (!result.data || result.data.length === 0) {
-        setError('No tasks available. Please create a task first.');
+        setError(t('schedules.add.noTasks'));
       } else {
         setTasks(result.data);
       }
     } catch (error) {
-      const errorMessage = 'Failed to load tasks. Please try again.';
+      const errorMessage = t('schedules.add.error');
       setError(errorMessage);
       showError(errorMessage);
       console.error('Error fetching tasks:', error);
@@ -105,7 +107,10 @@ export const useScheduleAdd = () => {
       today.setHours(0, 0, 0, 0);
       
       if (newDate < today) {
-        Alert.alert('Invalid Date', 'Please select today or a future date');
+        Alert.alert(
+          t('common.error.general'),
+          t('schedules.add.invalidDate')
+        );
         return;
       }
       
@@ -115,7 +120,10 @@ export const useScheduleAdd = () => {
 
   const handleSubmit = async () => {
     if (!selectedTaskId) {
-      Alert.alert('Error', 'Please select a task');
+      Alert.alert(
+        t('common.error.general'),
+        t('schedules.add.selectTask')
+      );
       return;
     }
 
@@ -138,10 +146,10 @@ export const useScheduleAdd = () => {
       if (!response.ok) throw new Error('Failed to create schedule');
 
       await response.json();
-      showSuccess('Schedule created successfully');
+      showSuccess(t('schedules.add.success'));
       router.back();
     } catch (error) {
-      showError('Failed to create schedule. Please try again.');
+      showError(t('schedules.add.error'));
       console.error('Error creating schedule:', error);
     }
   };

@@ -118,7 +118,10 @@ export const en = {
       selectDate: 'Select Date',
       selectTask: 'Select Task',
       noTasks: 'No tasks available. Please create a task first.',
-      invalidDate: 'Please select today or a future date'
+      invalidDate: 'Please select today or a future date',
+      createSchedule: 'Create Schedule',
+      success: 'Schedule created successfully',
+      error: 'Failed to create schedule'
     },
     view: {
       title: 'Schedule Details',

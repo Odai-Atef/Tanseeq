@@ -15,10 +15,11 @@ export const scheduleTheme = StyleSheet.create({
     color: colors.textPrimary,
   },
   dateButton: {
-    ...baseTheme.inputContainer,
-    padding: 12,
+    width: '100%',
+    padding: 10,
     backgroundColor: colors.white,
     borderRadius: 8,
+    marginBottom: 16,
   },
   dateIcon: {
     marginRight: 8,
@@ -105,5 +106,6 @@ export const scheduleTheme = StyleSheet.create({
     ...baseTheme.subtitle,
     color: colors.textPrimary,
     marginBottom: 0,
+    paddingHorizontal:15
   },
 });
