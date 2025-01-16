@@ -6,8 +6,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { colors, authTheme as styles } from '../../constants/Theme';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { useSignin } from '../../hooks/useSignin';
+import { useLanguage } from '../../hooks/useLanguage';
 
 export default function SignIn() {
+  const { t } = useLanguage();
   const {
     email,
     setEmail,
@@ -40,7 +42,7 @@ export default function SignIn() {
         </View>
         <View>
           <ThemedText style={styles.headerTitle}>
-            Welcome in Tanseeq 
+            {t('auth.welcome')}
           </ThemedText>
         </View>
         <View style={styles.content}>
@@ -48,7 +50,7 @@ export default function SignIn() {
             <Ionicons name="mail-outline" size={20} color={colors.secondary} style={{ marginRight: 8 }} />
             <TextInput
               style={[styles.input, emailError && { borderColor: colors.danger }]}
-              placeholder="Type your email"
+              placeholder={t('auth.emailPlaceholder')}
               value={email}
               onChangeText={(text) => {
                 setEmail(text);
@@ -73,7 +75,7 @@ export default function SignIn() {
             <Ionicons name="lock-closed-outline" size={20} color={colors.secondary} style={{ marginRight: 8 }} />
             <TextInput
               style={styles.input}
-              placeholder="Type your password"
+              placeholder={t('auth.passwordPlaceholder')}
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
@@ -94,12 +96,14 @@ export default function SignIn() {
             onPress={handleSignIn}
             disabled={loading}
           >
-            <ThemedText style={styles.buttonText}>{loading ? 'Signing In...' : 'Sign In'}</ThemedText>
+            <ThemedText style={styles.buttonText}>
+              {loading ? t('common.loading') : t('auth.signIn')}
+            </ThemedText>
           </TouchableOpacity>
 
           <View style={styles.dividerContainer}>
             <View style={styles.divider} />
-            <ThemedText style={styles.dividerText}>or continue with</ThemedText>
+            <ThemedText style={styles.dividerText}>{t('auth.orContinueWith')}</ThemedText>
             <View style={styles.divider} />
           </View>
 

@@ -34,4 +34,4 @@ export const getDirection = (language: Language): 'rtl' | 'ltr' => {
 };
 
 // Default language
-export const defaultLanguage: Language = 'en';
+export const defaultLanguage: Language = 'ar';
