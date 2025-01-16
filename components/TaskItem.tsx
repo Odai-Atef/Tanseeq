@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Pressable } from 'react-native';
+import { View, TouchableOpacity, Pressable } from 'react-native';
+import { ThemedText } from './ThemedText';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { taskItemTheme as styles } from '../constants/taskItemTheme';
 import { Schedule } from '../types/Schedule';
 import { Task } from '../types/Task';
+import { useTranslation } from '../contexts/LanguageContext';
 
 interface MenuProps {
   visible: boolean;
@@ -14,6 +16,8 @@ interface MenuProps {
 }
 
 const OptionsMenu = ({ visible, onClose, onView, onEdit }: MenuProps) => {
+  const { t } = useTranslation();
+  
   if (!visible) return null;
 
   return (
@@ -31,7 +35,7 @@ const OptionsMenu = ({ visible, onClose, onView, onEdit }: MenuProps) => {
           }}
         >
           <Ionicons name="eye-outline" size={20} color="#464D61" style={styles.menuIcon} />
-          <Text style={styles.menuText}>View</Text>
+          <ThemedText style={styles.menuText}>{t('common.buttons.viewAll')}</ThemedText>
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.menuItem}
@@ -41,7 +45,7 @@ const OptionsMenu = ({ visible, onClose, onView, onEdit }: MenuProps) => {
           }}
         >
           <Ionicons name="pencil-outline" size={20} color="#464D61" style={styles.menuIcon} />
-          <Text style={styles.menuText}>Edit</Text>
+          <ThemedText style={styles.menuText}>{t('common.buttons.edit')}</ThemedText>
         </TouchableOpacity>
       </View>
     </>
@@ -105,7 +109,7 @@ export const TaskItem = ({ item, type }: TaskItemProps) => {
     <TouchableOpacity onPress={handleView}>
       <View style={styles.taskItem}>
         <View style={styles.taskHeader}>
-          <Text style={styles.taskTitle}>{getTitle()}</Text>
+          <ThemedText type="defaultSemiBold" style={styles.taskTitle}>{getTitle()}</ThemedText>
           <View style={styles.menuWrapper}>
             <TouchableOpacity 
               onPress={() => setMenuVisible(!menuVisible)}
@@ -121,13 +125,13 @@ export const TaskItem = ({ item, type }: TaskItemProps) => {
             />
           </View>
         </View>
-        <Text style={styles.taskDescription}>{getDescription()}</Text>
+        <ThemedText style={styles.taskDescription}>{getDescription()}</ThemedText>
         <View style={styles.taskFooter}>
-          <Text style={styles.taskTime}>{getTimeInfo()}</Text>
+          <ThemedText style={styles.taskTime}>{getTimeInfo()}</ThemedText>
           <View style={[styles.statusBadge, { backgroundColor: getStatus() === 'Done' ? '#E8F5E9' : '#E3F2FD' }]}>
-            <Text style={[styles.statusText, { color: getStatus() === 'Done' ? '#4CAF50' : '#2196F3' }]}>
+            <ThemedText style={[styles.statusText, { color: getStatus() === 'Done' ? '#4CAF50' : '#2196F3' }]}>
               {getStatus()}
-            </Text>
+            </ThemedText>
           </View>
         </View>
       </View>

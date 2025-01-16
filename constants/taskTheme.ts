@@ -56,6 +56,7 @@ export const taskTheme = StyleSheet.create({
     borderRadius: 12,
     minWidth: 24,
     alignItems: 'center',
+    marginHorizontal:10
   },
   taskCountText: {
     color: colors.white,

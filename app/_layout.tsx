@@ -42,7 +42,7 @@ const navigationTheme = {
 
 export default function Layout() {
   const [loaded] = useFonts({
-    'SpaceMono': require('../assets/fonts/SpaceMono-Regular.ttf'),
+    'Cairo': require('../assets/fonts/Cairo/Cairo-VariableFont_slnt,wght.ttf'),
   });
 
   const colorScheme = useColorScheme();
@@ -106,7 +106,15 @@ function StackNavigator() {
   const { t } = useTranslation();
   
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ 
+      headerShown: false,
+      headerTitleStyle: {
+        fontFamily: 'Cairo'
+      },
+      headerBackTitleStyle: {
+        fontFamily: 'Cairo'
+      }
+    }}>
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="dashboard" options={{ headerShown: false }} />
       <Stack.Screen name="tasks" options={{ headerShown: false }} />

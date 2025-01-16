@@ -1,10 +1,13 @@
-import { View, TouchableOpacity, StyleSheet, Modal, Text } from 'react-native';
+import * as React from 'react';
+import { View, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { Link, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../constants/Theme';
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ADMIN_ROLE } from '../constants/roles';
+import { ThemedText } from './ThemedText';
+import { useTranslation } from '../contexts/LanguageContext';
 
 type FooterProps = {
   activeTab: 'home' | 'tasks' | 'profile' | 'calendar' | 'tasks/calendar';
@@ -13,6 +16,7 @@ type FooterProps = {
 export function Footer({ activeTab }: FooterProps) {
   const [showModal, setShowModal] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -103,15 +107,12 @@ export function Footer({ activeTab }: FooterProps) {
                   <Ionicons name="create-outline" size={20} color={colors.primary} />
                   <View style={styles.optionText}>
                     <View style={styles.textContainer}>
-                      <Text style={styles.optionTitle}>Create a Task</Text>
+                      <ThemedText type="defaultSemiBold" style={styles.optionTitle}>
+                        {t('tasks.add.title')}
+                      </ThemedText>
                     </View>
                   </View>
                 </TouchableOpacity>
-
-
-               
-
-
 
                 <TouchableOpacity 
                   style={styles.modalOption}
@@ -123,7 +124,9 @@ export function Footer({ activeTab }: FooterProps) {
                   <Ionicons name="calendar-outline" size={20} color={colors.primary} />
                   <View style={styles.optionText}>
                     <View style={styles.textContainer}>
-                      <Text style={styles.optionTitle}>Schedule current task</Text>
+                      <ThemedText type="defaultSemiBold" style={styles.optionTitle}>
+                        {t('schedules.add.title')}
+                      </ThemedText>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -138,7 +141,9 @@ export function Footer({ activeTab }: FooterProps) {
                   <Ionicons name="woman-outline" size={20} color={colors.primary} />
                   <View style={styles.optionText}>
                     <View style={styles.textContainer}>
-                      <Text style={styles.optionTitle}>Join a Home as Housemaid</Text>
+                      <ThemedText type="defaultSemiBold" style={styles.optionTitle}>
+                        {t('home.join.title')}
+                      </ThemedText>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -153,7 +158,9 @@ export function Footer({ activeTab }: FooterProps) {
                   <Ionicons name="person-add-outline" size={20} color={colors.primary} />
                   <View style={styles.optionText}>
                     <View style={styles.textContainer}>
-                      <Text style={styles.optionTitle}>Invite Housemaid</Text>
+                      <ThemedText type="defaultSemiBold" style={styles.optionTitle}>
+                        {t('home.invite.title')}
+                      </ThemedText>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -251,6 +258,5 @@ const styles = StyleSheet.create({
   optionTitle: {
     fontSize: 16,
     color: colors.text,
-    fontWeight: '500',
   },
 });

@@ -1,6 +1,7 @@
 import React from 'react';
-import { ScrollView, View, Text, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
+import { ScrollView, View, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
 import { ThemedView } from '../components/ThemedView';
+import { ThemedText } from '../components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
 import { dashboardTheme as styles, colors } from '../constants/Theme';
 import { Footer } from '../components/Footer';
@@ -16,7 +17,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const EmptyState = ({ message }: { message: string }) => (
   <View style={styles.emptyState}>
     <Ionicons name="calendar-outline" size={48} color="#464D61" style={styles.emptyStateIcon} />
-    <Text style={styles.emptyStateText}>{message}</Text>
+    <ThemedText style={styles.emptyStateText}>{message}</ThemedText>
   </View>
 );
 
@@ -38,7 +39,7 @@ export default function Dashboard() {
       return (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={styles.loadingText}>{t('common.loading')}</Text>
+          <ThemedText style={styles.loadingText}>{t('common.loading')}</ThemedText>
         </View>
       );
     }
@@ -72,12 +73,12 @@ export default function Dashboard() {
     <ThemedView style={[styles.container, { borderTopWidth: 50, borderTopColor: 'rgb(121, 128, 255)' }]}>
       <View style={[styles.header, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
         <View>
-          <Text style={[styles.greeting, { textAlign: isRTL ? 'right' : 'left' }]}>
+          <ThemedText type="title" style={[styles.greeting, { textAlign: isRTL ? 'right' : 'left' }]}>
             {t('dashboard.greeting', { name: userName })}
-          </Text>
-          <Text style={[styles.subGreeting, { textAlign: isRTL ? 'right' : 'left' }]}>
+          </ThemedText>
+          <ThemedText type="subtitle" style={[styles.subGreeting, { textAlign: isRTL ? 'right' : 'left' }]}>
             {t('dashboard.subGreeting')}
-          </Text>
+          </ThemedText>
         </View>
       </View>
 
@@ -94,30 +95,30 @@ export default function Dashboard() {
               inActiveStrokeWidth={5}
               activeStrokeWidth={5}
               titleColor={colors.white}
-              titleStyle={{ fontWeight: '600' }}
+              titleStyle={{ fontFamily: 'Cairo', fontWeight: '600' }}
             />
           </View>
           <View style={styles.progressInfo}>
-            <Text style={[styles.progressTitle, { textAlign: isRTL ? 'right' : 'left' }]}>
+            <ThemedText type="defaultSemiBold" style={[styles.progressTitle, { textAlign: isRTL ? 'right' : 'left', color: colors.white }]}>
               {t('dashboard.progressTitle')}
-            </Text>
-            <Text style={[styles.progressSubtext, { textAlign: isRTL ? 'right' : 'left' }]}>
+            </ThemedText>
+            <ThemedText style={[styles.progressSubtext, { textAlign: isRTL ? 'right' : 'left', color: colors.white }]}>
               {t('dashboard.tasksCompleted', {
                 completed: schedules.filter((schedule: Schedule) => 
                   ['Done', 'Cancelled'].includes(schedule.status)
                 ).length.toString(),
                 total: schedules.length.toString()
               })}
-            </Text>
+            </ThemedText>
           </View>
         </View>
 
         <View style={[styles.sectionHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-          <Text style={[styles.sectionTitle, { textAlign: isRTL ? 'right' : 'left' }]}>
+          <ThemedText type="defaultSemiBold" style={[styles.sectionTitle, { textAlign: isRTL ? 'right' : 'left' }]}>
             {t('dashboard.todayTasks')}
-          </Text>
+          </ThemedText>
           <TouchableOpacity onPress={() => router.push('/tasks/calendar')}>
-            <Text style={styles.viewAll}>{t('common.buttons.viewAll')}</Text>
+            <ThemedText type="link" style={styles.viewAll}>{t('common.buttons.viewAll')}</ThemedText>
           </TouchableOpacity>
         </View>
 
