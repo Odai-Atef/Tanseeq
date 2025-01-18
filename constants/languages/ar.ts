@@ -56,6 +56,7 @@ export const ar = {
   dashboard: {
     greeting: 'مرحباً، {name}!',
     subGreeting: 'هيا نكمل مهامك',
+    myHomes: 'منازلي',
     todayTasks: 'مهام اليوم',
     progressTitle: 'تقدم مهام اليوم',
     tasksCompleted: 'تم إكمال {completed} من {total} مهام',

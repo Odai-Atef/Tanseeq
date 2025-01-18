@@ -34,7 +34,8 @@ export const en = {
       next: 'Next',
       viewAll: 'View All',
       confirm: 'Yes'
-    }
+    },
+    progress: 'Progress'
   },
   auth: {
     welcome: 'Welcome in Tanseeq',
@@ -56,6 +57,7 @@ export const en = {
   dashboard: {
     greeting: 'Hello, {name}!',
     subGreeting: 'Let\'s complete your tasks',
+    myHomes: 'My Homes',
     todayTasks: 'Today Tasks',
     progressTitle: 'Progress Today Task',
     tasksCompleted: '{completed}/{total} Tasks Completed',

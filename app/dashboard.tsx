@@ -11,6 +11,7 @@ import { Schedule } from '../types/Schedule';
 import { TaskItem } from '../components/TaskItem';
 import { useDashboard } from '../hooks/dashboardHooks';
 import { useTranslation } from '../contexts/LanguageContext';
+import { MyHomes } from '../components/MyHomes';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -83,7 +84,9 @@ export default function Dashboard() {
       </View>
 
       <ScrollView style={styles.content}>
-        <View style={styles.progressSection}>
+        <MyHomes />
+      
+      <View style={styles.progressSection}>
           <View style={[styles.progressCircle, { backgroundColor: '#7980FF' }]}>
             <CircularProgress
               value={progressPercentage}

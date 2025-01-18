@@ -35,7 +35,7 @@ export function Footer({ activeTab }: FooterProps) {
 
   return (
     <View style={styles.footer}>
-      {userRole === ADMIN_ROLE ? (
+      {userRole === ADMIN_ROLE || true ? (
         // Admin Footer
         <>
           <Link href="/dashboard" asChild>
