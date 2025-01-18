@@ -116,7 +116,7 @@ export const MyHomes = () => {
         showsHorizontalScrollIndicator={false}
         snapToInterval={CARD_WIDTH}
         decelerationRate="fast"
-        contentContainerStyle={{ paddingHorizontal: 20 }}
+        contentContainerStyle={{ paddingHorizontal: 0,marginBottom:25 }}
         ItemSeparatorComponent={() => <View style={{ width: 20 }} />}
         inverted={isRTL} // Reverse the list direction for RTL
       />

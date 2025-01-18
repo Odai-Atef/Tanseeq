@@ -1,52 +1,8 @@
 import { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Home } from '../../types/Home';
-import { Member } from '../../types/Member';
-
-// Temporary dummy data - replace with actual API call
-const DUMMY_DATA: Home[] = [
-  {
-    name: "Gaming Platform Web & Mobile App",
-    date_created: "June 18, 2022",
-    tasks: 16,
-    links: 9,
-    progress: 78,
-    property_users: [
-      {
-        id: "1",
-        first_name: "Kholood",
-        last_name: null,
-        email: "kholood@tanseeq.pro",
-        avatar: null,
-        status: "active"
-      },
-      {
-        id: "2",
-        first_name: "Ahmed",
-        last_name: "Ali",
-        email: "ahmed@tanseeq.pro",
-        avatar: null,
-        status: "active"
-      }
-    ]
-  },
-  {
-    name: "Mobile Development Project",
-    date_created: "July 20, 2022",
-    tasks: 24,
-    links: 12,
-    progress: 65,
-    property_users: [
-      {
-        id: "3",
-        first_name: "Sara",
-        last_name: "Mohammed",
-        email: "sara@tanseeq.pro",
-        avatar: null,
-        status: "active"
-      }
-    ]
-  }
-];
+import { API_ENDPOINTS } from '../../constants/api';
+import Toast from 'react-native-toast-message';
 
 export const useHomes = () => {
   const [homes, setHomes] = useState<Home[]>([]);
@@ -56,13 +12,59 @@ export const useHomes = () => {
   useEffect(() => {
     const fetchHomes = async () => {
       try {
-        // TODO: Replace with actual API call
-        // const response = await fetch('api/homes');
-        // const data = await response.json();
-        setHomes(DUMMY_DATA);
+        const token = await AsyncStorage.getItem('access_token');
+        if (!token) {
+          throw new Error('Authentication required');
+        }
+
+        const fields = 'fields=*,property_users.*,property_users.directus_users_id.id,property_users.directus_users_id.first_name,property_users.directus_users_id.last_name,property_users.directus_users_id.email,property_users.directus_users_id.avatar,property_users.directus_users_id.status';
+        const response = await fetch(`${API_ENDPOINTS.HOME}?${fields}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json',
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch homes');
+        }
+
+        const data = await response.json();
+        
+        // Transform API data to match our Home type
+        const transformedHomes: Home[] = data.data.map((home: any) => ({
+          id: home.id,
+          name: home.name,
+          date_created: home.date_created,
+          is_default: home.is_default,
+          property_users: home.property_users?.map((pu: any) => ({
+            id: pu.directus_users_id.id,
+            first_name: pu.directus_users_id.first_name,
+            last_name: pu.directus_users_id.last_name,
+            email: pu.directus_users_id.email,
+            avatar: pu.directus_users_id.avatar,
+            status: pu.directus_users_id.status
+          })) || [],
+          // Static values until we get the calculation API
+          tasks: 5,
+          links: 3,
+          progress: 75
+        }));
+
+        setHomes(transformedHomes);
         setIsLoading(false);
       } catch (err) {
-        setError('Failed to fetch homes');
+        const message = err instanceof Error ? err.message : 'Failed to fetch homes';
+        setError(message);
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: message,
+          position: 'top',
+          visibilityTime: 3000,
+          autoHide: true,
+          topOffset: 30
+        });
         setIsLoading(false);
       }
     };

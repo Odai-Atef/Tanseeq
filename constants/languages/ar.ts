@@ -34,7 +34,8 @@ export const ar = {
       next: 'التالي',
       viewAll: 'عرض الكل',
       confirm: 'نعم'
-    }
+    },
+    progress: 'التقدم'
   },
   auth: {
     welcome: 'مرحباً بك في تنسيق',
