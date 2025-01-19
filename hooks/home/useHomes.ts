@@ -67,6 +67,13 @@ export const useHomes = () => {
         });
 
         setHomes(transformedHomes);
+        
+        // If there's a default home, save it to AsyncStorage
+        const defaultHome = transformedHomes.find(home => home.is_default);
+        if (defaultHome) {
+          await AsyncStorage.setItem(DEFAULT_HOME, JSON.stringify(defaultHome));
+        }
+        
         setIsLoading(false);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to fetch homes';
@@ -172,8 +179,11 @@ export const useHomes = () => {
         }))
       );
 
-      // Save to local storage
-      await AsyncStorage.setItem(DEFAULT_HOME, homeId);
+      // Save to local storage - store the entire home object
+      const defaultHome = homes.find(home => home.id === homeId);
+      if (defaultHome) {
+        await AsyncStorage.setItem(DEFAULT_HOME, JSON.stringify(defaultHome));
+      }
 
       Toast.show({
         type: 'success',
