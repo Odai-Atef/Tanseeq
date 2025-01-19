@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Home } from '../../types/Home';
 import { API_ENDPOINTS, DEFAULT_HOME } from '../../constants/api';
 import Toast from 'react-native-toast-message';
+import { eventEmitter, EVENTS } from '../../utils/eventEmitter';
 
 export const useHomes = () => {
   const [homes, setHomes] = useState<Home[]>([]);
@@ -183,6 +184,8 @@ export const useHomes = () => {
       const defaultHome = homes.find(home => home.id === homeId);
       if (defaultHome) {
         await AsyncStorage.setItem(DEFAULT_HOME, JSON.stringify(defaultHome));
+        // Emit event for default home change
+        eventEmitter.emit(EVENTS.DEFAULT_HOME_CHANGED, defaultHome);
       }
 
       Toast.show({

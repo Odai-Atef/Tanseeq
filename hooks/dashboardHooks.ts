@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ENDPOINTS } from '../constants/api';
 import { Schedule } from '../types/Schedule';
+import { eventEmitter, EVENTS } from '../utils/eventEmitter';
 
 export const useDashboard = () => {
   const [userName, setUserName] = useState('User');
@@ -91,9 +92,21 @@ export const useDashboard = () => {
     }
   };
 
+  // Initial load
   useEffect(() => {
     getUserInfo();
     fetchTodaySchedules();
+
+    // Listen for default home changes
+    const handleDefaultHomeChange = () => {
+      fetchTodaySchedules();
+    };
+
+    eventEmitter.on(EVENTS.DEFAULT_HOME_CHANGED, handleDefaultHomeChange);
+
+    return () => {
+      eventEmitter.off(EVENTS.DEFAULT_HOME_CHANGED, handleDefaultHomeChange);
+    };
   }, []);
 
   return {
