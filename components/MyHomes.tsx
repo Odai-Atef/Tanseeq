@@ -29,10 +29,21 @@ const MemberAvatar = ({ member, index, isRTL }: { member: Member; index: number;
 
 export const MyHomes = () => {
   const { t, isRTL } = useTranslation();
-  const { homes, isLoading, error } = useHomes();
+  const { homes, isLoading, error, setDefaultHome } = useHomes();
+
+  const handleHomePress = (homeId: string) => {
+    setDefaultHome(homeId);
+  };
 
   const renderHomeItem = ({ item }: { item: Home }) => (
-    <TouchableOpacity style={[styles.homeItem, { width: CARD_WIDTH - 20 }]}>
+    <TouchableOpacity 
+      style={[
+        styles.homeItem, 
+        { width: CARD_WIDTH - 20 },
+        item.is_default && styles.activeHomeItem
+      ]}
+      onPress={() => handleHomePress(item.id)}
+    >
       <View style={styles.top}>
         <View style={[styles.headerRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
           <View style={styles.iconBox}>

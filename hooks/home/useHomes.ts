@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Home } from '../../types/Home';
 import { API_ENDPOINTS } from '../../constants/api';
 import Toast from 'react-native-toast-message';
+
+const DEFAULT_HOME_ID_KEY = 'DEFAULT_HOME_ID';
 
 export const useHomes = () => {
   const [homes, setHomes] = useState<Home[]>([]);
@@ -72,9 +74,68 @@ export const useHomes = () => {
     fetchHomes();
   }, []);
 
+  const setDefaultHome = useCallback(async (homeId: string) => {
+    try {
+      const token = await AsyncStorage.getItem('access_token');
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      // Update all homes in the backend
+      const updatePromises = homes.map(home => 
+        fetch(`${API_ENDPOINTS.HOME}/${home.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({
+            is_default: home.id === homeId
+          })
+        })
+      );
+
+      await Promise.all(updatePromises);
+
+      // Update local state
+      setHomes(prevHomes => 
+        prevHomes.map(home => ({
+          ...home,
+          is_default: home.id === homeId
+        }))
+      );
+
+      // Save to local storage
+      await AsyncStorage.setItem(DEFAULT_HOME_ID_KEY, homeId);
+
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Default home updated successfully',
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to update default home';
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: message,
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30
+      });
+    }
+  }, [homes]);
+
   return {
     homes,
     isLoading,
-    error
+    error,
+    setDefaultHome
   };
 };

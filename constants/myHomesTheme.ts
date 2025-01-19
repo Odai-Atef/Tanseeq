@@ -35,6 +35,10 @@ export const myHomesTheme = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  activeHomeItem: {
+    borderWidth: 2,
+    borderColor: colors.primary,
+  },
   top: {
     marginBottom: 14,
   },
