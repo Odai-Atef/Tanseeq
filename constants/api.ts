@@ -1,4 +1,5 @@
 export const API_HOST = 'https://admin.tanseeq.pro';
+export const DEFAULT_HOME = 'DEFAULT_HOME';
 export const API_ENDPOINTS = {
     BASE_URL: API_HOST,
     LOGIN: `${API_HOST}/auth/login`,
@@ -9,5 +10,5 @@ export const API_ENDPOINTS = {
     TASKS: `${API_HOST}/items/tasks`,
     FILES: `${API_HOST}/files`,
     HOME: `${API_HOST}/items/properties`,
-    PROPERTY_USERS: `${API_HOST}/items/property_users`,
+    PROPERTY_USERS: `${API_HOST}/items/properties_directus_users`,
 };
