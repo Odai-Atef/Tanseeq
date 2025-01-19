@@ -16,7 +16,7 @@ interface MenuProps {
 }
 
 const OptionsMenu = ({ visible, onClose, onView, onEdit }: MenuProps) => {
-  const { t } = useTranslation();
+  const { t, isRTL } = useTranslation();
   
   if (!visible) return null;
 
@@ -26,7 +26,7 @@ const OptionsMenu = ({ visible, onClose, onView, onEdit }: MenuProps) => {
         style={styles.fullScreenOverlay}
         onPress={onClose}
       />
-      <View style={styles.menuContainer}>
+      <View style={[styles.menuContainer, { [isRTL ? 'left' : 'right']: 10 }]}>
         <TouchableOpacity 
           style={styles.menuItem}
           onPress={() => {
@@ -34,8 +34,10 @@ const OptionsMenu = ({ visible, onClose, onView, onEdit }: MenuProps) => {
             onClose();
           }}
         >
-          <Ionicons name="eye-outline" size={20} color="#464D61" style={styles.menuIcon} />
-          <ThemedText style={styles.menuText}>{t('common.buttons.viewAll')}</ThemedText>
+          <View style={[styles.menuItem, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+            <Ionicons name="eye-outline" size={20} color="#464D61" style={[styles.menuIcon, { marginLeft: isRTL ? 6 : 0, marginRight: isRTL ? 0 : 6 }]} />
+            <ThemedText style={styles.menuText}>{t('common.buttons.viewAll')}</ThemedText>
+          </View>
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.menuItem}
@@ -44,8 +46,10 @@ const OptionsMenu = ({ visible, onClose, onView, onEdit }: MenuProps) => {
             onClose();
           }}
         >
-          <Ionicons name="pencil-outline" size={20} color="#464D61" style={styles.menuIcon} />
-          <ThemedText style={styles.menuText}>{t('common.buttons.edit')}</ThemedText>
+          <View style={[styles.menuItem, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+            <Ionicons name="pencil-outline" size={20} color="#464D61" style={[styles.menuIcon, { marginLeft: isRTL ? 6 : 0, marginRight: isRTL ? 0 : 6 }]} />
+            <ThemedText style={styles.menuText}>{t('common.buttons.edit')}</ThemedText>
+          </View>
         </TouchableOpacity>
       </View>
     </>
@@ -58,6 +62,7 @@ interface TaskItemProps {
 }
 
 export const TaskItem = ({ item, type }: TaskItemProps) => {
+  const { isRTL } = useTranslation();
   const [menuVisible, setMenuVisible] = useState(false);
 
   const isSchedule = (item: Schedule | Task): item is Schedule => {
@@ -108,8 +113,8 @@ export const TaskItem = ({ item, type }: TaskItemProps) => {
   return (
     <TouchableOpacity onPress={handleView}>
       <View style={styles.taskItem}>
-        <View style={styles.taskHeader}>
-          <ThemedText type="defaultSemiBold" style={styles.taskTitle}>{getTitle()}</ThemedText>
+        <View style={[styles.taskHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+          <ThemedText type="defaultSemiBold" style={[styles.taskTitle, { marginLeft: isRTL ? 8 : 0, marginRight: isRTL ? 0 : 8 }]}>{getTitle()}</ThemedText>
           <View style={styles.menuWrapper}>
             <TouchableOpacity 
               onPress={() => setMenuVisible(!menuVisible)}
@@ -126,7 +131,7 @@ export const TaskItem = ({ item, type }: TaskItemProps) => {
           </View>
         </View>
         <ThemedText style={styles.taskDescription}>{getDescription()}</ThemedText>
-        <View style={styles.taskFooter}>
+        <View style={[styles.taskFooter, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
           <ThemedText style={styles.taskTime}>{getTimeInfo()}</ThemedText>
           <View style={[styles.statusBadge, { backgroundColor: getStatus() === 'Done' ? '#E8F5E9' : '#E3F2FD' }]}>
             <ThemedText style={[styles.statusText, { color: getStatus() === 'Done' ? '#4CAF50' : '#2196F3' }]}>

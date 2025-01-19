@@ -21,7 +21,6 @@ export const taskItemTheme = StyleSheet.create({
     fontWeight: '600',
     color: '#464D61',
     flex: 1,
-    marginRight: 8,
   },
   taskDescription: {
     fontSize: 14,
@@ -88,7 +87,6 @@ export const taskItemTheme = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   menuIcon: {
-    marginRight: 6,
     width: 24,
     textAlign: 'center',
   },

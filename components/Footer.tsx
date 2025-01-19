@@ -35,9 +35,7 @@ export function Footer({ activeTab }: FooterProps) {
 
   return (
     <View style={styles.footer}>
-      {userRole === ADMIN_ROLE || true ? (
-        // Admin Footer
-        <>
+    
           <Link href="/dashboard" asChild>
             <TouchableOpacity style={styles.tab}>
               <Ionicons
@@ -167,41 +165,7 @@ export function Footer({ activeTab }: FooterProps) {
               </View>
             </TouchableOpacity>
           </Modal>
-        </>
-      ) : (
-        // Non-admin Footer
-        <>
-          <Link href="/tasks/calendar" asChild>
-            <TouchableOpacity style={styles.tab}>
-              <Ionicons
-                name={activeTab === 'tasks/calendar' ? 'calendar' : 'calendar-outline'}
-                size={24}
-                color={activeTab === 'tasks/calendar' ? colors.primary : colors.textSecondary}
-              />
-            </TouchableOpacity>
-          </Link>
-
-          <Link href="/dashboard" asChild>
-            <TouchableOpacity style={styles.tab}>
-              <Ionicons
-                name={activeTab === 'home' ? 'grid' : 'grid-outline'}
-                size={24}
-                color={activeTab === 'home' ? colors.primary : colors.textSecondary}
-              />
-            </TouchableOpacity>
-          </Link>
-
-          <Link href="/profile" asChild>
-            <TouchableOpacity style={styles.tab}>
-              <Ionicons
-                name={activeTab === 'profile' ? 'person' : 'person-outline'}
-                size={24}
-                color={activeTab === 'profile' ? colors.primary : colors.textSecondary}
-              />
-            </TouchableOpacity>
-          </Link>
-        </>
-      )}
+      
     </View>
   );
 }
