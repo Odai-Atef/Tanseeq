@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ENDPOINTS } from '../constants/api';
 import { Schedule } from '../types/Schedule';
 import { eventEmitter, EVENTS } from '../utils/eventEmitter';
+import { showToast } from '../components/Toast';
 
 export const useDashboard = () => {
   const [userName, setUserName] = useState('User');
@@ -25,6 +26,11 @@ export const useDashboard = () => {
       }
     } catch (error) {
       console.error('Error fetching user info:', error);
+      showToast({
+        type: 'error',
+        text1Key: 'common.toast.error',
+        text2Key: 'common.toast.fetch.userInfo'
+      });
     }
   };
 
@@ -87,6 +93,11 @@ export const useDashboard = () => {
     } catch (error) {
       console.error('Error fetching today schedules:', error);
       setError('Failed to load schedules. Please try again later.');
+      showToast({
+        type: 'error',
+        text1Key: 'common.toast.error',
+        text2Key: 'common.toast.fetch.homes'
+      });
     } finally {
       setIsLoading(false);
     }

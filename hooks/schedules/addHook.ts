@@ -3,9 +3,9 @@ import { Alert, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import Toast from 'react-native-toast-message';
 import { API_ENDPOINTS } from '../../constants/api';
 import { useTranslation } from '../../contexts/LanguageContext';
+import { showToast } from '../../components/Toast';
 
 interface Task {
   id: number;
@@ -29,27 +29,19 @@ export const useScheduleAdd = () => {
   const [error, setError] = useState('');
   const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
 
-  const showError = (message: string) => {
-    Toast.show({
+  const showError = (messageKey: string) => {
+    showToast({
       type: 'error',
-      text1: t('common.error.general'),
-      text2: t(message),
-      position: 'top',
-      visibilityTime: 3000,
-      autoHide: true,
-      topOffset: 30
+      text1Key: 'common.toast.error',
+      text2Key: messageKey
     });
   };
 
-  const showSuccess = (message: string) => {
-    Toast.show({
+  const showSuccess = (messageKey: string) => {
+    showToast({
       type: 'success',
-      text1: t('common.success.created'),
-      text2: t(message),
-      position: 'top',
-      visibilityTime: 2000,
-      autoHide: true,
-      topOffset: 30
+      text1Key: 'common.toast.success',
+      text2Key: messageKey
     });
   };
 
@@ -94,7 +86,7 @@ export const useScheduleAdd = () => {
     } catch (error) {
       const errorMessage = t('schedules.add.error');
       setError(errorMessage);
-      showError(errorMessage);
+      showError('schedules.add.error');
       console.error('Error fetching tasks:', error);
     } finally {
       setLoading(false);
@@ -153,10 +145,10 @@ export const useScheduleAdd = () => {
       if (!response.ok) throw new Error('Failed to create schedule');
 
       await response.json();
-      showSuccess(t('schedules.add.success'));
+      showSuccess('schedules.add.success');
       router.back();
     } catch (error) {
-      showError(t('schedules.add.error'));
+      showError('schedules.add.error');
       console.error('Error creating schedule:', error);
     }
   };

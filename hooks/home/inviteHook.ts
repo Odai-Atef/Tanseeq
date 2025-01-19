@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast from 'react-native-toast-message';
+import { showToast } from '../../components/Toast';
 import { API_ENDPOINTS } from '../../constants/api';
 
 export const useInviteHome = () => {
@@ -21,14 +21,10 @@ export const useInviteHome = () => {
       }
       const token = await AsyncStorage.getItem('access_token');
       if (!token || !user) {
-        Toast.show({
+        showToast({
           type: 'error',
-          text1: 'Authentication Required',
-          text2: 'Please sign in to create/update home',
-          position: 'top',
-          visibilityTime: 3000,
-          autoHide: true,
-          topOffset: 30
+          text1Key: 'common.toast.auth.required',
+          text2Key: 'common.toast.auth.signInRequired'
         });
         return;
       }
@@ -77,26 +73,18 @@ export const useInviteHome = () => {
         throw new Error('Failed to create/update home');
       }
 
-      Toast.show({
+      showToast({
         type: 'success',
-        text1: 'Success',
-        text2: 'Home created/updated successfully',
-        position: 'top',
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30
+        text1Key: 'common.toast.success',
+        text2Key: 'common.toast.defaultHome.success'
       });
 
       return await response.json();
     } catch (error) {
-      Toast.show({
+      showToast({
         type: 'error',
-        text1: 'Error',
-        text2: 'Failed to create/update home',
-        position: 'top',
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30
+        text1Key: 'common.toast.error',
+        text2Key: 'common.toast.defaultHome.error'
       });
       return null;
     } finally {

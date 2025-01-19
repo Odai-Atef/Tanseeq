@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast from 'react-native-toast-message';
+import { showToast } from '../../components/Toast';
 import { Schedule } from '../../types/Schedule';
 import { API_ENDPOINTS } from '../../constants/api';
 import { ADMIN_ROLE } from '../../constants/roles';
@@ -20,29 +20,6 @@ export const useScheduleView = (id: string | string[]) => {
   const [error, setError] = useState('');
   const [userRole, setUserRole] = useState<string | null>(null);
 
-  const showError = (message: string) => {
-    Toast.show({
-      type: 'error',
-      text1: t('common.error.general'),
-      text2: t(message),
-      position: 'top',
-      visibilityTime: 3000,
-      autoHide: true,
-      topOffset: 30
-    });
-  };
-
-  const showSuccess = (message: string) => {
-    Toast.show({
-      type: 'success',
-      text1: t('common.success.created'),
-      text2: t(message),
-      position: 'top',
-      visibilityTime: 2000,
-      autoHide: true,
-      topOffset: 30
-    });
-  };
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -100,7 +77,11 @@ export const useScheduleView = (id: string | string[]) => {
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to load schedule';
         setError(errorMessage);
-        showError(errorMessage);
+        showToast({
+          type: 'error',
+          text1Key: 'common.toast.error',
+          text2Key: 'common.toast.schedule.error.load'
+        });
       } finally {
         setLoading(false);
       }
@@ -141,10 +122,18 @@ export const useScheduleView = (id: string | string[]) => {
 
               if (!response.ok) throw new Error('Failed to cancel schedule');
 
-              showSuccess(t('schedules.view.success.cancelled'));
+              showToast({
+                type: 'success',
+                text1Key: 'common.toast.success',
+                text2Key: 'schedules.view.success.cancelled'
+              });
               router.replace('/schedules' as any);
             } catch (error) {
-              showError(t('schedules.view.error.cancel'));
+              showToast({
+                type: 'error',
+                text1Key: 'common.toast.error',
+                text2Key: 'schedules.view.error.cancel'
+              });
               console.error('Error cancelling schedule:', error);
             }
           }
@@ -183,10 +172,18 @@ export const useScheduleView = (id: string | string[]) => {
 
               if (!response.ok) throw new Error('Failed to start task');
 
-              showSuccess(t('schedules.view.success.started'));
+              showToast({
+                type: 'success',
+                text1Key: 'common.toast.success',
+                text2Key: 'schedules.view.success.started'
+              });
               router.replace('/tasks/calendar' as any);
             } catch (error) {
-              showError(t('schedules.view.error.start'));
+              showToast({
+                type: 'error',
+                text1Key: 'common.toast.error',
+                text2Key: 'schedules.view.error.start'
+              });
               console.error('Error starting task:', error);
             }
           }
@@ -225,10 +222,18 @@ export const useScheduleView = (id: string | string[]) => {
 
               if (!response.ok) throw new Error('Failed to close task');
 
-              showSuccess(t('schedules.view.success.closed'));
+              showToast({
+                type: 'success',
+                text1Key: 'common.toast.success',
+                text2Key: 'schedules.view.success.closed'
+              });
               router.replace('/tasks/calendar' as any);
             } catch (error) {
-              showError(t('schedules.view.error.close'));
+              showToast({
+                type: 'error',
+                text1Key: 'common.toast.error',
+                text2Key: 'schedules.view.error.close'
+              });
               console.error('Error closing task:', error);
             }
           }

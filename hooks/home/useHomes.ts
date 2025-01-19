@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Home } from '../../types/Home';
 import { API_ENDPOINTS, DEFAULT_HOME } from '../../constants/api';
-import Toast from 'react-native-toast-message';
+import { showToast } from '../../components/Toast';
 import { eventEmitter, EVENTS } from '../../utils/eventEmitter';
 
 export const useHomes = () => {
@@ -79,14 +79,10 @@ export const useHomes = () => {
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to fetch homes';
         setError(message);
-        Toast.show({
+        showToast({
           type: 'error',
-          text1: 'Error',
-          text2: message,
-          position: 'top',
-          visibilityTime: 3000,
-          autoHide: true,
-          topOffset: 30
+          text1Key: 'common.toast.error',
+          text2Key: 'common.toast.fetch.homes'
         });
         setIsLoading(false);
       }
@@ -188,25 +184,17 @@ export const useHomes = () => {
         eventEmitter.emit(EVENTS.DEFAULT_HOME_CHANGED, defaultHome);
       }
 
-      Toast.show({
+      showToast({
         type: 'success',
-        text1: 'Success',
-        text2: 'Default home updated successfully',
-        position: 'top',
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30
+        text1Key: 'common.toast.success',
+        text2Key: 'common.toast.defaultHome.success'
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to update default home';
-      Toast.show({
+      showToast({
         type: 'error',
-        text1: 'Error',
-        text2: message,
-        position: 'top',
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30
+        text1Key: 'common.toast.error',
+        text2Key: 'common.toast.defaultHome.error'
       });
     }
   }, [homes]);
