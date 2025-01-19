@@ -5,6 +5,7 @@ export interface TaskImage {
 
 export class Task {
   id: number;
+  property_id: string; // UUID of the property/home
   status: string;
   user_created: string;
   date_created: string;
@@ -12,12 +13,13 @@ export class Task {
   date_updated: string | null;
   name: string;
   description: string | null;
-  images: TaskImage[] | null;
+  private _images: TaskImage[] | null;
   repeat_days: string[];
   repeat_monthly: string;
 
   constructor(data: any) {
     this.id = data.id;
+    this.property_id = data.property_id;
     this.status = data.status;
     this.user_created = data.user_created;
     this.date_created = data.date_created;
@@ -25,9 +27,21 @@ export class Task {
     this.date_updated = data.date_updated;
     this.name = data.name;
     this.description = data.description;
-    this.images = data.images;
+    this._images = data.images;
     this.repeat_days = data.repeat_days || [];
     this.repeat_monthly = data.repeat_monthly;
+  }
+
+  get images(): TaskImage[] | null {
+    return this._images;
+  }
+
+  set images(value: TaskImage[] | string | null) {
+    if (typeof value === 'string') {
+      this._images = [{ id: value, filename_download: value }];
+    } else {
+      this._images = value;
+    }
   }
 
   // Format the created date to a readable string
@@ -73,13 +87,23 @@ export class Task {
   }
 
   // Convert Task to API format for sending to server
-  toAPI(): any {
+  toAPI(): {
+    id: number;
+    property_id: string;
+    status: string;
+    name: string;
+    description: string | null;
+    images: string | null;
+    repeat_days: string[];
+    repeat_monthly: string;
+  } {
     return {
       id: this.id,
+      property_id: this.property_id,
       status: this.status,
       name: this.name,
       description: this.description,
-      images: this.images,
+      images: this._images && this._images.length > 0 ? this._images[0].id : null,
       repeat_days: this.repeat_days,
       repeat_monthly: this.repeat_monthly
     };
@@ -89,6 +113,7 @@ export class Task {
   clone(): Task {
     return new Task({
       id: this.id,
+      property_id: this.property_id,
       status: this.status,
       user_created: this.user_created,
       date_created: this.date_created,
@@ -96,7 +121,7 @@ export class Task {
       date_updated: this.date_updated,
       name: this.name,
       description: this.description,
-      images: this.images ? [...this.images] : null,
+      images: this._images ? [...this._images] : null,
       repeat_days: [...this.repeat_days],
       repeat_monthly: this.repeat_monthly
     });

@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
-import Toast from 'react-native-toast-message';
 import { Task } from '../../types/Task';
-import { API_ENDPOINTS } from '../../constants/api';
+import { API_ENDPOINTS, DEFAULT_HOME } from '../../constants/api';
 import { uploadFile } from '../../utils/fileUpload';
+import { showToast } from '../../components/Toast';
 
 type PeriodValues = {
   'Manual Assignment (No Schedule)': string;
@@ -22,6 +22,7 @@ export const useTaskAdd = (id?: string) => {
   const router = useRouter();
   const initialTask = new Task({
     id: undefined,
+    property_id: '',
     name: '',
     description: '',
     repeat_monthly: '-1',
@@ -55,18 +56,6 @@ export const useTaskAdd = (id?: string) => {
 
   const periods = Object.keys(periodValues) as (keyof PeriodValues)[];
 
-  const showNotification = (message: string, type: 'success' | 'error') => {
-    Toast.show({
-      type: type,
-      text1: type === 'success' ? 'Success' : 'Error',
-      text2: message,
-      position: 'top',
-      visibilityTime: 3000,
-      autoHide: true,
-      topOffset: 30
-    });
-  };
-
   useEffect(() => {
     if (id) {
       fetchTaskData();
@@ -77,7 +66,11 @@ export const useTaskAdd = (id?: string) => {
     try {
       const token = await AsyncStorage.getItem('access_token');
       if (!token) {
-        showNotification('Authentication required', 'error');
+        showToast({
+          type: 'error',
+          text1Key: 'common.toast.auth.required',
+          text2Key: 'common.error.auth.required'
+        });
         return;
       }
 
@@ -98,7 +91,11 @@ export const useTaskAdd = (id?: string) => {
         setSelectedImage(`${API_ENDPOINTS.BASE_URL}/assets/${result.data.images}?access_token=${token}`);
       }
     } catch (error) {
-      showNotification('Failed to load task data', 'error');
+      showToast({
+        type: 'error',
+        text1Key: 'common.toast.error',
+        text2Key: 'common.toast.task.error.update'
+      });
       console.error('Error fetching task:', error);
     } finally {
       setIsLoading(false);
@@ -132,7 +129,11 @@ export const useTaskAdd = (id?: string) => {
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        showNotification('Permission to access media library is required!', 'error');
+        showToast({
+          type: 'error',
+          text1Key: 'common.toast.error',
+          text2Key: 'common.error.permission'
+        });
         return;
       }
 
@@ -150,7 +151,11 @@ export const useTaskAdd = (id?: string) => {
       }
     } catch (error) {
       console.error('Error picking image:', error);
-      showNotification('Failed to pick image', 'error');
+      showToast({
+        type: 'error',
+        text1Key: 'common.toast.error',
+        text2Key: 'common.error.general'
+      });
     }
   };
 
@@ -158,7 +163,11 @@ export const useTaskAdd = (id?: string) => {
     try {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
       if (status !== 'granted') {
-        showNotification('Permission to access camera is required!', 'error');
+        showToast({
+          type: 'error',
+          text1Key: 'common.toast.error',
+          text2Key: 'common.error.permission'
+        });
         return;
       }
 
@@ -175,7 +184,11 @@ export const useTaskAdd = (id?: string) => {
       }
     } catch (error) {
       console.error('Error taking photo:', error);
-      showNotification('Failed to take photo', 'error');
+      showToast({
+        type: 'error',
+        text1Key: 'common.toast.error',
+        text2Key: 'common.error.general'
+      });
     }
   };
 
@@ -183,7 +196,11 @@ export const useTaskAdd = (id?: string) => {
     const validation = task.validate();
     if (!validation.isValid) {
       validation.errors.forEach(error => {
-        showNotification(error, 'error');
+        showToast({
+          type: 'error',
+          text1Key: 'common.toast.error',
+          text2Key: 'common.toast.task.error.validation'
+        });
       });
       return;
     }
@@ -191,9 +208,17 @@ export const useTaskAdd = (id?: string) => {
     setIsSubmitting(true);
 
     try {
-      const token = await AsyncStorage.getItem('access_token');
+      const [token, defaultHomeStr] = await Promise.all([
+        AsyncStorage.getItem('access_token'),
+        AsyncStorage.getItem(DEFAULT_HOME)
+      ]);
+
       if (!token) {
-        showNotification('Authentication required', 'error');
+        showToast({
+          type: 'error',
+          text1Key: 'common.toast.auth.required',
+          text2Key: 'common.error.auth.required'
+        });
         setIsSubmitting(false);
         return;
       }
@@ -202,7 +227,11 @@ export const useTaskAdd = (id?: string) => {
       if (selectedImage) {
         imageId = await uploadFile(selectedImage, token);
         if (!imageId) {
-          showNotification('Failed to upload image', 'error');
+          showToast({
+            type: 'error',
+            text1Key: 'common.toast.error',
+            text2Key: 'common.error.general'
+          });
           setIsSubmitting(false);
           return;
         }
@@ -211,14 +240,16 @@ export const useTaskAdd = (id?: string) => {
       const endpoint = id ? `${API_ENDPOINTS.TASKS}/${id}` : API_ENDPOINTS.TASKS;
       const method = id ? 'PATCH' : 'POST';
 
-      const taskData = {
-        status: task.status,
-        name: task.name,
-        description: task.description,
-        images: imageId,
-        repeat_days: task.repeat_days,
-        repeat_monthly: task.repeat_monthly
-      };
+      // Set property_id from DEFAULT_HOME when creating a new task
+      if (method === 'POST' && defaultHomeStr) {
+        const defaultHome = JSON.parse(defaultHomeStr);
+        task.property_id = defaultHome.id;
+      }
+
+      if (imageId) {
+        task.images = imageId;
+      }
+      const taskData = task.toAPI();
 
       const response = await fetch(endpoint, {
         method,
@@ -235,7 +266,11 @@ export const useTaskAdd = (id?: string) => {
 
       await response.json();
       setIsSubmitting(false);
-      showNotification(`Task ${id ? 'updated' : 'created'} successfully`, 'success');
+      showToast({
+        type: 'success',
+        text1Key: 'common.toast.success',
+        text2Key: id ? 'common.toast.task.updated' : 'common.toast.task.created'
+      });
       
       if (!id) {
         setTask(initialTask);
@@ -247,7 +282,11 @@ export const useTaskAdd = (id?: string) => {
       }, 1000);
 
     } catch (error) {
-      showNotification(`Failed to ${id ? 'update' : 'create'} task. Please try again.`, 'error');
+      showToast({
+        type: 'error',
+        text1Key: 'common.toast.error',
+        text2Key: id ? 'common.toast.task.error.update' : 'common.toast.task.error.create'
+      });
       console.error('Error submitting task:', error);
       setIsSubmitting(false);
     }

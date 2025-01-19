@@ -20,6 +20,16 @@ export const en = {
       fetch: {
         homes: 'Failed to fetch homes',
         userInfo: 'User info not found'
+      },
+      task: {
+        created: 'Task created successfully',
+        updated: 'Task updated successfully',
+        error: {
+          create: 'Failed to create task',
+          update: 'Failed to update task',
+          validation: 'Please check task details',
+          permission: 'Permission denied for this task'
+        }
       }
     },
     error: {
