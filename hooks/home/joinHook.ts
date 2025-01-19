@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { router } from 'expo-router';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import Toast from 'react-native-toast-message';
+import { showToast } from '../../components/Toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ENDPOINTS } from '../../constants/api';
 
@@ -18,14 +18,10 @@ export const useJoinHome = () => {
     if (status === 'granted') {
       setShowScanner(true);
     } else {
-      Toast.show({
+      showToast({
         type: 'error',
-        text1: 'Camera Permission',
-        text2: 'Camera permission is required to scan QR codes',
-        position: 'top',
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30
+        text1Key: 'common.error.permission',
+        text2Key: 'home.join.cameraRequired'
       });
     }
   };
@@ -37,41 +33,29 @@ export const useJoinHome = () => {
       setHomeId(scannedHomeId);
       setHomePassword(scannedPassword);
     } else {
-      Toast.show({
+      showToast({
         type: 'error',
-        text1: 'Invalid QR Code',
-        text2: 'The QR code does not contain valid home information',
-        position: 'top',
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30
+        text1Key: 'common.error.validation.invalid',
+        text2Key: 'home.join.invalidQR'
       });
     }
   };
 
   const validateInputs = (): boolean => {
     if (!homeId || !homePassword) {
-      Toast.show({
+      showToast({
         type: 'error',
-        text1: 'Validation Error',
-        text2: 'Please enter both Home ID and Password',
-        position: 'top',
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30
+        text1Key: 'common.error.validation.error',
+        text2Key: 'home.join.enterBoth'
       });
       return false;
     }
 
     if (homeId.length !== 6 || homePassword.length !== 6) {
-      Toast.show({
+      showToast({
         type: 'error',
-        text1: 'Validation Error',
-        text2: 'Home ID and Password must be 6 digits',
-        position: 'top',
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30
+        text1Key: 'common.error.validation.error',
+        text2Key: 'home.join.sixDigits'
       });
       return false;
     }
@@ -92,14 +76,10 @@ export const useJoinHome = () => {
       }
       const userId=user.id;
       if (!token || !userId) {
-        Toast.show({
+        showToast({
           type: 'error',
-          text1: 'Authentication Required',
-          text2: 'Please sign in to join a home',
-          position: 'top',
-          visibilityTime: 3000,
-          autoHide: true,
-          topOffset: 30
+          text1Key: 'common.toast.auth.required',
+          text2Key: 'common.toast.auth.signInRequired'
         });
         return;
       }
@@ -115,21 +95,29 @@ export const useJoinHome = () => {
       const homeData = await getHomeResponse.json();
       
       if (!getHomeResponse.ok || !homeData.data?.[0]?.id) {
-        Toast.show({
+        showToast({
           type: 'error',
-          text1: 'Authentication Failed',
-          text2: 'Invalid home ID or password',
-          position: 'top',
-          visibilityTime: 3000,
-          autoHide: true,
-          topOffset: 30
+          text1Key: 'common.toast.auth.failed',
+          text2Key: 'home.join.invalidCredentials'
         });
         return;
       }
 
       const propertyId = homeData.data[0].id;
 
-      // Create property_users entry
+      // Set is_default=false for all other homes of this user
+      await fetch(`${API_ENDPOINTS.PROPERTY_USERS}?filter[directus_users_id][_eq]=${userId}&filter[properties_id][_neq]=${propertyId}`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          is_default: false
+        })
+      });
+
+      // Create property_users entry for the new home
       const joinResponse = await fetch(API_ENDPOINTS.PROPERTY_USERS, {
         method: 'POST',
         headers: {
@@ -137,22 +125,19 @@ export const useJoinHome = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          user: userId,
-          property: propertyId
+          directus_users_id: userId,
+          properties_id: propertyId,
+          is_default:1
         })
       });
 
       if (!joinResponse.ok) {
         const errorData = await joinResponse.json();
         if (errorData.errors?.[0]?.extensions?.code === 'RECORD_NOT_UNIQUE') {
-          Toast.show({
+          showToast({
             type: 'info',
-            text1: 'Already Joined',
-            text2: 'You are already part of this home',
-            position: 'top',
-            visibilityTime: 3000,
-            autoHide: true,
-            topOffset: 30
+            text1Key: 'common.toast.join.alreadyJoined',
+            text2Key: 'common.toast.join.alreadyJoinedDesc'
           });
           router.replace('/dashboard');
           return;
@@ -160,26 +145,18 @@ export const useJoinHome = () => {
         throw new Error('Failed to join home');
       }
 
-      Toast.show({
+      showToast({
         type: 'success',
-        text1: 'Success',
-        text2: 'Successfully joined the home',
-        position: 'top',
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30
+        text1Key: 'common.toast.success',
+        text2Key: 'common.toast.join.success'
       });
 
       router.replace('/dashboard');
     } catch (error) {
-      Toast.show({
+      showToast({
         type: 'error',
-        text1: 'Error',
-        text2: 'Failed to join home. Please check the ID and password.',
-        position: 'top',
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30
+        text1Key: 'common.toast.error',
+        text2Key: 'common.toast.join.error'
       });
     } finally {
       setIsSubmitting(false);

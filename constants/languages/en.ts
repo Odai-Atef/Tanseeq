@@ -1,6 +1,27 @@
 export const en = {
   common: {
     loading: 'Loading...',
+    toast: {
+      success: 'Success',
+      error: 'Error',
+      join: {
+        success: 'Successfully joined the home',
+        error: 'Failed to join home'
+      },
+      defaultHome: {
+        success: 'Default home updated successfully',
+        error: 'Failed to update default home'
+      },
+      auth: {
+        required: 'Authentication Required',
+        failed: 'Authentication Failed',
+        signInRequired: 'Please sign in to join a home'
+      },
+      fetch: {
+        homes: 'Failed to fetch homes',
+        userInfo: 'User info not found'
+      }
+    },
     error: {
       general: 'Something went wrong. Please try again.',
       network: 'Network error. Please check your connection.',
@@ -181,6 +202,11 @@ export const en = {
     join: {
       title: 'Join Home',
       homeId: 'Home ID',
+      cameraRequired: 'Camera permission is required to scan QR codes',
+      invalidQR: 'The QR code does not contain valid home information',
+      enterBoth: 'Please enter both Home ID and Password',
+      sixDigits: 'Home ID and Password must be 6 digits',
+      invalidCredentials: 'Invalid home ID or password',
       homePassword: 'Home Password',
       homeIdPlaceholder: 'Enter 6-digit Home ID',
       homePasswordPlaceholder: 'Enter 6-digit Home Password',

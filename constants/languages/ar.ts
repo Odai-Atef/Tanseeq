@@ -1,6 +1,27 @@
 export const ar = {
   common: {
     loading: 'جاري التحميل...',
+    toast: {
+      success: 'نجاح',
+      error: 'خطأ',
+      join: {
+        success: 'تم الانضمام إلى المنزل بنجاح',
+        error: 'فشل في الانضمام إلى المنزل'
+      },
+      defaultHome: {
+        success: 'تم تحديث المنزل الافتراضي بنجاح',
+        error: 'فشل في تحديث المنزل الافتراضي'
+      },
+      auth: {
+        required: 'المصادقة مطلوبة',
+        failed: 'فشل المصادقة',
+        signInRequired: 'يرجى تسجيل الدخول للانضمام إلى المنزل'
+      },
+      fetch: {
+        homes: 'فشل في جلب المنازل',
+        userInfo: 'معلومات المستخدم غير موجودة'
+      }
+    },
     error: {
       general: 'حدث خطأ. يرجى المحاولة مرة أخرى.',
       network: 'خطأ في الشبكة. يرجى التحقق من اتصالك.',
@@ -182,6 +203,11 @@ export const ar = {
       title: 'الانضمام للمنزل',
       homeId: 'معرف المنزل',
       homePassword: 'كلمة مرور المنزل',
+      cameraRequired: 'إذن الكاميرا مطلوب لمسح رموز QR',
+      invalidQR: 'رمز QR لا يحتوي على معلومات منزل صالحة',
+      enterBoth: 'يرجى إدخال معرف المنزل وكلمة المرور',
+      sixDigits: 'يجب أن يكون معرف المنزل وكلمة المرور 6 أرقام',
+      invalidCredentials: 'معرف المنزل أو كلمة المرور غير صحيحة',
       homeIdPlaceholder: 'أدخل معرف المنزل المكون من 6 أرقام',
       homePasswordPlaceholder: 'أدخل كلمة المرور المكونة من 6 أرقام',
       scanQrCode: 'مسح رمز QR',
