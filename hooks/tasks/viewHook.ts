@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast from 'react-native-toast-message';
+import { showToast } from '../../components/Toast';
 import { Task } from '../../types/Task';
 
 interface ApiResponse {
@@ -14,28 +14,30 @@ export const useTaskView = (id: string | string[]) => {
   const [error, setError] = useState('');
   const [token, setToken] = useState<string | null>(null);
 
-  const showError = (message: string) => {
-    Toast.show({
-      type: 'error',
-      text1: 'Error',
-      text2: message,
-      position: 'top',
-      visibilityTime: 3000,
-      autoHide: true,
-      topOffset: 30
-    });
-  };
 
   useEffect(() => {
     const fetchTask = async () => {
       try {
         const accessToken = await AsyncStorage.getItem('access_token');
         if (!accessToken) {
-          throw new Error('No access token found');
+          showToast({
+            type: 'error',
+            text1Key: 'common.toast.auth.required',
+            text2Key: 'common.error.auth.required'
+          });
+          return;
+        }
+
+        const defaultHomeStr = await AsyncStorage.getItem('DEFAULT_HOME');
+        let url = `${API_ENDPOINTS.TASKS}?fields=*,task.*,task.images.*&filter[id][_eq]=${id}`;
+        
+        if (defaultHomeStr) {
+          const defaultHome = JSON.parse(defaultHomeStr);
+          url += `&filter[property_id][_eq]=${defaultHome.id}`;
         }
 
         const response = await fetch(
-          `${API_ENDPOINTS.TASKS}?fields=*,task.*,task.images.*&filter[id][_eq]=${id}`,
+          url,
           {
             headers: {
               'Authorization': `Bearer ${accessToken}`,
@@ -58,7 +60,12 @@ export const useTaskView = (id: string | string[]) => {
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to load task';
         setError(errorMessage);
-        showError(errorMessage);
+        showToast({
+          type: 'error',
+          text1Key: 'common.toast.error',
+          text2Key: 'common.toast.task.error.load'
+        });
+        console.error('Error fetching task:', err);
       } finally {
         setLoading(false);
       }

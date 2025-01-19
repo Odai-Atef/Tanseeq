@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast from 'react-native-toast-message';
+import { showToast } from '../../components/Toast';
 import { Schedule } from '../../types/Schedule';
 import { API_ENDPOINTS } from '../../constants/api';
 
@@ -19,15 +19,11 @@ export const useCalendar = () => {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const showError = (message: string) => {
-    Toast.show({
+  const showError = () => {
+    showToast({
       type: 'error',
-      text1: 'Error',
-      text2: message,
-      position: 'top',
-      visibilityTime: 3000,
-      autoHide: true,
-      topOffset: 30
+      text1Key: 'common.toast.error',
+      text2Key: 'common.error.general'
     });
   };
 
@@ -35,11 +31,24 @@ export const useCalendar = () => {
     try {
       const token = await AsyncStorage.getItem('access_token');
       if (!token) {
-        throw new Error('No access token found');
+        showToast({
+          type: 'error',
+          text1Key: 'common.toast.auth.required',
+          text2Key: 'common.error.auth.required'
+        });
+        return;
+      }
+
+      const defaultHomeStr = await AsyncStorage.getItem('DEFAULT_HOME');
+      let url = `${API_ENDPOINTS.SCHEDULE}?fields=*,task.*&filter[day][_eq]=${date}`;
+      
+      if (defaultHomeStr) {
+        const defaultHome = JSON.parse(defaultHomeStr);
+        url += `&filter[task][property_id][_eq]=${defaultHome.id}`;
       }
 
       const response = await fetch(
-        `${API_ENDPOINTS.SCHEDULE}?fields=*,task.*&filter[day][_eq]=${date}`,
+        url,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -56,7 +65,12 @@ export const useCalendar = () => {
       const scheduleInstances = (result.data || []).map(schedule => Schedule.fromAPI(schedule));
       setSchedules(scheduleInstances);
     } catch (err) {
-      showError(err instanceof Error ? err.message : 'Failed to load schedules');
+      showToast({
+        type: 'error',
+        text1Key: 'common.toast.error',
+        text2Key: 'common.toast.schedule.error.load'
+      });
+      console.error('Error fetching schedules:', err);
     } finally {
       setLoading(false);
     }
