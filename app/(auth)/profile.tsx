@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, ActivityIndicator, I18nManager } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
@@ -25,18 +25,25 @@ const ProfileListItem = ({
 }) => (
   <TouchableOpacity 
     onPress={onPress}
-    style={styles.listItem}
+    style={[
+      styles.listItem,
+      { flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row' }
+    ]}
   >
-    <View style={styles.iconContainer}>
+    <View style={[
+      styles.iconContainer,
+      I18nManager.isRTL && { marginLeft: 10, marginRight: 0 }
+    ]}>
       <Ionicons name={icon} size={20} color={danger ? colors.danger : color} />
     </View>
     <ThemedText style={[
       styles.listItemText,
-      danger && { color: colors.danger }
+      danger && { color: colors.danger },
+      I18nManager.isRTL && { textAlign: 'right' }
     ]}>
       {title}
     </ThemedText>
-    <Ionicons name="chevron-forward-outline" size={20} color={colors.textPrimary} />
+  
   </TouchableOpacity>
 );
 
@@ -73,16 +80,19 @@ export default function Profile() {
               style={styles.avatar}
             />
           </View>
-          <ThemedText style={styles.userName}>{getDisplayName()}</ThemedText>
-          <Text style={styles.userEmail}>{userInfo?.email || t('profile.noEmail')}</Text>
+          <ThemedText style={[
+            styles.userName,
+            I18nManager.isRTL && { textAlign: 'center' }
+          ]}>
+            {getDisplayName()}
+          </ThemedText>
+          <Text style={[
+            styles.userEmail,
+            I18nManager.isRTL && { textAlign: 'center' }
+          ]}>
+            {userInfo?.email || t('profile.noEmail')}
+          </Text>
         </View>
-
-        {/* <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => router.push('/(auth)/edit-profile' as any)}
-        >
-          <Text style={styles.editButtonText}>Edit Profile</Text>
-        </TouchableOpacity> */}
 
         <View style={{ marginTop: 16 }}>
           <ProfileListItem
@@ -118,14 +128,20 @@ export default function Profile() {
       {showLogoutModal && (
         <View style={styles.modal}>
           <View style={styles.modalContent}>
-            <ThemedText style={styles.modalTitle}>
+            <ThemedText style={[
+              styles.modalTitle,
+              I18nManager.isRTL && { textAlign: 'center' }
+            ]}>
               {t('profile.logoutConfirmation')}
             </ThemedText>
             <TouchableOpacity
               onPress={handleLogout}
               style={[styles.modalButton, styles.modalButtonBorder]}
             >
-              <Text style={{ color: colors.danger, fontSize: 16, fontWeight: '600' }}>
+              <Text style={[
+                { color: colors.danger, fontSize: 16, fontWeight: '600' },
+                I18nManager.isRTL && { textAlign: 'center' }
+              ]}>
                 {t('profile.logoutButton')}
               </Text>
             </TouchableOpacity>
@@ -133,7 +149,10 @@ export default function Profile() {
               onPress={() => setShowLogoutModal(false)}
               style={styles.modalButton}
             >
-              <Text style={{ color: colors.textSecondary, fontSize: 16 }}>
+              <Text style={[
+                { color: colors.textSecondary, fontSize: 16 },
+                I18nManager.isRTL && { textAlign: 'center' }
+              ]}>
                 {t('profile.cancelButton')}
               </Text>
             </TouchableOpacity>
