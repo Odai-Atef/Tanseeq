@@ -213,5 +213,19 @@ export const ar = {
       scanQrCode: 'مسح رمز QR',
       submit: 'انضمام للمنزل'
     }
+  },
+  profile: {
+    defaultUser: 'مستخدم',
+    upgradeTitle: 'الترقية إلى بريميوم',
+    helpCenter: 'مركز المساعدة',
+    rateApp: 'تقييم التطبيق',
+    privacyPolicy: 'سياسة الخصوصية',
+    logout: 'تسجيل الخروج',
+    editProfile: 'تعديل الملف الشخصي',
+    logoutConfirmation: 'هل أنت متأكد أنك تريد تسجيل الخروج؟',
+    featureNotAvailable: 'هذه الميزة غير متوفرة حالياً',
+    noEmail: 'لا يوجد بريد إلكتروني',
+    logoutButton: 'تسجيل الخروج',
+    cancelButton: 'إلغاء'
   }
 };
