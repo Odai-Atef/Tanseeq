@@ -33,10 +33,18 @@ export const useDashboard = () => {
       setError(null);
       
       const token = await AsyncStorage.getItem('access_token');
+      const defaultHomeStr = await AsyncStorage.getItem('DEFAULT_HOME');
       const today = new Date().toISOString().split('T')[0];
       
+      let url = `${API_ENDPOINTS.SCHEDULE}?fields=*,task.*&filter[day][_eq]=${today}`;
+      
+      if (defaultHomeStr) {
+        const defaultHome = JSON.parse(defaultHomeStr);
+        url += `&filter[task][property_id][_eq]=${defaultHome.id}`;
+      }
+      
       const response = await fetch(
-        `${API_ENDPOINTS.SCHEDULE}?fields=*,task.*&filter[day][_eq]=${today}`,
+        url,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
