@@ -60,12 +60,19 @@ export const useScheduleAdd = () => {
   const fetchTasks = async () => {
     try {
       const token = await AsyncStorage.getItem('access_token');
+      const defaultHome = await AsyncStorage.getItem('DEFAULT_HOME');
+      
       if (!token) {
         throw new Error('No access token found');
       }
 
+      if (!defaultHome) {
+        setError(t('common.error.fetch'));
+        return;
+      }
+      const home=JSON.parse(defaultHome)
       const response = await fetch(
-        `${API_ENDPOINTS.TASKS}?fields=id,name`,
+        `${API_ENDPOINTS.TASKS}?fields=id,name&property_id=${home.id}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
