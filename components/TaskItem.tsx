@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, TouchableOpacity, Pressable } from 'react-native';
 import { ThemedText } from './ThemedText';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,7 +16,7 @@ interface MenuProps {
   onEdit: () => void;
 }
 
-const OptionsMenu = ({ visible, onClose, onView, onEdit }: MenuProps) => {
+const OptionsMenu = ({ visible, onClose, onView, onEdit, showEdit }: MenuProps & { showEdit: boolean }) => {
   const { t, isRTL } = useTranslation();
   
   if (!visible) return null;
@@ -39,18 +40,20 @@ const OptionsMenu = ({ visible, onClose, onView, onEdit }: MenuProps) => {
             <ThemedText style={styles.menuText}>{t('common.buttons.viewAll')}</ThemedText>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity 
-          style={styles.menuItem}
-          onPress={() => {
-            onEdit();
-            onClose();
-          }}
-        >
-          <View style={[styles.menuItem, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-            <Ionicons name="pencil-outline" size={20} color="#464D61" style={[styles.menuIcon, { marginLeft: isRTL ? 6 : 0, marginRight: isRTL ? 0 : 6 }]} />
-            <ThemedText style={styles.menuText}>{t('common.buttons.edit')}</ThemedText>
-          </View>
-        </TouchableOpacity>
+        {showEdit && (
+          <TouchableOpacity 
+            style={styles.menuItem}
+            onPress={() => {
+              onEdit();
+              onClose();
+            }}
+          >
+            <View style={[styles.menuItem, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+              <Ionicons name="pencil-outline" size={20} color="#464D61" style={[styles.menuIcon, { marginLeft: isRTL ? 6 : 0, marginRight: isRTL ? 0 : 6 }]} />
+              <ThemedText style={styles.menuText}>{t('common.buttons.edit')}</ThemedText>
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
     </>
   );
@@ -64,6 +67,26 @@ interface TaskItemProps {
 export const TaskItem = ({ item, type }: TaskItemProps) => {
   const { isRTL } = useTranslation();
   const [menuVisible, setMenuVisible] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+
+  useEffect(() => {
+    const checkUserPermission = async () => {
+      try {
+        const userInfoStr = await AsyncStorage.getItem('userInfo');
+        if (userInfoStr) {
+          const userInfo = JSON.parse(userInfoStr);
+          // Only show edit if it's a task and user created it
+          if (!isSchedule(item)) {
+            setShowEdit(userInfo.id === item.user_created);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking user permission:', error);
+      }
+    };
+
+    checkUserPermission();
+  }, [item]);
 
   const isSchedule = (item: Schedule | Task): item is Schedule => {
     return 'task' in item;
@@ -127,6 +150,7 @@ export const TaskItem = ({ item, type }: TaskItemProps) => {
               onClose={() => setMenuVisible(false)}
               onView={handleView}
               onEdit={handleEdit}
+              showEdit={showEdit}
             />
           </View>
         </View>

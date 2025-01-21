@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, ScrollView, ActivityIndicator, Image, Dimensions } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedView } from '../../components/ThemedView';
@@ -8,11 +8,31 @@ import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import { API_ENDPOINTS } from '../../constants/api';
 import { useTaskView } from '../../hooks/tasks/viewHook';
+import { useTranslation } from '../../contexts/LanguageContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function TaskView() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const { task, loading, error, token } = useTaskView(id);
+  const { t } = useTranslation();
+  const [canEdit, setCanEdit] = useState(false);
+
+  useEffect(() => {
+    const checkUserPermission = async () => {
+      try {
+        const userInfoStr = await AsyncStorage.getItem('userInfo');
+        if (userInfoStr && task) {
+          const userInfo = JSON.parse(userInfoStr);
+          setCanEdit(userInfo.id === task.user_created);
+        }
+      } catch (error) {
+        console.error('Error checking user permission:', error);
+      }
+    };
+
+    checkUserPermission();
+  }, [task]);
 
   if (loading) {
     return (
@@ -55,7 +75,7 @@ export default function TaskView() {
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.subtitle}>Status</ThemedText>
+          <ThemedText style={styles.subtitle}>{t('tasks.view.status')}</ThemedText>
           <ThemedText style={styles.description}>
             {task.status}
           </ThemedText>
@@ -63,7 +83,7 @@ export default function TaskView() {
 
         {task.repeat_days.length > 0 && (
           <View style={styles.section}>
-            <ThemedText style={styles.subtitle}>Repeat Days</ThemedText>
+            <ThemedText style={styles.subtitle}>{t('tasks.add.scheduleDays')}</ThemedText>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
               {task.getRepeatDayNames().map((dayName) => (
                 <View key={dayName} style={styles.repeatDayChip}>
@@ -76,7 +96,7 @@ export default function TaskView() {
 
         {task.repeat_monthly && (
           <View style={styles.section}>
-            <ThemedText style={styles.subtitle}>Monthly Repeat</ThemedText>
+            <ThemedText style={styles.subtitle}>{t('tasks.add.schedule')}</ThemedText>
             <ThemedText style={styles.description}>
                {task.getRepeatFormat()}
             </ThemedText>
@@ -84,7 +104,7 @@ export default function TaskView() {
         )}
 
         <View style={styles.section}>
-          <ThemedText style={styles.subtitle}>Created</ThemedText>
+          <ThemedText style={styles.subtitle}>{t('tasks.view.createdAt')}</ThemedText>
           <ThemedText style={styles.description}>
             {task.getFormattedCreatedDate()}
           </ThemedText>
@@ -92,7 +112,7 @@ export default function TaskView() {
 
         {task.date_updated && (
           <View style={styles.section}>
-            <ThemedText style={styles.subtitle}>Last Updated</ThemedText>
+            <ThemedText style={styles.subtitle}>{t('tasks.view.updatedAt')}</ThemedText>
             <ThemedText style={styles.description}>
               {task.getFormattedUpdatedDate()}
             </ThemedText>
@@ -100,17 +120,19 @@ export default function TaskView() {
         )}
       </ScrollView>
 
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.submitButton}
-          onPress={() => router.push({
-            pathname: "/tasks/add",
-            params: { id: task.id }
-          })}
-        >
-          <ThemedText style={styles.footerButtonText}>Edit Task</ThemedText>
-        </TouchableOpacity>
-      </View>
+      {canEdit && (
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={() => router.push({
+              pathname: "/tasks/add",
+              params: { id: task.id }
+            })}
+          >
+            <ThemedText style={styles.footerButtonText}>{t('common.buttons.edit')}</ThemedText>
+          </TouchableOpacity>
+        </View>
+      )}
     </ThemedView>
   );
 }
