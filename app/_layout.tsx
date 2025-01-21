@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { LanguageProvider, useTranslation } from '../contexts/LanguageContext';
 import Toast from 'react-native-toast-message';
+import { ToastProvider } from '../components/Toast';
 import { useFonts } from 'expo-font';
 import { useColorScheme } from 'react-native';
 import { DarkTheme, DefaultTheme, Theme, NavigationContainer } from '@react-navigation/native';
@@ -94,10 +95,12 @@ export default function Layout() {
 
   return (
     <LanguageProvider>
-      <NavigationContainer theme={navigationTheme[colorScheme ?? 'light']}>
-        <StackNavigator />
-        <Toast />
-      </NavigationContainer>
+      <ToastProvider>
+        <NavigationContainer theme={navigationTheme[colorScheme ?? 'light']}>
+          <StackNavigator />
+          <Toast />
+        </NavigationContainer>
+      </ToastProvider>
     </LanguageProvider>
   );
 }
