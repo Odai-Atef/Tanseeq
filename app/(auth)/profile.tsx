@@ -81,8 +81,7 @@ export default function Profile() {
             />
           </View>
           <ThemedText style={[
-            styles.userName,
-            I18nManager.isRTL && { textAlign: 'center' }
+            styles.userName 
           ]}>
             {getDisplayName()}
           </ThemedText>

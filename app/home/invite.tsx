@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   value: {
+    paddingTop:15,
     fontSize: 32,
     fontWeight: 'bold',
     letterSpacing: 2,

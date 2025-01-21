@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderTopWidth: 1,
     borderTopColor: colors.line,
+    zIndex: 0,
   },
   tab: {
     padding: 10,

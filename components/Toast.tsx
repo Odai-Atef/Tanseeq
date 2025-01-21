@@ -59,7 +59,7 @@ export const showToast = (props: ShowToastProps) => {
       position: 'top',
       visibilityTime: 3000,
       autoHide: true,
-      topOffset: 30
+      topOffset: 70
     });
   }
 };

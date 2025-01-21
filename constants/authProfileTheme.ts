@@ -43,10 +43,11 @@ export const authProfileTheme = StyleSheet.create({
     fontWeight: '600',
   },
   userName: {
+    paddingTop:15,
     fontSize: 24,
     fontWeight: '700',
     color: colors.textPrimary,
-    marginBottom: 4,
+    textAlign: 'center'
   },
   userEmail: {
     fontSize: 16,
