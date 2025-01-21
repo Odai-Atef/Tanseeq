@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
 import { Footer } from '../../components/Footer';
@@ -91,6 +91,7 @@ const TaskSection = ({
 
 export default function Tasks() {
   const { t, isRTL } = useTranslation();
+  const [refreshing, setRefreshing] = React.useState(false);
   const {
     expandedSections,
     selectedDate,
@@ -99,12 +100,29 @@ export default function Tasks() {
     doneTasks,
     notStartedTasks,
     setSelectedDate,
-    toggleSection
+    toggleSection,
+    fetchSchedules
   } = useCalendar();
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await fetchSchedules(selectedDate);
+    setRefreshing(false);
+  }, [selectedDate, fetchSchedules]);
 
   return (
     <ThemedView style={styles.container_trans}>
-      <ScrollView style={styles.content}>
+      <ScrollView 
+        style={styles.content}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
+          />
+        }
+      >
         <Calendar
           style={styles.calendar}
           theme={{

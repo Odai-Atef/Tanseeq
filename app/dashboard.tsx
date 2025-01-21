@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
+import { ScrollView, View, TouchableOpacity, Dimensions, ActivityIndicator, RefreshControl } from 'react-native';
 import { ThemedView } from '../components/ThemedView';
 import { ThemedText } from '../components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,6 +23,7 @@ const EmptyState = ({ message }: { message: string }) => (
 );
 
 export default function Dashboard() {
+  const [refreshing, setRefreshing] = React.useState(false);
   const {
     userName,
     schedules,
@@ -30,10 +31,17 @@ export default function Dashboard() {
     recentCompletedSchedule,
     progressPercentage,
     isLoading,
-    error
+    error,
+    fetchTodaySchedules
   } = useDashboard();
 
   const { t, isRTL } = useTranslation();
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await fetchTodaySchedules();
+    setRefreshing(false);
+  }, [fetchTodaySchedules]);
 
   const renderTaskContent = () => {
     if (isLoading) {
@@ -83,7 +91,17 @@ export default function Dashboard() {
         </View>
       </View>
 
-      <ScrollView style={styles.content}>
+      <ScrollView 
+        style={styles.content}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
+          />
+        }
+      >
         <MyHomes />
       
       <View style={styles.progressSection}>

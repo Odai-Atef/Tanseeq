@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, ActivityIndicator } from 'react-native';
+import { View, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Footer } from '../../components/Footer';
 import { ThemedText } from '../../components/ThemedText';
@@ -18,6 +18,7 @@ export default function TasksScreen() {
   const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -55,32 +56,35 @@ export default function TasksScreen() {
     }
   };
 
-  if (loading) {
-    return (
-      <ThemedView style={styles.container}>
-        <View style={[styles.content, { justifyContent: 'center', alignItems: 'center' }]}>
-          <ActivityIndicator size="large" color={colors.primary} />
-        </View>
-        <Footer activeTab="tasks" />
-      </ThemedView>
-    );
-  }
-
-  if (error) {
-    return (
-      <ThemedView style={styles.container}>
-        <View style={[styles.content, { justifyContent: 'center', alignItems: 'center' }]}>
-          <ThemedText style={{ color: colors.danger }}>{error}</ThemedText>
-        </View>
-        <Footer activeTab="tasks" />
-      </ThemedView>
-    );
-  }
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await fetchTasks();
+    setRefreshing(false);
+  }, [fetchTasks]);
 
   return (
     <ThemedView style={styles.container_trans}>
-      <ScrollView style={styles.content}>
-          <View >
+      <ScrollView 
+        style={styles.content}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
+          />
+        }
+      >
+        {loading ? (
+          <View style={[styles.content, { justifyContent: 'center', alignItems: 'center' }]}>
+            <ActivityIndicator size="large" color={colors.primary} />
+          </View>
+        ) : error ? (
+          <View style={[styles.content, { justifyContent: 'center', alignItems: 'center' }]}>
+            <ThemedText style={{ color: colors.danger }}>{error}</ThemedText>
+          </View>
+        ) : (
+          <View>
             {tasks.map((task) => (
               <TaskItem
                 key={task.id}
@@ -88,7 +92,8 @@ export default function TasksScreen() {
                 type="task"
               />
             ))}
-        </View>
+          </View>
+        )}
       </ScrollView>
       <Footer activeTab="tasks" />
     </ThemedView>
