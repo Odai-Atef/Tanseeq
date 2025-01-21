@@ -16,6 +16,12 @@
         "com.apple.developer.applesignin": [
           "Default"
         ]
+      },
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app needs access to the camera to scan QR codes",
+        "NSPhotoLibraryUsageDescription": "This app needs access to photos for profile pictures and task attachments",
+        "NSPhotoLibraryAddUsageDescription": "This app needs access to photos to save images",
+        "NSMicrophoneUsageDescription": "This app needs access to microphone"
       }
     },
     "android": {
@@ -23,7 +29,13 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "pro.tanseeq.app"
+      "package": "pro.tanseeq.app",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -49,8 +61,7 @@
         {
           "mode": "development"
         }
-      ],
-      "expo-barcode-scanner"
+      ]
     ],
     "experiments": {
       "typedRoutes": true

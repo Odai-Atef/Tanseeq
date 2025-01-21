@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { router } from 'expo-router';
-import { BarCodeScanner } from 'expo-barcode-scanner';
+import { PermissionsAndroid, Platform } from 'react-native';
 import { showToast } from '../../components/Toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ENDPOINTS } from '../../constants/api';
@@ -13,11 +13,36 @@ export const useJoinHome = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const requestCameraPermission = async () => {
-    const { status } = await BarCodeScanner.requestPermissionsAsync();
-    setHasPermission(status === 'granted');
-    if (status === 'granted') {
+    if (Platform.OS === 'ios') {
+      setHasPermission(true);
       setShowScanner(true);
-    } else {
+      return;
+    }
+
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: "Camera Permission",
+          message: "App needs camera permission to scan QR codes",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK"
+        }
+      );
+      
+      const permissionGranted = granted === PermissionsAndroid.RESULTS.GRANTED;
+      setHasPermission(permissionGranted);
+      if (permissionGranted) {
+        setShowScanner(true);
+      } else {
+        showToast({
+          type: 'error',
+          text1Key: 'common.error.permission',
+          text2Key: 'home.join.cameraRequired'
+        });
+      }
+    } catch (err) {
       showToast({
         type: 'error',
         text1Key: 'common.error.permission',
@@ -26,9 +51,9 @@ export const useJoinHome = () => {
     }
   };
 
-  const handleBarCodeScanned = ({ data }: { data: string }) => {
+  const handleBarCodeScanned = (event: { data: string }) => {
     setShowScanner(false);
-    const [scannedHomeId, scannedPassword] = data.split(',');
+    const [scannedHomeId, scannedPassword] = event.data.split(',');
     if (scannedHomeId && scannedPassword) {
       setHomeId(scannedHomeId);
       setHomePassword(scannedPassword);
