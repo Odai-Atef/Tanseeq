@@ -30,7 +30,7 @@ export const useInviteHome = () => {
       }
 
       // Get existing home for the user
-      const getResponse = await fetch(`${API_ENDPOINTS.HOME}?filter[user_created][_eq]=${user.id}`, {
+      const getResponse = await fetch(`${API_ENDPOINTS.HOME}?filter[id][_eq]=${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
