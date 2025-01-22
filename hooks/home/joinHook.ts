@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { router } from 'expo-router';
-import { PermissionsAndroid, Platform } from 'react-native';
+import { Platform } from 'react-native';
+import * as ExpoBarCodeScanner from 'expo-barcode-scanner';
 import { showToast } from '../../components/Toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ENDPOINTS } from '../../constants/api';
@@ -13,25 +14,9 @@ export const useJoinHome = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const requestCameraPermission = async () => {
-    if (Platform.OS === 'ios') {
-      setHasPermission(true);
-      setShowScanner(true);
-      return;
-    }
-
     try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        {
-          title: "Camera Permission",
-          message: "App needs camera permission to scan QR codes",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK"
-        }
-      );
-      
-      const permissionGranted = granted === PermissionsAndroid.RESULTS.GRANTED;
+      const { status } = await ExpoBarCodeScanner.requestPermissionsAsync();
+      const permissionGranted = status === 'granted';
       setHasPermission(permissionGranted);
       if (permissionGranted) {
         setShowScanner(true);
@@ -51,9 +36,9 @@ export const useJoinHome = () => {
     }
   };
 
-  const handleBarCodeScanned = (event: { data: string }) => {
+  const handleBarCodeScanned = ({ type, data }: { type: string, data: string }) => {
     setShowScanner(false);
-    const [scannedHomeId, scannedPassword] = event.data.split(',');
+    const [scannedHomeId, scannedPassword] = data.split(',');
     if (scannedHomeId && scannedPassword) {
       setHomeId(scannedHomeId);
       setHomePassword(scannedPassword);

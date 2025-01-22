@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-import QRCodeScanner from 'react-native-qrcode-scanner';
-import { RNCamera } from 'react-native-camera';
+import { BarCodeScanner } from 'expo-barcode-scanner';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
 import { colors, homeTheme as styles } from '../../constants/Theme';
@@ -26,16 +25,18 @@ export default function JoinHome() {
 
   if (showScanner && hasPermission) {
     return (
-      <ThemedView style={styles.container}>
-        <QRCodeScanner
-          onRead={handleBarCodeScanned}
-          flashMode={RNCamera.Constants.FlashMode.auto}
-          topContent={
+      <ThemedView style={[styles.container, { padding: 0 }]}>
+        <View style={{ flex: 1 }}>
+          <BarCodeScanner
+            onBarCodeScanned={handleBarCodeScanned}
+            style={StyleSheet.absoluteFillObject}
+          />
+          <View style={{ padding: 20, position: 'absolute', top: 0, left: 0, right: 0 }}>
             <ThemedText style={styles.scanButtonText}>
               {t('home.join.scanQrCode')}
             </ThemedText>
-          }
-        />
+          </View>
+        </View>
       </ThemedView>
     );
   }

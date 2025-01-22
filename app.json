@@ -17,6 +17,7 @@
           "Default"
         ]
       },
+      "bundleResourceIOS": true,
       "infoPlist": {
         "NSCameraUsageDescription": "This app needs access to the camera to scan QR codes",
         "NSPhotoLibraryUsageDescription": "This app needs access to photos for profile pictures and task attachments",
@@ -46,6 +47,18 @@
       "expo-router",
       [
         "expo-apple-authentication"
+      ],
+      "expo-barcode-scanner",
+      [
+        "react-native-permissions",
+        {
+          "ios": {
+            "cameraPermission": "This app needs access to the camera to scan QR codes",
+            "photoLibraryPermission": "This app needs access to photos for profile pictures and task attachments",
+            "photoLibraryAddOnlyPermission": "This app needs access to photos to save images",
+            "microphonePermission": "This app needs access to microphone"
+          }
+        }
       ],
       [
         "expo-splash-screen",
