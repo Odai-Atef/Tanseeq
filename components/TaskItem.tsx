@@ -137,27 +137,64 @@ export const TaskItem = ({ item, type }: TaskItemProps) => {
     <TouchableOpacity onPress={handleView}>
       <View style={styles.taskItem}>
         <View style={[styles.taskHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-          <ThemedText type="defaultSemiBold" style={[styles.taskTitle, { marginLeft: isRTL ? 8 : 0, marginRight: isRTL ? 0 : 8 }]}>{getTitle()}</ThemedText>
-          <View style={styles.menuWrapper}>
-            <TouchableOpacity 
-              onPress={() => setMenuVisible(!menuVisible)}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Ionicons name="ellipsis-vertical" size={20} color="#464D61" />
-            </TouchableOpacity>
-            <OptionsMenu
-              visible={menuVisible}
-              onClose={() => setMenuVisible(false)}
-              onView={handleView}
-              onEdit={handleEdit}
-              showEdit={showEdit}
-            />
-          </View>
+          {isRTL ? (
+            <>
+              <ThemedText type="defaultSemiBold" style={[styles.taskTitle, { marginRight: 8, textAlign: 'right' }]}>
+                {getTitle()}
+              </ThemedText>
+              <View style={styles.menuWrapper}>
+                <TouchableOpacity 
+                  onPress={() => setMenuVisible(!menuVisible)}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                  <Ionicons name="ellipsis-vertical" size={20} color="#464D61" />
+                </TouchableOpacity>
+                <OptionsMenu
+                  visible={menuVisible}
+                  onClose={() => setMenuVisible(false)}
+                  onView={handleView}
+                  onEdit={handleEdit}
+                  showEdit={showEdit}
+                />
+              </View>
+            </>
+          ) : (
+            <>
+              <View style={styles.menuWrapper}>
+                <TouchableOpacity 
+                  onPress={() => setMenuVisible(!menuVisible)}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                  <Ionicons name="ellipsis-vertical" size={20} color="#464D61" />
+                </TouchableOpacity>
+                <OptionsMenu
+                  visible={menuVisible}
+                  onClose={() => setMenuVisible(false)}
+                  onView={handleView}
+                  onEdit={handleEdit}
+                  showEdit={showEdit}
+                />
+              </View>
+              <ThemedText type="defaultSemiBold" style={[styles.taskTitle, { marginLeft: 8, textAlign: 'left' }]}>
+                {getTitle()}
+              </ThemedText>
+            </>
+          )}
         </View>
-        <ThemedText style={styles.taskDescription}>{getDescription()}</ThemedText>
+        <ThemedText style={[styles.taskDescription, { textAlign: isRTL ? 'right' : 'left' }]}>
+          {getDescription()}
+        </ThemedText>
         <View style={[styles.taskFooter, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-          <ThemedText style={styles.taskTime}>{getTimeInfo()}</ThemedText>
-          <View style={[styles.statusBadge, { backgroundColor: getStatus() === 'Done' ? '#E8F5E9' : '#E3F2FD' }]}>
+          <ThemedText style={[styles.taskTime, { textAlign: isRTL ? 'right' : 'left' }]}>
+            {getTimeInfo()}
+          </ThemedText>
+          <View style={[
+            styles.statusBadge, 
+            { 
+              backgroundColor: getStatus() === 'Done' ? '#E8F5E9' : '#E3F2FD',
+              alignSelf: isRTL ? 'flex-start' : 'flex-end'
+            }
+          ]}>
             <ThemedText style={[styles.statusText, { color: getStatus() === 'Done' ? '#4CAF50' : '#2196F3' }]}>
               {getStatus()}
             </ThemedText>

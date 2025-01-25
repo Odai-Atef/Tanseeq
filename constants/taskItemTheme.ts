@@ -10,7 +10,6 @@ export const taskItemTheme = StyleSheet.create({
     marginBottom: 16,
   },
   taskHeader: {
-    flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
@@ -21,6 +20,7 @@ export const taskItemTheme = StyleSheet.create({
     fontWeight: '600',
     color: '#464D61',
     flex: 1,
+    flexShrink: 1,
   },
   taskDescription: {
     fontSize: 14,
@@ -66,7 +66,6 @@ export const taskItemTheme = StyleSheet.create({
   menuContainer: {
     position: 'absolute',
     top: 25,
-    right: 10,
     backgroundColor: '#ffffff',
     minWidth: 150,
     shadowColor: '#000',
