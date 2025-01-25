@@ -54,13 +54,7 @@ export const MyHomes = () => {
           </ThemedText>
         </View>
         <View style={[styles.metaList, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-          <View style={[styles.metaItem, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-            <Ionicons name="calendar-outline" size={12} color={colors.text} />
-            <ThemedText style={[styles.metaText, { marginRight: isRTL ? 4 : 0, marginLeft: isRTL ? 0 : 4 }]}>
-              {item.date_created}
-            </ThemedText>
-          </View>
-          <View style={[styles.metaItem, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+          {/* <View style={[styles.metaItem, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
             <Ionicons name="list-outline" size={12} color={colors.text} />
             <ThemedText style={[styles.metaText, { marginRight: isRTL ? 4 : 0, marginLeft: isRTL ? 0 : 4 }]}>
               {item.tasks}
@@ -71,7 +65,7 @@ export const MyHomes = () => {
             <ThemedText style={[styles.metaText, { marginRight: isRTL ? 4 : 0, marginLeft: isRTL ? 0 : 4 }]}>
               {item.links}
             </ThemedText>
-          </View>
+          </View> */}
         </View>
       </View>
 
@@ -120,7 +114,11 @@ export const MyHomes = () => {
         </ThemedText>
       </View>
       <FlatList
-        data={homes}
+        data={[...homes].sort((a, b) => {
+          if (a.is_default && !b.is_default) return -1;
+          if (!a.is_default && b.is_default) return 1;
+          return 0;
+        })}
         renderItem={renderHomeItem}
         keyExtractor={(item, index) => index.toString()}
         horizontal

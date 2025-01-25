@@ -17,5 +17,6 @@ class GlobalEventEmitter extends EventEmitter {
 
 export const eventEmitter = GlobalEventEmitter.getInstance();
 export const EVENTS = {
-  DEFAULT_HOME_CHANGED: 'DEFAULT_HOME_CHANGED'
+  DEFAULT_HOME_CHANGED: 'DEFAULT_HOME_CHANGED',
+  SCHEDULE_STATUS_CHANGED: 'SCHEDULE_STATUS_CHANGED'
 } as const;

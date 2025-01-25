@@ -4,91 +4,130 @@ import { Home } from '../../types/Home';
 import { API_ENDPOINTS, DEFAULT_HOME } from '../../constants/api';
 import { showToast } from '../../components/Toast';
 import { eventEmitter, EVENTS } from '../../utils/eventEmitter';
+import { Schedule } from '../../types/Schedule';
 
 export const useHomes = () => {
   const [homes, setHomes] = useState<Home[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchHomes = async () => {
-      try {
-        const token = await AsyncStorage.getItem('access_token');
-        if (!token) {
-          throw new Error('Authentication required');
-        }
+  const fetchHomeProgress = async (homeId: string): Promise<number> => {
+    try {
+      const token = await AsyncStorage.getItem('access_token');
+      const today = new Date().toISOString().split('T')[0];
+      
+      const url = `${API_ENDPOINTS.SCHEDULE}?fields=*,task.*&filter[day][_eq]=${today}&filter[task][property_id][_eq]=${homeId}`;
+      
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) throw new Error('Failed to fetch schedules');
+      
+      const data = await response.json();
+      const todaySchedules = (data.data || []).map((item: any) => Schedule.fromAPI(item));
 
-        const fields = 'fields=*,property_users.*,property_users.directus_users_id.id,property_users.directus_users_id.first_name,property_users.directus_users_id.last_name,property_users.directus_users_id.email,property_users.directus_users_id.avatar,property_users.directus_users_id.status';
-        const response = await fetch(`${API_ENDPOINTS.HOME}?${fields}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json',
-          }
-        });
+      // Calculate progress percentage
+      const totalSchedules = todaySchedules.length;
+      const activeSchedules = todaySchedules.filter((schedule: Schedule) => 
+        ['Done', 'Cancelled'].includes(schedule.status)
+      ).length;
+      
+      return totalSchedules > 0 ? Math.round((activeSchedules / totalSchedules) * 100) : 0;
+    } catch (error) {
+      console.error('Error fetching home progress:', error);
+      return 0;
+    }
+  };
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch homes');
-        }
-
-        const data = await response.json();
-        
-        // Transform API data to match our Home type
-        // Get user info from localStorage
-        const userInfoStr = await AsyncStorage.getItem('userInfo');
-        if (!userInfoStr) {
-          throw new Error('User info not found');
-        }
-        const userInfo = JSON.parse(userInfoStr);
-
-        const transformedHomes: Home[] = data.data.map((home: any) => {
-          // Find the property user that matches the current user
-          const currentUserPropertyUser = home.property_users?.find(
-            (pu: any) => pu.directus_users_id.id === userInfo.id
-          );
-
-          return {
-            id: home.id,
-            name: home.name,
-            date_created: home.date_created,
-            // Use is_default from the matching property user if found
-            is_default: currentUserPropertyUser ? currentUserPropertyUser.is_default : false,
-            property_users: home.property_users?.map((pu: any) => ({
-              id: pu.directus_users_id.id,
-              first_name: pu.directus_users_id.first_name,
-              last_name: pu.directus_users_id.last_name,
-              email: pu.directus_users_id.email,
-              avatar: pu.directus_users_id.avatar,
-              status: pu.directus_users_id.status
-            })) || [],
-            // Static values until we get the calculation API
-            tasks: 5,
-            links: 3,
-            progress: 75
-          };
-        });
-
-        setHomes(transformedHomes);
-        
-        // If there's a default home, save it to AsyncStorage
-        const defaultHome = transformedHomes.find(home => home.is_default);
-        if (defaultHome) {
-          await AsyncStorage.setItem(DEFAULT_HOME, JSON.stringify(defaultHome));
-        }
-        
-        setIsLoading(false);
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to fetch homes';
-        setError(message);
-        showToast({
-          type: 'error',
-          text1Key: 'common.toast.error',
-          text2Key: 'common.toast.fetch.homes'
-        });
-        setIsLoading(false);
+  const fetchHomes = useCallback(async () => {
+    try {
+      const token = await AsyncStorage.getItem('access_token');
+      if (!token) {
+        throw new Error('Authentication required');
       }
-    };
 
-    fetchHomes();
+      const fields = 'fields=*,property_users.*,property_users.directus_users_id.id,property_users.directus_users_id.first_name,property_users.directus_users_id.last_name,property_users.directus_users_id.email,property_users.directus_users_id.avatar,property_users.directus_users_id.status';
+      const response = await fetch(`${API_ENDPOINTS.HOME}?${fields}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch homes');
+      }
+
+      const data = await response.json();
+      
+      // Transform API data to match our Home type
+      // Get user info from localStorage
+      const userInfoStr = await AsyncStorage.getItem('userInfo');
+      if (!userInfoStr) {
+        throw new Error('User info not found');
+      }
+      const userInfo = JSON.parse(userInfoStr);
+
+      const transformedHomes: Home[] = data.data.map((home: any) => {
+        // Find if any property user has is_default true
+        const hasDefaultUser = home.property_users?.some((pu: any) => pu.is_default) || false;
+
+        // Map property users
+        const mappedPropertyUsers = home.property_users?.map((pu: any) => {
+          const user = pu.directus_users_id;
+          return {
+            id: user.id,
+            first_name: user.first_name,
+            last_name: user.last_name || null,
+            email: user.email,
+            avatar: user.avatar || null,
+            status: user.status as 'active' | 'inactive'
+          };
+        }) || [];
+
+        return {
+          id: home.id,
+          name: home.name,
+          date_created: home.date_created,
+          is_default: hasDefaultUser,
+          property_users: mappedPropertyUsers,
+          tasks: 5,
+          links: 3,
+          progress: 0 // Will be updated by fetchHomeProgress
+        };
+      });
+
+      // Fetch progress for each home
+      const homesWithProgress = await Promise.all(
+        transformedHomes.map(async (home) => {
+          const progress = await fetchHomeProgress(home.id);
+          return { ...home, progress };
+        })
+      );
+
+      setHomes(homesWithProgress);
+      
+      // If there's a default home, save it to AsyncStorage
+      const defaultHome = homesWithProgress.find(home => home.is_default);
+      if (defaultHome) {
+        await AsyncStorage.setItem(DEFAULT_HOME, JSON.stringify(defaultHome));
+      }
+      
+      setIsLoading(false);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to fetch homes';
+      setError(message);
+      showToast({
+        type: 'error',
+        text1Key: 'common.toast.error',
+        text2Key: 'common.toast.fetch.homes'
+      });
+      setIsLoading(false);
+    }
   }, []);
 
   const setDefaultHome = useCallback(async (homeId: string) => {
@@ -198,6 +237,21 @@ export const useHomes = () => {
       });
     }
   }, [homes]);
+
+  useEffect(() => {
+    fetchHomes();
+
+    // Listen for schedule status changes to update progress
+    const handleScheduleChange = () => {
+      fetchHomes();
+    };
+
+    eventEmitter.on(EVENTS.SCHEDULE_STATUS_CHANGED, handleScheduleChange);
+
+    return () => {
+      eventEmitter.off(EVENTS.SCHEDULE_STATUS_CHANGED, handleScheduleChange);
+    };
+  }, [fetchHomes]);
 
   return {
     homes,
