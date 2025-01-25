@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ADMIN_ROLE } from '../constants/roles';
 import { ThemedText } from './ThemedText';
-import { useTranslation } from '../contexts/LanguageContext';
+import { useTranslation, useTextDirection } from '../contexts/LanguageContext';
 
 type FooterProps = {
   activeTab: 'home' | 'tasks' | 'profile' | 'calendar' | 'tasks/calendar';
@@ -17,6 +17,7 @@ export function Footer({ activeTab }: FooterProps) {
   const [showModal, setShowModal] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
   const { t } = useTranslation();
+  const { flexDirection } = useTextDirection();
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -96,14 +97,14 @@ export function Footer({ activeTab }: FooterProps) {
             >
               <View style={styles.modalContent}>
                 <TouchableOpacity 
-                  style={styles.modalOption}
+                  style={[styles.modalOption, flexDirection === 'row-reverse' && styles.modalOptionRTL]}
                   onPress={() => {
                     setShowModal(false);
                     router.push('/tasks/add');
                   }}
                 >
                   <Ionicons name="create-outline" size={20} color={colors.primary} />
-                  <View style={styles.optionText}>
+                  <View style={[styles.optionText, flexDirection === 'row-reverse' && styles.optionTextRTL]}>
                     <View style={styles.textContainer}>
                       <ThemedText type="defaultSemiBold" style={styles.optionTitle}>
                         {t('tasks.add.title')}
@@ -113,14 +114,14 @@ export function Footer({ activeTab }: FooterProps) {
                 </TouchableOpacity>
 
                 <TouchableOpacity 
-                  style={styles.modalOption}
+                  style={[styles.modalOption, flexDirection === 'row-reverse' && styles.modalOptionRTL]}
                   onPress={() => {
                     setShowModal(false);
                     router.push('/schedules/add');
                   }}
                 >
                   <Ionicons name="calendar-outline" size={20} color={colors.primary} />
-                  <View style={styles.optionText}>
+                  <View style={[styles.optionText, flexDirection === 'row-reverse' && styles.optionTextRTL]}>
                     <View style={styles.textContainer}>
                       <ThemedText type="defaultSemiBold" style={styles.optionTitle}>
                         {t('schedules.add.title')}
@@ -130,14 +131,14 @@ export function Footer({ activeTab }: FooterProps) {
                 </TouchableOpacity>
 
                 <TouchableOpacity 
-                  style={styles.modalOption}
+                  style={[styles.modalOption, flexDirection === 'row-reverse' && styles.modalOptionRTL]}
                   onPress={() => {
                     setShowModal(false);
                     router.push('/home/join');
                   }}
                 >
                   <Ionicons name="woman-outline" size={20} color={colors.primary} />
-                  <View style={styles.optionText}>
+                  <View style={[styles.optionText, flexDirection === 'row-reverse' && styles.optionTextRTL]}>
                     <View style={styles.textContainer}>
                       <ThemedText type="defaultSemiBold" style={styles.optionTitle}>
                         {t('home.join.title')}
@@ -147,14 +148,14 @@ export function Footer({ activeTab }: FooterProps) {
                 </TouchableOpacity>
 
                 <TouchableOpacity 
-                  style={styles.modalOption}
+                  style={[styles.modalOption, flexDirection === 'row-reverse' && styles.modalOptionRTL]}
                   onPress={() => {
                     setShowModal(false);
                     router.push('/home/invite');
                   }}
                 >
                   <Ionicons name="person-add-outline" size={20} color={colors.primary} />
-                  <View style={styles.optionText}>
+                  <View style={[styles.optionText, flexDirection === 'row-reverse' && styles.optionTextRTL]}>
                     <View style={styles.textContainer}>
                       <ThemedText type="defaultSemiBold" style={styles.optionTitle}>
                         {t('home.invite.title')}
@@ -212,13 +213,19 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.line,
   },
+  modalOptionRTL: {
+    flexDirection: 'row-reverse',
+  },
   optionText: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 15,
+    marginHorizontal: 15,
+  },
+  optionTextRTL: {
+    flexDirection: 'row-reverse',
   },
   textContainer: {
-    marginLeft: 10,
+    marginHorizontal: 10,
   },
   optionTitle: {
     fontSize: 16,
