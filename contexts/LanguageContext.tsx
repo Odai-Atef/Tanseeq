@@ -1,6 +1,7 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { useLanguage } from '../hooks/useLanguage';
 import { Language } from '../constants/languages';
+import { TextStyle, ViewStyle } from 'react-native';
 
 interface LanguageContextType {
   language: Language;
@@ -30,12 +31,12 @@ export const useTranslation = () => {
   return context;
 };
 
-// Hook to get current text direction
+// Hook to get current text direction with proper TypeScript types
 export const useTextDirection = () => {
   const { isRTL } = useTranslation();
   return {
-    direction: isRTL ? 'rtl' : 'ltr',
-    textAlign: isRTL ? 'right' : 'left' as const,
-    flexDirection: isRTL ? 'row-reverse' : 'row' as const
+    direction: isRTL ? 'rtl' : 'ltr' as const,
+    textAlign: (isRTL ? 'right' : 'left') as TextStyle['textAlign'],
+    flexDirection: (isRTL ? 'row-reverse' : 'row') as ViewStyle['flexDirection']
   };
 };

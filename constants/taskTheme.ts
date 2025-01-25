@@ -108,10 +108,6 @@ export const taskTheme = StyleSheet.create({
     borderBottomWidth: 0,
     marginBottom: 16,
   },
-  sectionTitle: {
-    ...baseTheme.headerTitle,
-    fontSize: 0,
-  },
   title: {
     ...baseTheme.headerTitle,
     fontSize: 24,
@@ -300,5 +296,119 @@ export const taskTheme = StyleSheet.create({
     marginBottom: 16,
     marginHorizontal: -16,
     backgroundColor: colors.background,
+  },
+  bannerImage: {
+    width: '100%',
+    height: 250,
+    resizeMode: 'cover'
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.textPrimary,
+    marginBottom: 12,
+  },
+  seeDetails: {
+    color: colors.primary,
+    marginLeft: 4,
+  },
+  listSection: {
+    marginTop: 24,
+  },
+  listItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.line,
+  },
+  listItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  listItemTitle: {
+    fontSize: 16,
+    color: colors.textPrimary,
+    opacity: 0.8,
+  },
+  teamList: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  avatarContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  avatar: {
+    width: '100%',
+    height: '100%',
+  },
+  addMemberButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.background,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  leaderContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  leaderAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+  },
+  leaderName: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.textPrimary,
+  },
+  statusBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  statusText: {
+    fontSize: 14,
+    color: colors.textPrimary,
+    fontWeight: '500',
+  },
+  dueDateButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  dueDateText: {
+    fontSize: 14,
+    color: colors.textPrimary,
+  },
+  attachmentButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: colors.background,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  attachmentText: {
+    fontSize: 14,
+    color: colors.primary,
+  },
+  editButton: {
+    ...baseTheme.submitButton,
+    width: '100%',
+    backgroundColor: colors.primary,
+  },
+  editButtonText: {
+    ...baseTheme.submitButtonText,
+    color: colors.white,
   },
 });

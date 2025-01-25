@@ -38,4 +38,9 @@ export const colors = {
   textPrimary: '#31394F',
   textSecondary: '#464D61',
   lightGray: '#F0F1F5',
+  // Status colors
+  statusTodo: '#F0F1F5',
+  statusInProgress: '#FCF4E8',
+  statusCompleted: '#EDF9F0',
+  statusCancelled: '#FEEFEF',
 } as const;

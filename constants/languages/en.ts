@@ -132,7 +132,12 @@ export const en = {
       title: 'Task Details',
       status: 'Status',
       createdAt: 'Created At',
-      updatedAt: 'Updated At'
+      updatedAt: 'Updated At',
+      createdBy: 'Created By',
+      schedule: 'Schedule',
+      attachment: 'Attachment',
+      attachments: 'attachments',
+      noAttachments: 'No attachments'
     },
     calendar: {
       title: 'Calendar',

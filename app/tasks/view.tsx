@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, ActivityIndicator, Image, Dimensions } from 'react-native';
+import { View, ScrollView, ActivityIndicator, Image, Dimensions, TouchableOpacity, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
 import { colors, taskTheme as styles } from '../../constants/Theme';
-import { Ionicons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native';
+import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 import { API_ENDPOINTS } from '../../constants/api';
 import { useTaskView } from '../../hooks/tasks/viewHook';
-import { useTranslation } from '../../contexts/LanguageContext';
+import { useTranslation, useTextDirection } from '../../contexts/LanguageContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function TaskView() {
@@ -16,6 +15,7 @@ export default function TaskView() {
   const { id } = useLocalSearchParams();
   const { task, loading, error, token } = useTaskView(id);
   const { t } = useTranslation();
+  const { textAlign, flexDirection } = useTextDirection();
   const [canEdit, setCanEdit] = useState(false);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function TaskView() {
     return (
       <ThemedView style={styles.container}>
         <View style={[styles.content, { justifyContent: 'center', alignItems: 'center' }]}>
-          <ThemedText style={{ color: colors.danger }}>{error || 'Task not found'}</ThemedText>
+          <ThemedText style={{ color: colors.danger }}>{error || t('tasks.view.notFound')}</ThemedText>
         </View>
       </ThemedView>
     );
@@ -61,75 +61,64 @@ export default function TaskView() {
           <View style={styles.imageContainer}>
             <Image
               source={{ uri: `${API_ENDPOINTS.BASE_URL}/assets/${task.images}?access_token=${token}` }}
-              style={{
-                width: Dimensions.get('window').width,
-                height: 250,
-                resizeMode: 'cover'
-              }}
+              style={styles.bannerImage}
             />
           </View>
         )}
-        <View style={styles.section}>
-          <ThemedText style={styles.title}>{task.name}</ThemedText>
-          <ThemedText style={styles.description}>{task.description}</ThemedText>
-        </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.subtitle}>{t('tasks.view.status')}</ThemedText>
-          <ThemedText style={styles.description}>
-            {task.status}
+          <ThemedText style={[styles.sectionTitle, { textAlign }]}>{task.name}</ThemedText>
+          <ThemedText style={[styles.description, { textAlign }]}>
+            {task.description}
           </ThemedText>
         </View>
 
-        {task.repeat_days.length > 0 && (
-          <View style={styles.section}>
-            <ThemedText style={styles.subtitle}>{t('tasks.add.scheduleDays')}</ThemedText>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
-              {task.getRepeatDayNames().map((dayName) => (
-                <View key={dayName} style={styles.repeatDayChip}>
-                  <ThemedText style={styles.repeatDayText}>{dayName}</ThemedText>
-                </View>
-              ))}
+        <View style={styles.listSection}>
+        
+
+          {/* Created Date Section */}
+          <View style={[styles.listItem, { flexDirection }]}>
+            <View style={[styles.listItemLeft, { flexDirection }]}>
+              <MaterialCommunityIcons name="clock-outline" size={20} color={colors.text} />
+              <ThemedText style={[styles.listItemTitle, { textAlign }]}>{t('tasks.view.createdAt')}</ThemedText>
+            </View>
+            <ThemedText style={{ textAlign }}>{task.getFormattedCreatedDate()}</ThemedText>
+          </View>
+
+          {/* Status Section */}
+          <View style={[styles.listItem, { flexDirection }]}>
+            <View style={[styles.listItemLeft, { flexDirection }]}>
+              <MaterialCommunityIcons name="checkbox-marked-circle" size={20} color={colors.text} />
+              <ThemedText style={[styles.listItemTitle, { textAlign }]}>{t('tasks.view.status')}</ThemedText>
+            </View>
+            <View style={[styles.statusBadge, { backgroundColor: colors.statusTodo }]}>
+              <ThemedText style={styles.statusText}>{task.status}</ThemedText>
             </View>
           </View>
-        )}
 
-        {task.repeat_monthly && (
-          <View style={styles.section}>
-            <ThemedText style={styles.subtitle}>{t('tasks.add.schedule')}</ThemedText>
-            <ThemedText style={styles.description}>
-               {task.getRepeatFormat()}
-            </ThemedText>
+          {/* Schedule Section */}
+          <View style={[styles.listItem, { flexDirection }]}>
+            <View style={[styles.listItemLeft, { flexDirection }]}>
+              <MaterialCommunityIcons name="calendar-clock" size={20} color={colors.text} />
+              <ThemedText style={[styles.listItemTitle, { textAlign }]}>{t('tasks.view.schedule')}</ThemedText>
+            </View>
+            <ThemedText style={{ textAlign }}>{task.getRepeatFormat()}</ThemedText>
           </View>
-        )}
 
-        <View style={styles.section}>
-          <ThemedText style={styles.subtitle}>{t('tasks.view.createdAt')}</ThemedText>
-          <ThemedText style={styles.description}>
-            {task.getFormattedCreatedDate()}
-          </ThemedText>
+         
         </View>
-
-        {task.date_updated && (
-          <View style={styles.section}>
-            <ThemedText style={styles.subtitle}>{t('tasks.view.updatedAt')}</ThemedText>
-            <ThemedText style={styles.description}>
-              {task.getFormattedUpdatedDate()}
-            </ThemedText>
-          </View>
-        )}
       </ScrollView>
 
       {canEdit && (
-        <View style={styles.footer}>
+        <View style={[styles.footer, { flexDirection }]}>
           <TouchableOpacity
-            style={styles.submitButton}
+            style={[styles.editButton, { alignSelf: flexDirection === 'row-reverse' ? 'flex-start' : 'flex-end' }]}
             onPress={() => router.push({
               pathname: "/tasks/add",
               params: { id: task.id }
             })}
           >
-            <ThemedText style={styles.footerButtonText}>{t('common.buttons.edit')}</ThemedText>
+            <ThemedText style={styles.editButtonText}>{t('common.buttons.edit')}</ThemedText>
           </TouchableOpacity>
         </View>
       )}

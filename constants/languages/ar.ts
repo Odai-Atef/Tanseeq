@@ -122,7 +122,13 @@ export const ar = {
       title: 'تفاصيل المهمة',
       status: 'الحالة',
       createdAt: 'تم الإنشاء في',
-      updatedAt: 'تم التحديث في'
+      updatedAt: 'تم التحديث في',
+      createdBy: 'تم الإنشاء بواسطة',
+      schedule: 'الجدول',
+      attachment: 'المرفق',
+      attachments: 'مرفقات',
+      noAttachments: 'لا توجد مرفقات',
+      notFound: 'لم يتم العثور على المهمة'
     },
     calendar: {
       title: 'التقويم',
