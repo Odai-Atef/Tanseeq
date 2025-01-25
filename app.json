@@ -48,7 +48,6 @@
       [
         "expo-apple-authentication"
       ],
-      "expo-barcode-scanner",
       [
         "react-native-permissions",
         {
@@ -78,6 +77,31 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "OneSignalNotificationServiceExtension",
+                  "bundleIdentifier": "pro.tanseeq.app.OneSignalNotificationServiceExtension",
+                  "entitlements": {
+                    "com.apple.security.application-groups": [
+                      "group.pro.tanseeq.app.onesignal"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "projectId": "424eeca5-d56f-4da4-bcfa-ea2fbf8ee0c7"
+      }
     }
   }
 }

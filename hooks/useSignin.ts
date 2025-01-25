@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useLanguage } from './useLanguage';
 import { Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,7 +7,7 @@ import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import { makeRedirectUri } from 'expo-auth-session';
 import * as AppleAuthentication from 'expo-apple-authentication';
-import { showToast } from '../components/Toast';
+import Toast from 'react-native-toast-message';
 import { API_ENDPOINTS } from '../constants/api';
 
 WebBrowser.maybeCompleteAuthSession();
@@ -49,7 +50,19 @@ const validateEmail = (email: string): boolean => {
 };
 
 export const useSignin = () => {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
+  const handleToast = useCallback((type: string, text1Key: string, text2Key: string) => {
+    Toast.show({
+      type,
+      text1: t(text1Key),
+      text2: t(text2Key),
+      position: 'top',
+      visibilityTime: 3000,
+      autoHide: true,
+      topOffset: 70
+    });
+  }, [t]);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -109,11 +122,7 @@ export const useSignin = () => {
       await AsyncStorage.setItem('userInfo', JSON.stringify(data.data));
     } catch (error) {
       console.error('Error fetching user info:', error);
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.toast.fetch.userInfo'
-      });
+      handleToast('error', 'common.toast.error', 'common.toast.fetch.userInfo');
     }
   };
 
@@ -123,11 +132,7 @@ export const useSignin = () => {
       await promptAsync();
     } catch (error) {
       console.error('Google Sign-In Error:', error);
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.toast.auth.failed'
-      });
+      handleToast('error', 'common.toast.error', 'common.toast.auth.failed');
     } finally {
       setLoading(false);
     }
@@ -135,11 +140,7 @@ export const useSignin = () => {
 
   const handleGoogleSuccess = async (accessToken: string | undefined) => {
     if (!accessToken) {
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.toast.auth.failed'
-      });
+      handleToast('error', 'common.toast.error', 'common.toast.auth.failed');
       return;
     }
 
@@ -171,19 +172,11 @@ export const useSignin = () => {
       ]);
 
       await fetchUserInfo(data.data.access_token);
-      showToast({
-        type: 'success',
-        text1Key: 'common.toast.success',
-        text2Key: 'auth.signInSuccess'
-      });
+      handleToast('success', 'common.toast.success', 'auth.signInSuccess');
       router.replace('/dashboard');
     } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to sign in with Google';
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.toast.auth.failed'
-      });
+      handleToast('error', 'common.toast.error', 'common.toast.auth.failed');
     } finally {
       setLoading(false);
     }
@@ -227,19 +220,11 @@ export const useSignin = () => {
       ]);
 
       await fetchUserInfo(data.data.access_token);
-      showToast({
-        type: 'success',
-        text1Key: 'common.toast.success',
-        text2Key: 'auth.signInSuccess'
-      });
+      handleToast('success', 'common.toast.success', 'auth.signInSuccess');
       router.replace('/dashboard');
     } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to sign in with Apple';
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.toast.auth.failed'
-      });
+      handleToast('error', 'common.toast.error', 'common.toast.auth.failed');
     } finally {
       setLoading(false);
     }
@@ -258,11 +243,7 @@ export const useSignin = () => {
     }
 
     if (!password) {
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.error.validation.required'
-      });
+      handleToast('error', 'common.toast.error', 'common.error.validation.required');
       return;
     }
 
@@ -283,11 +264,7 @@ export const useSignin = () => {
 
       if (data.errors) {
         const errorMessage = data.errors[0]?.message;
-        showToast({
-          type: 'error',
-          text1Key: 'common.toast.error',
-          text2Key: 'common.toast.auth.failed'
-        });
+        handleToast('error', 'common.toast.error', 'common.toast.auth.failed');
         return;
       }
 
@@ -301,19 +278,11 @@ export const useSignin = () => {
       ]);
 
       await fetchUserInfo(data.data.access_token);
-      showToast({
-        type: 'success',
-        text1Key: 'common.toast.success',
-        text2Key: 'auth.signInSuccess'
-      });
+      handleToast('success', 'common.toast.success', 'auth.signInSuccess');
       router.replace('/dashboard');
     } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to sign in. Please try again.';
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.toast.auth.failed'
-      });
+      handleToast('error', 'common.toast.error', 'common.toast.auth.failed');
     } finally {
       setLoading(false);
     }

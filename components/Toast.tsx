@@ -23,7 +23,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
       position: 'top',
       visibilityTime: 3000,
       autoHide: true,
-      topOffset: 30
+      topOffset: 70
     });
   }, [t]);
 
