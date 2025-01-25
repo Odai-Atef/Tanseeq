@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_ENDPOINTS } from '../constants/api';
 import { LanguageProvider, useTranslation } from '../contexts/LanguageContext';
 import Toast from 'react-native-toast-message';
 import { ToastProvider } from '../components/Toast';
@@ -79,6 +81,29 @@ export default function Layout() {
 
     OneSignal.promptForPushNotificationsWithUserResponse(response => {
       console.log("OneSignal: user response:", response);
+    });
+
+    // Get OneSignal User ID and update user info
+    OneSignal.getDeviceState().then(async deviceState => {
+      if (deviceState?.userId) {
+        try {
+          const token = await AsyncStorage.getItem('access_token');
+          if (token) {
+            await fetch(API_ENDPOINTS.USER_INFO, {
+              method: 'PATCH',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                one_signal: deviceState.userId
+              })
+            });
+          }
+        } catch (error) {
+          console.error('Error updating OneSignal ID:', error);
+        }
+      }
     });
   }, []);
 
