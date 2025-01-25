@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { router } from 'expo-router';
 import { Platform } from 'react-native';
-import * as ExpoBarCodeScanner from 'expo-barcode-scanner';
 import { showToast } from '../../components/Toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ENDPOINTS } from '../../constants/api';
@@ -13,44 +12,8 @@ export const useJoinHome = () => {
   const [showScanner, setShowScanner] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const requestCameraPermission = async () => {
-    try {
-      const { status } = await ExpoBarCodeScanner.requestPermissionsAsync();
-      const permissionGranted = status === 'granted';
-      setHasPermission(permissionGranted);
-      if (permissionGranted) {
-        setShowScanner(true);
-      } else {
-        showToast({
-          type: 'error',
-          text1Key: 'common.error.permission',
-          text2Key: 'home.join.cameraRequired'
-        });
-      }
-    } catch (err) {
-      showToast({
-        type: 'error',
-        text1Key: 'common.error.permission',
-        text2Key: 'home.join.cameraRequired'
-      });
-    }
-  };
 
-  const handleBarCodeScanned = ({ type, data }: { type: string, data: string }) => {
-    setShowScanner(false);
-    const [scannedHomeId, scannedPassword] = data.split(',');
-    if (scannedHomeId && scannedPassword) {
-      setHomeId(scannedHomeId);
-      setHomePassword(scannedPassword);
-    } else {
-      showToast({
-        type: 'error',
-        text1Key: 'common.error.validation.invalid',
-        text2Key: 'home.join.invalidQR'
-      });
-    }
-  };
-
+ 
   const validateInputs = (): boolean => {
     if (!homeId || !homePassword) {
       showToast({
@@ -181,8 +144,6 @@ export const useJoinHome = () => {
     hasPermission,
     showScanner,
     isSubmitting,
-    requestCameraPermission,
-    handleBarCodeScanned,
     handleSubmit
   };
 };

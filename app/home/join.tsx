@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-import { BarCodeScanner } from 'expo-barcode-scanner';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
 import { colors, homeTheme as styles } from '../../constants/Theme';
@@ -18,8 +17,6 @@ export default function JoinHome() {
     hasPermission,
     showScanner,
     isSubmitting,
-    requestCameraPermission,
-    handleBarCodeScanned,
     handleSubmit
   } = useJoinHome();
 
@@ -27,10 +24,7 @@ export default function JoinHome() {
     return (
       <ThemedView style={[styles.container, { padding: 0 }]}>
         <View style={{ flex: 1 }}>
-          <BarCodeScanner
-            onBarCodeScanned={handleBarCodeScanned}
-            style={StyleSheet.absoluteFillObject}
-          />
+     
           <View style={{ padding: 20, position: 'absolute', top: 0, left: 0, right: 0 }}>
             <ThemedText style={styles.scanButtonText}>
               {t('home.join.scanQrCode')}
@@ -75,15 +69,7 @@ export default function JoinHome() {
           />
         </View>
 
-        <TouchableOpacity
-          style={styles.scanButton}
-          onPress={requestCameraPermission}
-        >
-          <Feather name="camera" size={24} color={colors.primary} style={{ marginRight: 8 }} />
-          <ThemedText style={styles.scanButtonText}>
-            {t('home.join.scanQrCode')}
-          </ThemedText>
-        </TouchableOpacity>
+   
       </ScrollView>
 
       <View style={styles.footer}>
