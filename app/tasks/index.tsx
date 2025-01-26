@@ -63,7 +63,7 @@ export default function TasksScreen() {
   }, [fetchTasks]);
 
   return (
-    <ThemedView style={styles.container_trans}>
+    <ThemedView style={[styles.container_trans,styles.ios_boarder]}>
       <ScrollView 
         style={styles.content}
         refreshControl={

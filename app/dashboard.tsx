@@ -79,7 +79,7 @@ export default function Dashboard() {
   };
 
   return (
-    <ThemedView style={[styles.container, { borderTopWidth: 65, borderTopColor: 'rgb(121, 128, 255)' }]}>
+    <ThemedView style={[styles.container,styles.ios_boarder]}>
       <View style={[styles.header, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
         <View>
           <ThemedText type="title" style={[styles.greeting, { textAlign: isRTL ? 'right' : 'left' }]}>

@@ -71,7 +71,7 @@ export default function Profile() {
   }
 
   return (
-    <ThemedView style={[baseTheme.container, { borderTopWidth: 50, borderTopColor: colors.primary }]}>
+    <ThemedView style={[baseTheme.container, baseTheme.ios_boarder]}>
       <ScrollView>
         <View style={styles.profileSection}>
           <View style={styles.avatarContainer}>

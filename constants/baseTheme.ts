@@ -21,6 +21,7 @@ export const baseTheme = StyleSheet.create({
     fontWeight: '700',
     textAlign: 'left',
   },
+  ios_boarder: { borderTopWidth: 65, borderTopColor: 'rgb(121, 128, 255)' },
   content: {
     padding: 16,
   },
