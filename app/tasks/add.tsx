@@ -118,8 +118,12 @@ export default function TaskAdd() {
             </TouchableOpacity>
           </View>
           {selectedImage && (
-            <View style={styles.imagePreview}>
-              <Image source={{ uri: selectedImage }} style={styles.previewImage} />
+            <View style={[styles.imagePreview, { width: '100%', height: 200 }]}>
+              <Image 
+                source={{ uri: selectedImage }} 
+                style={[styles.previewImage, { width: '100%', height: '100%' }]} 
+                resizeMode="cover"
+              />
               <TouchableOpacity 
                 style={styles.removeImageButton}
                 onPress={() => {

@@ -181,10 +181,11 @@ export const taskTheme = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     position: 'relative',
+    backgroundColor: colors.background,
   },
   previewImage: {
     width: '100%',
-    height: 200,
+    height: '100%',
     resizeMode: 'cover',
   },
   removeImageButton: {
