@@ -232,6 +232,7 @@ export const ar = {
     featureNotAvailable: 'هذه الميزة غير متوفرة حالياً',
     noEmail: 'لا يوجد بريد إلكتروني',
     logoutButton: 'تسجيل الخروج',
-    cancelButton: 'إلغاء'
+    cancelButton: 'إلغاء',
+    switchLanguage: 'تغيير اللغة'
   }
 };

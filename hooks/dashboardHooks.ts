@@ -3,9 +3,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ENDPOINTS } from '../constants/api';
 import { Schedule } from '../types/Schedule';
 import { eventEmitter, EVENTS } from '../utils/eventEmitter';
-import { showToast } from '../components/Toast';
+import { useLanguage } from './useLanguage';
+import Toast from 'react-native-toast-message';
 
 export const useDashboard = () => {
+  const { t } = useLanguage();
+
   const [userName, setUserName] = useState('User');
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [firstInProgressSchedule, setFirstInProgressSchedule] = useState<Schedule | null>(null);
@@ -26,12 +29,15 @@ export const useDashboard = () => {
       }
     } catch (error) {
       console.error('Error fetching user info:', error);
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.toast.fetch.userInfo'
-      });
-    }
+      Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.toast.fetch.userInfo'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});    }
   };
 
   const fetchTodaySchedules = async () => {
@@ -93,12 +99,15 @@ export const useDashboard = () => {
     } catch (error) {
       console.error('Error fetching today schedules:', error);
       setError('Failed to load schedules. Please try again later.');
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.toast.fetch.homes'
-      });
-    } finally {
+      Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.toast.fetch.homes'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});    } finally {
       setIsLoading(false);
     }
   };

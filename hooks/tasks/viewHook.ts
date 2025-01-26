@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { showToast } from '../../components/Toast';
+import Toast from 'react-native-toast-message';
+import { useLanguage } from '../useLanguage';
 import { Task } from '../../types/Task';
 
 interface ApiResponse {
@@ -9,6 +10,8 @@ interface ApiResponse {
 }
 
 export const useTaskView = (id: string | string[]) => {
+  const { t } = useLanguage();
+
   const [task, setTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -20,12 +23,15 @@ export const useTaskView = (id: string | string[]) => {
       try {
         const accessToken = await AsyncStorage.getItem('access_token');
         if (!accessToken) {
-          showToast({
-            type: 'error',
-            text1Key: 'common.toast.auth.required',
-            text2Key: 'common.error.auth.required'
-          });
-          return;
+          Toast.show({
+    type: 'error',
+    text1: t('common.toast.auth.required'),
+    text2: t('common.error.auth.required'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});          return;
         }
 
         const defaultHomeStr = await AsyncStorage.getItem('DEFAULT_HOME');
@@ -60,12 +66,15 @@ export const useTaskView = (id: string | string[]) => {
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to load task';
         setError(errorMessage);
-        showToast({
-          type: 'error',
-          text1Key: 'common.toast.error',
-          text2Key: 'common.toast.task.error.load'
-        });
-        console.error('Error fetching task:', err);
+        Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.toast.task.error.load'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});        console.error('Error fetching task:', err);
       } finally {
         setLoading(false);
       }

@@ -27,19 +27,22 @@ const ProfileListItem = ({
     onPress={onPress}
     style={[
       styles.listItem,
-      { flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row' }
+      { 
+        flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
+        justifyContent: 'flex-start'
+      }
     ]}
   >
     <View style={[
       styles.iconContainer,
-      I18nManager.isRTL && { marginLeft: 10, marginRight: 0 }
+      I18nManager.isRTL ? { marginLeft: 10 } : { marginRight: 10 }
     ]}>
       <Ionicons name={icon} size={20} color={danger ? colors.danger : color} />
     </View>
     <ThemedText style={[
       styles.listItemText,
       danger && { color: colors.danger },
-      I18nManager.isRTL && { textAlign: 'right' }
+      { textAlign: I18nManager.isRTL ? 'right' : 'left' }
     ]}>
       {title}
     </ThemedText>
@@ -72,8 +75,11 @@ export default function Profile() {
 
   return (
     <ThemedView style={[baseTheme.container, baseTheme.ios_boarder]}>
-      <ScrollView>
-        <View style={styles.profileSection}>
+      <ScrollView contentContainerStyle={I18nManager.isRTL ? { alignItems: 'flex-end' } : undefined}>
+        <View style={[
+          styles.profileSection,
+          I18nManager.isRTL && { alignItems: 'center' }
+        ]}>
           <View style={styles.avatarContainer}>
             <Image
               source={require('../../assets/images/avt4.jpg')}
@@ -81,7 +87,8 @@ export default function Profile() {
             />
           </View>
           <ThemedText style={[
-            styles.userName 
+            styles.userName,
+            I18nManager.isRTL && { textAlign: 'center', width: '100%' }
           ]}>
             {getDisplayName()}
           </ThemedText>
@@ -93,7 +100,10 @@ export default function Profile() {
           </Text>
         </View>
 
-        <View style={{ marginTop: 16 }}>
+        <View style={[
+          { marginTop: 16 },
+          I18nManager.isRTL && { alignItems: 'stretch' }
+        ]}>
           <ProfileListItem
             icon="diamond-outline"
             title={t('profile.upgradeTitle')}
@@ -116,6 +126,14 @@ export default function Profile() {
             onPress={handleFeatureNotAvailable}
           />
           <ProfileListItem
+            icon="language"
+            title={t('profile.switchLanguage')}
+            onPress={() => {
+              I18nManager.forceRTL(!I18nManager.isRTL);
+              I18nManager.allowRTL(!I18nManager.isRTL);
+            }}
+          />
+          <ProfileListItem
             icon="log-out-outline"
             title={t('profile.logout')}
             onPress={() => setShowLogoutModal(true)}
@@ -125,8 +143,11 @@ export default function Profile() {
       </ScrollView>
 
       {showLogoutModal && (
-        <View style={styles.modal}>
-          <View style={styles.modalContent}>
+        <View style={[styles.modal, I18nManager.isRTL && { alignItems: 'center' }]}>
+          <View style={[
+            styles.modalContent,
+            I18nManager.isRTL && { alignItems: 'center', width: '90%' }
+          ]}>
             <ThemedText style={[
               styles.modalTitle,
               I18nManager.isRTL && { textAlign: 'center' }

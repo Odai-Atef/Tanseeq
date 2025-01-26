@@ -228,5 +228,20 @@ export const en = {
       scanQrCode: 'Scan QR Code',
       submit: 'Join Home'
     }
+  },
+  profile: {
+    defaultUser: 'User',
+    upgradeTitle: 'Upgrade to Premium',
+    helpCenter: 'Help Center',
+    rateApp: 'Rate App',
+    privacyPolicy: 'Privacy Policy',
+    logout: 'Logout',
+    editProfile: 'Edit Profile',
+    logoutConfirmation: 'Are you sure you want to logout?',
+    featureNotAvailable: 'This feature is not available yet',
+    noEmail: 'No email',
+    logoutButton: 'Logout',
+    cancelButton: 'Cancel',
+    switchLanguage: 'Switch Language'
   }
 };

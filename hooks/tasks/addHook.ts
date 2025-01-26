@@ -5,7 +5,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { Task } from '../../types/Task';
 import { API_ENDPOINTS, DEFAULT_HOME } from '../../constants/api';
 import { uploadFile } from '../../utils/fileUpload';
-import { showToast } from '../../components/Toast';
+import Toast from 'react-native-toast-message';
+import { useLanguage } from '../useLanguage';
 
 type PeriodValues = {
   'Manual Assignment (No Schedule)': string;
@@ -19,6 +20,8 @@ type PeriodValues = {
 };
 
 export const useTaskAdd = (id?: string) => {
+  const { t } = useLanguage();
+
   const router = useRouter();
   const initialTask = new Task({
     id: undefined,
@@ -66,12 +69,15 @@ export const useTaskAdd = (id?: string) => {
     try {
       const token = await AsyncStorage.getItem('access_token');
       if (!token) {
-        showToast({
-          type: 'error',
-          text1Key: 'common.toast.auth.required',
-          text2Key: 'common.error.auth.required'
-        });
-        return;
+        Toast.show({
+    type: 'error',
+    text1: t('common.toast.auth.required'),
+    text2: t('common.error.auth.required'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});        return;
       }
 
       const response = await fetch(`${API_ENDPOINTS.TASKS}/${id}`, {
@@ -91,12 +97,15 @@ export const useTaskAdd = (id?: string) => {
         setSelectedImage(`${API_ENDPOINTS.BASE_URL}/assets/${result.data.images}?access_token=${token}`);
       }
     } catch (error) {
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.toast.task.error.update'
-      });
-      console.error('Error fetching task:', error);
+      Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.toast.task.error.update'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});      console.error('Error fetching task:', error);
     } finally {
       setIsLoading(false);
     }
@@ -129,12 +138,15 @@ export const useTaskAdd = (id?: string) => {
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        showToast({
-          type: 'error',
-          text1Key: 'common.toast.error',
-          text2Key: 'common.error.permission'
-        });
-        return;
+        Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.error.permission'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});        return;
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -151,24 +163,30 @@ export const useTaskAdd = (id?: string) => {
       }
     } catch (error) {
       console.error('Error picking image:', error);
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.error.general'
-      });
-    }
+      Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.error.general'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});    }
   };
 
   const takePhoto = async () => {
     try {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
       if (status !== 'granted') {
-        showToast({
-          type: 'error',
-          text1Key: 'common.toast.error',
-          text2Key: 'common.error.permission'
-        });
-        return;
+        Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.error.permission'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});        return;
       }
 
       const result = await ImagePicker.launchCameraAsync({
@@ -184,24 +202,30 @@ export const useTaskAdd = (id?: string) => {
       }
     } catch (error) {
       console.error('Error taking photo:', error);
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.error.general'
-      });
-    }
+      Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.error.general'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});    }
   };
 
   const handleSubmit = async () => {
     const validation = task.validate();
     if (!validation.isValid) {
       validation.errors.forEach(error => {
-        showToast({
-          type: 'error',
-          text1Key: 'common.toast.error',
-          text2Key: 'common.toast.task.error.validation'
-        });
-      });
+        Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.toast.task.error.validation'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});      });
       return;
     }
 
@@ -214,12 +238,15 @@ export const useTaskAdd = (id?: string) => {
       ]);
 
       if (!token) {
-        showToast({
-          type: 'error',
-          text1Key: 'common.toast.auth.required',
-          text2Key: 'common.error.auth.required'
-        });
-        setIsSubmitting(false);
+        Toast.show({
+    type: 'error',
+    text1: t('common.toast.auth.required'),
+    text2: t('common.error.auth.required'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});        setIsSubmitting(false);
         return;
       }
 
@@ -227,12 +254,16 @@ export const useTaskAdd = (id?: string) => {
       if (selectedImage) {
         imageId = await uploadFile(selectedImage, token);
         if (!imageId) {
-          showToast({
-            type: 'error',
-            text1Key: 'common.toast.error',
-            text2Key: 'common.error.general'
-          });
-          setIsSubmitting(false);
+          Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.error.general'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});         
+ setIsSubmitting(false);
           return;
         }
       }
@@ -266,11 +297,16 @@ export const useTaskAdd = (id?: string) => {
 
       await response.json();
       setIsSubmitting(false);
-      showToast({
+      Toast.show({
         type: 'success',
-        text1Key: 'common.toast.success',
-        text2Key: id ? 'common.toast.task.updated' : 'common.toast.task.created'
-      });
+        text1: t('common.toast.success'),
+        text2:  id ? t('common.toast.task.updated') : t('common.toast.task.created'),
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 70
+    });      
+   
       
       if (!id) {
         setTask(initialTask);
@@ -282,11 +318,16 @@ export const useTaskAdd = (id?: string) => {
       }, 1000);
 
     } catch (error) {
-      showToast({
+      Toast.show({
         type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: id ? 'common.toast.task.error.update' : 'common.toast.task.error.create'
-      });
+        text1: t('common.toast.error'),
+        text2:  id ? t('common.toast.task.error.update') : t('common.toast.task.error.create'),
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 70
+    }); 
+   
       console.error('Error submitting task:', error);
       setIsSubmitting(false);
     }

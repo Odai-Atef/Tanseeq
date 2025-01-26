@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { showToast } from '../../components/Toast';
 import { Schedule } from '../../types/Schedule';
 import { API_ENDPOINTS } from '../../constants/api';
-
+import Toast from 'react-native-toast-message';
+import { useLanguage } from '../useLanguage';
 interface ApiResponse {
   data: any[];
 }
 
 export const useCalendar = () => {
+  const { t } = useLanguage();
+
   const [expandedSections, setExpandedSections] = useState({
     inProgress: true,
     done: true,
@@ -20,23 +22,29 @@ export const useCalendar = () => {
   const [loading, setLoading] = useState(true);
 
   const showError = () => {
-    showToast({
-      type: 'error',
-      text1Key: 'common.toast.error',
-      text2Key: 'common.error.general'
-    });
-  };
+    Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.error.general'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});  };
 
   const fetchSchedules = async (date: string) => {
     try {
       const token = await AsyncStorage.getItem('access_token');
       if (!token) {
-        showToast({
-          type: 'error',
-          text1Key: 'common.toast.auth.required',
-          text2Key: 'common.error.auth.required'
-        });
-        return;
+        Toast.show({
+    type: 'error',
+    text1: t('common.toast.auth.required'),
+    text2: t('common.error.auth.required'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});        return;
       }
 
       const defaultHomeStr = await AsyncStorage.getItem('DEFAULT_HOME');
@@ -65,12 +73,15 @@ export const useCalendar = () => {
       const scheduleInstances = (result.data || []).map(schedule => Schedule.fromAPI(schedule));
       setSchedules(scheduleInstances);
     } catch (err) {
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.toast.schedule.error.load'
-      });
-      console.error('Error fetching schedules:', err);
+      Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.toast.schedule.error.load'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});      console.error('Error fetching schedules:', err);
     } finally {
       setLoading(false);
     }
