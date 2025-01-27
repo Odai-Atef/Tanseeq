@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { router } from 'expo-router';
 import { Platform } from 'react-native';
-import { showToast } from '../../components/Toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ENDPOINTS } from '../../constants/api';
-
+import Toast from 'react-native-toast-message';
+import { useLanguage } from '../useLanguage';
 export const useJoinHome = () => {
+  const { t } = useLanguage();
+
   const [homeId, setHomeId] = useState('');
   const [homePassword, setHomePassword] = useState('');
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -16,20 +18,28 @@ export const useJoinHome = () => {
  
   const validateInputs = (): boolean => {
     if (!homeId || !homePassword) {
-      showToast({
-        type: 'error',
-        text1Key: 'common.error.validation.error',
-        text2Key: 'home.join.enterBoth'
-      });
+      Toast.show({
+    type: 'error',
+    text1: t('common.error.validation.error'),
+    text2: t('home.join.enterBoth'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
       return false;
     }
 
     if (homeId.length !== 6 || homePassword.length !== 6) {
-      showToast({
-        type: 'error',
-        text1Key: 'common.error.validation.error',
-        text2Key: 'home.join.sixDigits'
-      });
+      Toast.show({
+    type: 'error',
+    text1: t('common.error.validation.error'),
+    text2: t('home.join.sixDigits'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
       return false;
     }
 
@@ -49,11 +59,15 @@ export const useJoinHome = () => {
       }
       const userId=user.id;
       if (!token || !userId) {
-        showToast({
-          type: 'error',
-          text1Key: 'common.toast.auth.required',
-          text2Key: 'common.toast.auth.signInRequired'
-        });
+        Toast.show({
+    type: 'error',
+    text1: t('common.toast.auth.required'),
+    text2: t('common.toast.auth.signInRequired'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
         return;
       }
 
@@ -68,11 +82,15 @@ export const useJoinHome = () => {
       const homeData = await getHomeResponse.json();
       
       if (!getHomeResponse.ok || !homeData.data?.[0]?.id) {
-        showToast({
-          type: 'error',
-          text1Key: 'common.toast.auth.failed',
-          text2Key: 'home.join.invalidCredentials'
-        });
+        Toast.show({
+    type: 'error',
+    text1: t('common.toast.auth.failed'),
+    text2: t('home.join.invalidCredentials'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
         return;
       }
 
@@ -107,30 +125,42 @@ export const useJoinHome = () => {
       if (!joinResponse.ok) {
         const errorData = await joinResponse.json();
         if (errorData.errors?.[0]?.extensions?.code === 'RECORD_NOT_UNIQUE') {
-          showToast({
-            type: 'info',
-            text1Key: 'common.toast.join.alreadyJoined',
-            text2Key: 'common.toast.join.alreadyJoinedDesc'
-          });
+          Toast.show({
+    type: 'info',
+    text1: t('common.toast.join.alreadyJoined'),
+    text2: t('common.toast.join.alreadyJoinedDesc'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
           router.replace('/dashboard');
           return;
         }
         throw new Error('Failed to join home');
       }
 
-      showToast({
-        type: 'success',
-        text1Key: 'common.toast.success',
-        text2Key: 'common.toast.join.success'
-      });
+      Toast.show({
+    type: 'success',
+    text1: t('common.toast.success'),
+    text2: t('common.toast.join.success'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
 
       router.replace('/dashboard');
     } catch (error) {
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.toast.join.error'
-      });
+      Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.toast.join.error'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
     } finally {
       setIsSubmitting(false);
     }

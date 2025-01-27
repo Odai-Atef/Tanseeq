@@ -2,11 +2,13 @@ import { useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Home } from '../../types/Home';
 import { API_ENDPOINTS, DEFAULT_HOME } from '../../constants/api';
-import { showToast } from '../../components/Toast';
 import { eventEmitter, EVENTS } from '../../utils/eventEmitter';
 import { Schedule } from '../../types/Schedule';
-
+import Toast from 'react-native-toast-message';
+import { useLanguage } from '../useLanguage';
 export const useHomes = () => {
+  const { t } = useLanguage();
+
   const [homes, setHomes] = useState<Home[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -121,11 +123,15 @@ export const useHomes = () => {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch homes';
       setError(message);
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.toast.fetch.homes'
-      });
+      Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.toast.fetch.homes'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
       setIsLoading(false);
     }
   }, []);
@@ -223,18 +229,26 @@ export const useHomes = () => {
         eventEmitter.emit(EVENTS.DEFAULT_HOME_CHANGED, defaultHome);
       }
 
-      showToast({
-        type: 'success',
-        text1Key: 'common.toast.success',
-        text2Key: 'common.toast.defaultHome.success'
-      });
+      Toast.show({
+    type: 'success',
+    text1: t('common.toast.success'),
+    text2: t('common.toast.defaultHome.success'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to update default home';
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.toast.defaultHome.error'
-      });
+      Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.toast.defaultHome.error'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
     }
   }, [homes]);
 

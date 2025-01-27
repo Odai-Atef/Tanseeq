@@ -1,9 +1,11 @@
 import { useState, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { showToast } from '../../components/Toast';
 import { API_ENDPOINTS } from '../../constants/api';
+import Toast from 'react-native-toast-message';
+import { useLanguage } from '../useLanguage';
 
 export const useInviteHome = () => {
+  const { t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Generate random 6-digit numbers for home ID and password
@@ -21,11 +23,15 @@ export const useInviteHome = () => {
       }
       const token = await AsyncStorage.getItem('access_token');
       if (!token || !user) {
-        showToast({
-          type: 'error',
-          text1Key: 'common.toast.auth.required',
-          text2Key: 'common.toast.auth.signInRequired'
-        });
+        Toast.show({
+    type: 'error',
+    text1: t('common.toast.auth.required'),
+    text2: t('common.toast.auth.signInRequired'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
         return;
       }
 
@@ -73,19 +79,27 @@ export const useInviteHome = () => {
         throw new Error('Failed to create/update home');
       }
 
-      showToast({
-        type: 'success',
-        text1Key: 'common.toast.success',
-        text2Key: 'common.toast.defaultHome.success'
-      });
+      Toast.show({
+    type: 'success',
+    text1: t('common.toast.success'),
+    text2: t('common.toast.defaultHome.success'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
 
       return await response.json();
     } catch (error) {
-      showToast({
-        type: 'error',
-        text1Key: 'common.toast.error',
-        text2Key: 'common.toast.defaultHome.error'
-      });
+      Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.toast.defaultHome.error'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
       return null;
     } finally {
       setIsSubmitting(false);

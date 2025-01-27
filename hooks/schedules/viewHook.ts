@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { showToast } from '../../components/Toast';
 import { Schedule } from '../../types/Schedule';
 import { API_ENDPOINTS } from '../../constants/api';
 import { ADMIN_ROLE } from '../../constants/roles';
 import { useTranslation } from '../../contexts/LanguageContext';
+import Toast from 'react-native-toast-message';
+import { useLanguage } from '../../hooks/useLanguage';
 
 interface ApiResponse {
   data: any[];
@@ -77,11 +78,15 @@ export const useScheduleView = (id: string | string[]) => {
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to load schedule';
         setError(errorMessage);
-        showToast({
-          type: 'error',
-          text1Key: 'common.toast.error',
-          text2Key: 'common.toast.schedule.error.load'
-        });
+        Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('common.toast.schedule.error.load'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
       } finally {
         setLoading(false);
       }
@@ -122,18 +127,26 @@ export const useScheduleView = (id: string | string[]) => {
 
               if (!response.ok) throw new Error('Failed to cancel schedule');
 
-              showToast({
-                type: 'success',
-                text1Key: 'common.toast.success',
-                text2Key: 'schedules.view.success.cancelled'
-              });
+              Toast.show({
+    type: 'success',
+    text1: t('common.toast.success'),
+    text2: t('schedules.view.success.cancelled'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
               router.replace('/schedules' as any);
             } catch (error) {
-              showToast({
-                type: 'error',
-                text1Key: 'common.toast.error',
-                text2Key: 'schedules.view.error.cancel'
-              });
+              Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('schedules.view.error.cancel'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
               console.error('Error cancelling schedule:', error);
             }
           }
@@ -172,18 +185,26 @@ export const useScheduleView = (id: string | string[]) => {
 
               if (!response.ok) throw new Error('Failed to start task');
 
-              showToast({
-                type: 'success',
-                text1Key: 'common.toast.success',
-                text2Key: 'schedules.view.success.started'
-              });
+              Toast.show({
+    type: 'success',
+    text1: t('common.toast.success'),
+    text2: t('schedules.view.success.started'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
               router.replace('/tasks/calendar' as any);
             } catch (error) {
-              showToast({
-                type: 'error',
-                text1Key: 'common.toast.error',
-                text2Key: 'schedules.view.error.start'
-              });
+              Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('schedules.view.error.start'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
               console.error('Error starting task:', error);
             }
           }
@@ -222,18 +243,26 @@ export const useScheduleView = (id: string | string[]) => {
 
               if (!response.ok) throw new Error('Failed to close task');
 
-              showToast({
-                type: 'success',
-                text1Key: 'common.toast.success',
-                text2Key: 'schedules.view.success.closed'
-              });
+              Toast.show({
+    type: 'success',
+    text1: t('common.toast.success'),
+    text2: t('schedules.view.success.closed'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
               router.replace('/tasks/calendar' as any);
             } catch (error) {
-              showToast({
-                type: 'error',
-                text1Key: 'common.toast.error',
-                text2Key: 'schedules.view.error.close'
-              });
+              Toast.show({
+    type: 'error',
+    text1: t('common.toast.error'),
+    text2: t('schedules.view.error.close'),
+    position: 'top',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 70
+});
               console.error('Error closing task:', error);
             }
           }
