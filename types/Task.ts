@@ -47,7 +47,7 @@ export class Task {
   // Format the created date to a readable string
   getFormattedCreatedDate(): string {
     return new Date(this.date_created).toLocaleDateString('en-US', {
-      month: 'long',
+      month: 'short',
       day: 'numeric',
       year: 'numeric',
       hour: '2-digit',

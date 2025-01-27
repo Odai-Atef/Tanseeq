@@ -146,9 +146,9 @@ function StackNavigator() {
       <Stack.Screen name="schedules" options={{ headerShown: false }} />
       <Stack.Screen name="tasks/calendar" options={{ headerBackTitleVisible: false, title: t('tasks.calendar.title'), headerShown: false }} />
       <Stack.Screen name="tasks/index" options={{ headerBackTitleVisible: false, title: t('tasks.title'), headerShown: false }} />
-      <Stack.Screen name="tasks/view" options={{ headerBackTitleVisible: false, title: t('tasks.view.title'), headerShown: true }} />
+      <Stack.Screen name="tasks/view" options={{ headerBackTitleVisible: false, title: t('tasks.view.title'), headerShown: false }} />
       <Stack.Screen name="tasks/add" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false, title: t('tasks.add.title') }} />
-      <Stack.Screen name="schedules/view" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: true, title: t('schedules.view.title') }} />
+      <Stack.Screen name="schedules/view" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false, title: t('schedules.view.title') }} />
       <Stack.Screen name="schedules/add" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false, title: "Schedule Task"}} />
       <Stack.Screen name="home/invite" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: true, title: t('home.invite.title') }} />
       <Stack.Screen name="home/join" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false, title: t('home.join.title') }} />

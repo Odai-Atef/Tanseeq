@@ -110,11 +110,11 @@ export const ar = {
       },
       days: {
         sunday: 'أحد',
-        monday: 'إثن',
-        tuesday: 'ثلا',
-        wednesday: 'أرب',
-        thursday: 'خمي',
-        friday: 'جمع',
+        monday: 'إثنين',
+        tuesday: 'ثلاثاء',
+        wednesday: 'أربعاء',
+        thursday: 'خميس',
+        friday: 'جمعة',
         saturday: 'سبت'
       }
     },

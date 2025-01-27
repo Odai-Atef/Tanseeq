@@ -44,9 +44,7 @@ export default function ScheduleView() {
   }
 
   const renderFooter = () => {
-    if (schedule.status === 'Done') {
-      return null;
-    }
+  
     if (schedule.status === 'Not-Started') {
       if (isAdmin) {
         return (
@@ -73,7 +71,7 @@ export default function ScheduleView() {
       }
     }
 
-    if (schedule.status === 'In-progress' && !isAdmin) {
+    if (schedule.status === 'In-progress' ) {
       return (
         <View style={[styles.footer, { flexDirection }]}>
           <TouchableOpacity
@@ -86,24 +84,12 @@ export default function ScheduleView() {
       );
     }
 
-    return (
-      <View style={[styles.footer, { flexDirection }]}>
-        <TouchableOpacity
-          style={[styles.footerButton, styles.footerButtonPrimary, { flex: 1 }]}
-          onPress={() => router.push({
-            pathname: "/schedules/add",
-            params: { id: schedule.id }
-          })}
-        >
-          <MaterialCommunityIcons name="pencil" size={20} color="white" style={styles.footerButtonIcon} />
-          <ThemedText style={styles.footerButtonText}>{t('schedules.view.actions.edit')}</ThemedText>
-        </TouchableOpacity>
-      </View>
-    );
+    return null;
+
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, styles.ios_boarder]}>
       <ScrollView style={styles.content}>
         <View style={styles.section}>
           <ThemedText style={[styles.sectionTitle, { textAlign }]}>{schedule.task.name}</ThemedText>

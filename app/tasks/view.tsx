@@ -55,7 +55,7 @@ export default function TaskView() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container,styles.ios_boarder]}>
       <ScrollView style={styles.content}>
         {task.images && task.images.length > 0 && token && (
           <View style={styles.imageContainer}>
