@@ -70,7 +70,7 @@ export default function TaskAdd() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.ios_boarder,styles.container]}>
       <ScrollView style={styles.content}>
         <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
           <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>

@@ -85,7 +85,7 @@ export default function ScheduleAdd() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container,styles.ios_boarder]}>
       <ScrollView style={styles.content}>
         <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
           <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
@@ -102,7 +102,7 @@ export default function ScheduleAdd() {
               style={[styles.dateIcon, isRTL ? { marginLeft: 8 } : { marginRight: 8 }]} 
             />
             <ThemedText style={[styles.dateText, { textAlign: isRTL ? 'right' : 'left' }]}>
-              {date.toLocaleDateString(isRTL ? 'ar-SA' : 'en-US', {
+              {date.toLocaleDateString('en-US', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',

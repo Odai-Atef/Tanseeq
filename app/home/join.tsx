@@ -36,7 +36,7 @@ export default function JoinHome() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container,styles.ios_boarder]}>
       <ScrollView style={styles.content}>
         <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
           <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
