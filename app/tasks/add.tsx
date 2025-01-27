@@ -2,6 +2,7 @@ import React from 'react';
 import { View, TextInput, TouchableOpacity, ScrollView, Platform, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useLocalSearchParams } from 'expo-router';
+import { Header } from '../../components/Header';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { ThemedView } from '../../components/ThemedView';
@@ -70,7 +71,8 @@ export default function TaskAdd() {
   }
 
   return (
-    <ThemedView style={[styles.ios_boarder,styles.container]}>
+    <ThemedView style={[styles.ios_boarder, styles.container]}>
+      <Header title={id ? t('tasks.edit.title') : t('tasks.add.title')} />
       <ScrollView style={styles.content}>
         <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
           <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>

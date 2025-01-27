@@ -7,6 +7,7 @@ import { colors, taskTheme as styles } from '../../constants/Theme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useScheduleView } from '../../hooks/schedules/viewHook';
 import { useTranslation, useTextDirection } from '../../contexts/LanguageContext';
+import { Header } from '../../components/Header';
 
 export default function ScheduleView() {
   const router = useRouter();
@@ -90,6 +91,8 @@ export default function ScheduleView() {
 
   return (
     <ThemedView style={[styles.container, styles.ios_boarder]}>
+      <Header title={t('schedules.view.title')} />
+
       <ScrollView style={styles.content}>
         <View style={styles.section}>
           <ThemedText style={[styles.sectionTitle, { textAlign }]}>{schedule.task.name}</ThemedText>

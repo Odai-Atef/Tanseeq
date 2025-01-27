@@ -3,9 +3,11 @@ import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
-import { colors } from '../../constants/Theme';
+import { colors, scheduleTheme as  baseTheme } from '../../constants/Theme';
+
 import { useTranslation } from '../../contexts/LanguageContext';
 import { useInviteHome } from '../../hooks/home/inviteHook';
+import { Header } from '../../components/Header';
 
 export default function HomeInvite() {
   const { t } = useTranslation();
@@ -24,7 +26,9 @@ export default function HomeInvite() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    
+    <ThemedView style={[baseTheme.ios_boarder, styles.container]}>
+      <Header title={t('home.invite.title')} />
       <View style={styles.content}>
    
         <View style={styles.section}>
@@ -68,20 +72,20 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 20,
   },
   content: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop:10
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 10,
     alignItems: 'center',
   },
   label: {
     fontSize: 18,
-    marginBottom: 8,
+    marginBottom: 5,
     opacity: 0.8,
   },
   value: {

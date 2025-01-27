@@ -6,6 +6,7 @@ import { colors, homeTheme as styles } from '../../constants/Theme';
 import { useJoinHome } from '../../hooks/home/joinHook';
 import { useTranslation } from '../../contexts/LanguageContext';
 import { Feather } from '@expo/vector-icons';
+import { Header } from '../../components/Header';
 
 export default function JoinHome() {
   const { t, isRTL } = useTranslation();
@@ -37,6 +38,8 @@ export default function JoinHome() {
 
   return (
     <ThemedView style={[styles.container,styles.ios_boarder]}>
+      <Header title={t('home.join.title')} />
+
       <ScrollView style={styles.content}>
         <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
           <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>

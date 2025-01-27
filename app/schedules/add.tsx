@@ -7,6 +7,7 @@ import { colors, scheduleTheme as styles, baseTheme } from '../../constants/Them
 import { Ionicons } from '@expo/vector-icons';
 import { useScheduleAdd } from '../../hooks/schedules/addHook';
 import { useTranslation } from '../../contexts/LanguageContext';
+import { Header } from '../../components/Header';
 
 export default function ScheduleAdd() {
   const {
@@ -86,6 +87,8 @@ export default function ScheduleAdd() {
 
   return (
     <ThemedView style={[styles.container,styles.ios_boarder]}>
+      <Header title={t('schedules.add.title')} />
+
       <ScrollView style={styles.content}>
         <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
           <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>

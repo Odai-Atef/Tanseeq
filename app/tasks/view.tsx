@@ -9,6 +9,7 @@ import { API_ENDPOINTS } from '../../constants/api';
 import { useTaskView } from '../../hooks/tasks/viewHook';
 import { useTranslation, useTextDirection } from '../../contexts/LanguageContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Header } from '../../components/Header';
 
 export default function TaskView() {
   const router = useRouter();
@@ -56,6 +57,8 @@ export default function TaskView() {
 
   return (
     <ThemedView style={[styles.container,styles.ios_boarder]}>
+      <Header title={t('tasks.view.title')} />
+
       <ScrollView style={styles.content}>
         {task.images && task.images.length > 0 && token && (
           <View style={styles.imageContainer}>
