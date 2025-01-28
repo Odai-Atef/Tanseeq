@@ -6,6 +6,9 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
+      "android": {
+        "gradleCommand": ":app:assembleDebug"
+      },
       "ios": {
         "resourceClass": "m-medium",
         "simulator": true
