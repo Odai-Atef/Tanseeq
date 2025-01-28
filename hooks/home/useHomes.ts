@@ -271,6 +271,7 @@ export const useHomes = () => {
     homes,
     isLoading,
     error,
-    setDefaultHome
+    setDefaultHome,
+    fetchHomes
   };
 };
