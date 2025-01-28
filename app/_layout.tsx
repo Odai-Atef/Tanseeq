@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ENDPOINTS } from '../constants/api';
-import { LanguageProvider, useTranslation } from '../contexts/LanguageContext';
 import Toast from 'react-native-toast-message';
 import { useFonts } from 'expo-font';
 import { useColorScheme } from 'react-native';
@@ -50,42 +49,41 @@ export default function Layout() {
   const colorScheme = useColorScheme();
 
   useEffect(() => {
-    // Initialize OneSignal
-    OneSignal.setAppId(ONESIGNAL_APP_ID);
-    OneSignal.setNotificationWillShowInForegroundHandler(notificationReceivedEvent => {
-      const notification = notificationReceivedEvent.getNotification();
-      
-      // Show Toast notification
-      Toast.show({
-        type: 'info',
-        text1: notification.title || 'New Notification',
-        text2: notification.body || '',
-        position: 'top',
-        visibilityTime: 4000,
-        autoHide: true,
-        topOffset: 30,
-        onPress: () => {
-          // Handle notification tap if needed
+    const initOneSignal = async () => {
+      try {
+        // Initialize OneSignal
+        OneSignal.setAppId(ONESIGNAL_APP_ID);
+        
+        // Handle foreground notifications
+        OneSignal.setNotificationWillShowInForegroundHandler(notificationReceivedEvent => {
+          const notification = notificationReceivedEvent.getNotification();
+          
+          // Show Toast notification
+          Toast.show({
+            type: 'info',
+            text1: notification.title || 'New Notification',
+            text2: notification.body || '',
+            position: 'top',
+            visibilityTime: 4000,
+            autoHide: true,
+            topOffset: 30,
+          });
+
+          // Complete notification processing
           notificationReceivedEvent.complete(notification);
-        }
-      });
+        });
 
-      // Complete the notification
-      notificationReceivedEvent.complete(notification);
-    });
+        // Handle notification opened
+        OneSignal.setNotificationOpenedHandler(notification => {
+          console.log("OneSignal: notification opened:", notification);
+        });
 
-    OneSignal.setNotificationOpenedHandler(notification => {
-      console.log("OneSignal: notification opened:", notification);
-    });
+        // Request push notification permission
+        OneSignal.promptForPushNotificationsWithUserResponse();
 
-    OneSignal.promptForPushNotificationsWithUserResponse(response => {
-      console.log("OneSignal: user response:", response);
-    });
-
-    // Get OneSignal User ID and update user info
-    OneSignal.getDeviceState().then(async deviceState => {
-      if (deviceState?.userId) {
-        try {
+        // Get OneSignal User ID and update user info
+        const deviceState = await OneSignal.getDeviceState();
+        if (deviceState?.userId) {
           const token = await AsyncStorage.getItem('access_token');
           if (token) {
             await fetch(API_ENDPOINTS.USER_INFO, {
@@ -99,11 +97,13 @@ export default function Layout() {
               })
             });
           }
-        } catch (error) {
-          console.error('Error updating OneSignal ID:', error);
         }
+      } catch (error) {
+        console.error('Error initializing OneSignal:', error);
       }
-    });
+    };
+
+    initOneSignal();
   }, []);
 
   useEffect(() => {
@@ -128,7 +128,6 @@ export default function Layout() {
 }
 
 function StackNavigator() {
-  const { t } = useTranslation();
   
   return (
     <Stack screenOptions={{ 
@@ -144,14 +143,14 @@ function StackNavigator() {
       <Stack.Screen name="dashboard" options={{ headerShown: false }} />
       <Stack.Screen name="tasks" options={{ headerShown: false }} />
       <Stack.Screen name="schedules" options={{ headerShown: false }} />
-      <Stack.Screen name="tasks/calendar" options={{ headerBackTitleVisible: false, title: t('tasks.calendar.title'), headerShown: false }} />
-      <Stack.Screen name="tasks/index" options={{ headerBackTitleVisible: false, title: t('tasks.title'), headerShown: false }} />
-      <Stack.Screen name="tasks/view" options={{ headerBackTitleVisible: false, title: t('tasks.view.title'), headerShown: false }} />
-      <Stack.Screen name="tasks/add" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false, title: t('tasks.add.title') }} />
-      <Stack.Screen name="schedules/view" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false, title: t('schedules.view.title') }} />
-      <Stack.Screen name="schedules/add" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false, title: "Schedule Task"}} />
-      <Stack.Screen name="home/invite" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false, title: t('home.invite.title') }} />
-      <Stack.Screen name="home/join" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false, title: t('home.join.title') }} />
+      <Stack.Screen name="tasks/calendar" options={{ headerBackTitleVisible: false, headerShown: false }} />
+      <Stack.Screen name="tasks/index" options={{ headerBackTitleVisible: false, headerShown: false }} />
+      <Stack.Screen name="tasks/view" options={{ headerBackTitleVisible: false, headerShown: false }} />
+      <Stack.Screen name="tasks/add" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false,  }} />
+      <Stack.Screen name="schedules/view" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false }} />
+      <Stack.Screen name="schedules/add" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false}} />
+      <Stack.Screen name="home/invite" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false }} />
+      <Stack.Screen name="home/join" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false }} />
     </Stack>
   );
 }

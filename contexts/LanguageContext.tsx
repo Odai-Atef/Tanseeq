@@ -18,7 +18,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   return (
     <LanguageContext.Provider value={languageUtils}>
-      {!languageUtils.isLoading && children}
+      {children}
     </LanguageContext.Provider>
   );
 };
