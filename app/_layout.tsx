@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ENDPOINTS } from '../constants/api';
+import { LanguageProvider } from '../contexts/LanguageContext';
 import Toast from 'react-native-toast-message';
 import { useFonts } from 'expo-font';
 import { useColorScheme } from 'react-native';
