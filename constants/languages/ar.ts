@@ -20,6 +20,16 @@ export const ar = {
       fetch: {
         homes: 'فشل في جلب المنازل',
         userInfo: 'معلومات المستخدم غير موجودة'
+      },
+      task: {
+        created: 'تم إنشاء المهمة بنجاح',
+        updated: 'تم تحديث المهمة بنجاح',
+        error: {
+          create: 'فشل في إنشاء المهمة',
+          update: 'فشل في تحديث المهمة',
+          validation: 'يرجى التحقق من تفاصيل المهمة',
+          permission: 'تم رفض الإذن لهذه المهمة'
+        }
       }
     },
     error: {
@@ -117,6 +127,9 @@ export const ar = {
         friday: 'جمعة',
         saturday: 'سبت'
       }
+    },
+    edit:{
+      "title": "تعديل المهمة",
     },
     view: {
       title: 'تفاصيل المهمة',
