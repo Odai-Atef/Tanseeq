@@ -18,7 +18,7 @@ export default function ScheduleView() {
     schedule,
     loading,
     error,
-    isAdmin,
+    userInfo,
     handleCancel,
     handleStartTask,
     handleCloseTask
@@ -45,9 +45,8 @@ export default function ScheduleView() {
   }
 
   const renderFooter = () => {
-  
     if (schedule.status === 'Not-Started') {
-      if (isAdmin) {
+      if (userInfo && schedule.task.user_created === userInfo.id) {
         return (
           <View style={[styles.footer, { flexDirection }]}>
             <TouchableOpacity
