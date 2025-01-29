@@ -72,7 +72,7 @@ export const useScheduleAdd = () => {
       }
       const home = JSON.parse(defaultHome);
       const response = await fetch(
-        `${API_ENDPOINTS.TASKS}?fields=id,name&property_id=${home.id}`,
+        `${API_ENDPOINTS.TASKS}?sort=name&fields=id,name&property_id=${home.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -143,7 +143,7 @@ export const useScheduleAdd = () => {
         },
         body: JSON.stringify({
           task: selectedTaskId,
-          day: date.toISOString(),
+          day: date.toISOString().split('T')[0],
         }),
       });
 
@@ -151,7 +151,8 @@ export const useScheduleAdd = () => {
 
       await response.json();
       showSuccess("schedules.add.success");
-      router.back();
+      router.push("/tasks/calendar");
+
     } catch (error) {
       showError("schedules.add.error");
       console.error("Error creating schedule:", error);

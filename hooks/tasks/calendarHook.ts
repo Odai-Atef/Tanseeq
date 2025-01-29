@@ -48,7 +48,7 @@ export const useCalendar = () => {
       }
 
       const defaultHomeStr = await AsyncStorage.getItem('DEFAULT_HOME');
-      let url = `${API_ENDPOINTS.SCHEDULE}?fields=*,task.*&filter[day][_eq]=${date}`;
+      let url = `${API_ENDPOINTS.SCHEDULE}?sort=task.name&fields=*,task.*&filter[day][_eq]=${date}`;
       
       if (defaultHomeStr) {
         const defaultHome = JSON.parse(defaultHomeStr);
