@@ -138,7 +138,7 @@ export const useScheduleView = (id: string | string[]) => {
                 autoHide: true,
                 topOffset: 70,
               });
-              router.replace("/schedules" as any);
+              router.replace("/tasks/calendar" as any);
             } catch (error) {
               Toast.show({
                 type: "error",
