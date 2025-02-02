@@ -6,7 +6,7 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "version": "1.0.10",
+  "version": "1.0.12",
   "description": "Tanseeq App",
   "orientation": "portrait",
   "icons": [
