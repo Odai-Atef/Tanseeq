@@ -53,30 +53,28 @@ export default function Layout() {
     const initOneSignal = async () => {
       try {
         // Initialize OneSignal
-        OneSignal.setAppId(ONESIGNAL_APP_ID);
+        OneSignal.initialize(ONESIGNAL_APP_ID);
         
+        // Enable logging for debugging (optional)
+        OneSignal.setLogLevel(6, 0);
+
         // Handle foreground notifications
-        OneSignal.setNotificationWillShowInForegroundHandler(notificationReceivedEvent => {
-          const notification = notificationReceivedEvent.getNotification();
-          
+        OneSignal.setNotificationWillShowInForegroundHandler((event) => {
           // Show Toast notification
           Toast.show({
             type: 'info',
-            text1: notification.title || 'New Notification',
-            text2: notification.body || '',
+            text1: event.notification.title || 'New Notification',
+            text2: event.notification.body || '',
             position: 'top',
             visibilityTime: 4000,
             autoHide: true,
             topOffset: 30,
           });
-
-          // Complete notification processing
-          notificationReceivedEvent.complete(notification);
         });
 
         // Handle notification opened
-        OneSignal.setNotificationOpenedHandler(notification => {
-          console.log("OneSignal: notification opened:", notification);
+        OneSignal.setNotificationOpenedHandler((event) => {
+          console.log("OneSignal: notification opened:", event);
         });
 
         // Request push notification permission
@@ -100,7 +98,6 @@ export default function Layout() {
           }
         }
       } catch (error) {
-        console.error('Error initializing OneSignal:', error);
       }
     };
 
