@@ -160,13 +160,14 @@ export default function TaskAdd() {
             <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
               {t('tasks.add.scheduleDays')} *
             </ThemedText>
-            <View style={[styles.radioGroup, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+            <View style={[styles.radioGroup, { flexDirection: 'column'}]}>
               {DAYS.map((day, index) => (
                 <TouchableOpacity
                   key={index}
                   style={[
                     styles.checkboxContainer,
-                    task.repeatsOnDay((index + 1).toString()) && styles.checkboxActive
+                    task.repeatsOnDay((index + 1).toString()) && styles.checkboxActive,
+                    { flexDirection: isRTL ? 'row-reverse' : 'row', alignItems: 'center', width: '100%' }
                   ]}
                   onPress={() => toggleDaySelection((index + 1).toString())}
                 >

@@ -119,13 +119,13 @@ export const ar = {
         annually: 'سنوياً'
       },
       days: {
-        sunday: 'أحد',
-        monday: 'إثنين',
-        tuesday: 'ثلاثاء',
-        wednesday: 'أربعاء',
-        thursday: 'خميس',
-        friday: 'جمعة',
-        saturday: 'سبت'
+        sunday: 'الأحد',
+        monday: 'الإثنين',
+        tuesday: 'الثلاثاء',
+        wednesday: 'الأربعاء',
+        thursday: 'الخميس',
+        friday: 'الجمعة',
+        saturday: 'السبت'
       }
     },
     edit:{

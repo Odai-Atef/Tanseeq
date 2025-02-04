@@ -208,7 +208,8 @@ export const taskTheme = StyleSheet.create({
   },
   checkboxContainer: {
     ...baseTheme.inputContainer,
-    padding: 12,
+    padding: 4,
+    marginBottom:0
   },
   checkboxActive: {
     borderColor: colors.primary,
@@ -221,6 +222,7 @@ export const taskTheme = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.line,
     marginRight: 12,
+    marginLeft:12,
     alignItems: 'center',
     justifyContent: 'center',
   },
