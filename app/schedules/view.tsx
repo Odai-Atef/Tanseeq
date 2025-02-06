@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, ScrollView, ActivityIndicator, TouchableOpacity, Image } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { API_ENDPOINTS } from '../../constants/api';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
 import { colors, taskTheme as styles } from '../../constants/Theme';
@@ -21,7 +22,8 @@ export default function ScheduleView() {
     userInfo,
     handleCancel,
     handleStartTask,
-    handleCloseTask
+    handleCloseTask,
+    token
   } = useScheduleView(id);
 
   if (loading) {
@@ -93,6 +95,15 @@ export default function ScheduleView() {
       <Header title={t('schedules.view.title')} />
 
       <ScrollView style={styles.content}>
+        {schedule.task.images && schedule.task.images.length > 0 && token && (
+          <View style={styles.imageContainer}>
+            <Image
+              source={{ uri: `${API_ENDPOINTS.BASE_URL}/assets/${schedule.task.images}?access_token=${token}` }}
+              style={styles.bannerImage}
+            />
+          </View>
+        )}
+
         <View style={styles.section}>
           <ThemedText style={[styles.sectionTitle, { textAlign }]}>{schedule.task.name}</ThemedText>
           <ThemedText style={[styles.description, { textAlign }]}>{schedule.task.description}</ThemedText>

@@ -273,6 +273,16 @@ export const useScheduleView = (id: string | string[]) => {
     );
   };
 
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getToken = async () => {
+      const accessToken = await AsyncStorage.getItem("access_token");
+      setToken(accessToken);
+    };
+    getToken();
+  }, []);
+
   return {
     schedule,
     loading,
@@ -283,5 +293,6 @@ export const useScheduleView = (id: string | string[]) => {
     handleCloseTask,
     isAdmin: userRole === ADMIN_ROLE,
     userInfo,
+    token,
   };
 };
