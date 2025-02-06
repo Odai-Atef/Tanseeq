@@ -263,19 +263,22 @@ export const useTaskAdd = (id?: string) => {
 
       let imageId = null;
       if (selectedImage) {
-        imageId = await uploadFile(selectedImage, token);
-        if (!imageId) {
-          Toast.show({
-            type: "error",
-            text1: t("common.toast.error"),
-            text2: t("common.error.general"),
-            position: "top",
-            visibilityTime: 3000,
-            autoHide: true,
-            topOffset: 70,
-          });
-          setIsSubmitting(false);
-          return;
+        // Only upload if it's a new image (local URI) and not an existing server image
+        if (!selectedImage.startsWith(`${API_ENDPOINTS.BASE_URL}/assets/`)) {
+          imageId = await uploadFile(selectedImage, token);
+          if (!imageId) {
+            Toast.show({
+              type: "error",
+              text1: t("common.toast.error"),
+              text2: t("common.error.general"),
+              position: "top",
+              visibilityTime: 3000,
+              autoHide: true,
+              topOffset: 70,
+            });
+            setIsSubmitting(false);
+            return;
+          }
         }
       }
 
@@ -292,6 +295,9 @@ export const useTaskAdd = (id?: string) => {
 
       if (imageId) {
         task.images = imageId;
+      } else if (id && selectedImage && selectedImage.startsWith(`${API_ENDPOINTS.BASE_URL}/assets/`)) {
+        // Keep existing image ID when editing and image hasn't changed
+        task.images = task.images;
       }
       const taskData = task.toAPI();
 
