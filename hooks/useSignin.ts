@@ -71,7 +71,7 @@ export const useSignin = () => {
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: '971482339745-13626slrfdkbjdatcirbl2lftl65dpha.apps.googleusercontent.com',
-    iosClientId: 'YOUR_IOS_CLIENT_ID',
+    iosClientId: '971482339745-h8muqs921dv3usnsfek3mhu2cc5924t7.apps.googleusercontent.com',
     clientId: '971482339745-6opbc4ijqapscv98muma2u326ed1lq5g.apps.googleusercontent.com',
     scopes: ['profile', 'email']
   });
