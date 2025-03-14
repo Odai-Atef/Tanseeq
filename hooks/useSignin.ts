@@ -191,7 +191,7 @@ export const useSignin = () => {
           AppleAuthentication.AppleAuthenticationScope.EMAIL,
         ],
       });
-
+console.log(credential)
       const response = await fetch(API_ENDPOINTS.APPLE_LOGIN, {
         method: 'POST',
         headers: {
@@ -205,6 +205,7 @@ export const useSignin = () => {
       });
 
       const data: LoginResponse = await response.json();
+      console.log(data)
 
       if (data.errors) {
         throw new Error(data.errors[0]?.message || 'Apple login failed');

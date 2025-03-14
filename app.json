@@ -7,7 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "tanseeq",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "pro.tanseeq.app",
@@ -67,12 +67,6 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ],
-      [
-        "onesignal-expo-plugin",
-        {
-          "mode": "development"
-        }
       ]
     ],
     "experiments": {
@@ -83,23 +77,6 @@
         "origin": false
       },
       "eas": {
-        "build": {
-          "experimental": {
-            "ios": {
-              "appExtensions": [
-                {
-                  "targetName": "OneSignalNotificationServiceExtension",
-                  "bundleIdentifier": "pro.tanseeq.app.OneSignalNotificationServiceExtension",
-                  "entitlements": {
-                    "com.apple.security.application-groups": [
-                      "group.pro.tanseeq.app.onesignal"
-                    ]
-                  }
-                }
-              ]
-            }
-          }
-        },
         "projectId": "424eeca5-d56f-4da4-bcfa-ea2fbf8ee0c7"
       }
     }
