@@ -191,7 +191,27 @@ export const useSignin = () => {
           AppleAuthentication.AppleAuthenticationScope.EMAIL,
         ],
       });
-console.log(credential)
+      console.log(credential);
+      
+      // Get stored user data for Apple sign-in if available
+      let userEmail = credential.email;
+      let userName = credential.fullName;
+      
+      // If email is null (subsequent sign-ins), try to get from storage
+      if (!userEmail) {
+        try {
+          const storedUserData = await AsyncStorage.getItem(`apple_user_${credential.user}`);
+          if (storedUserData) {
+            const userData = JSON.parse(storedUserData);
+            userEmail = userData.email;
+            userName = userData.fullName || userName;
+            console.log('Retrieved stored email for Apple user:', userEmail);
+          }
+        } catch (storageError) {
+          console.error('Error retrieving stored Apple user data:', storageError);
+        }
+      }
+      
       const response = await fetch(API_ENDPOINTS.APPLE_LOGIN, {
         method: 'POST',
         headers: {
@@ -199,13 +219,18 @@ console.log(credential)
         },
         body: JSON.stringify({
           identityToken: credential.identityToken,
-          fullName: credential.fullName,
-          email: credential.email,
+          fullName: userName,
+          email: userEmail,
         }),
       });
+      console.log(JSON.stringify({
+        identityToken: credential.identityToken,
+        fullName: userName,
+        email: userEmail,
+      }));
 
       const data: LoginResponse = await response.json();
-      console.log(data)
+      console.log(data);
 
       if (data.errors) {
         throw new Error(data.errors[0]?.message || 'Apple login failed');
@@ -213,6 +238,19 @@ console.log(credential)
 
       if (!data.data) {
         throw new Error('Invalid response from server');
+      }
+
+      // If this is the first sign-in (we have the email), store it for future use
+      if (credential.email && credential.user) {
+        try {
+          await AsyncStorage.setItem(`apple_user_${credential.user}`, JSON.stringify({
+            email: credential.email,
+            fullName: credential.fullName
+          }));
+          console.log('Stored Apple user data for future sign-ins');
+        } catch (storageError) {
+          console.error('Error storing Apple user data:', storageError);
+        }
       }
 
       await Promise.all([
