@@ -205,10 +205,10 @@ export const useSignin = () => {
             const userData = JSON.parse(storedUserData);
             userEmail = userData.email;
             userName = userData.fullName || userName;
-            console.log('Retrieved stored email for Apple user:', userEmail);
+            console.log(t('auth.apple.dataRetrieved'), userEmail);
           }
         } catch (storageError) {
-          console.error('Error retrieving stored Apple user data:', storageError);
+          console.error(t('auth.apple.retrieveError'), storageError);
         }
       }
       
@@ -247,9 +247,9 @@ export const useSignin = () => {
             email: credential.email,
             fullName: credential.fullName
           }));
-          console.log('Stored Apple user data for future sign-ins');
+          console.log(t('auth.apple.dataStored'));
         } catch (storageError) {
-          console.error('Error storing Apple user data:', storageError);
+          console.error(t('auth.apple.storeError'), storageError);
         }
       }
 

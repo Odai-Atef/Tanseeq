@@ -83,7 +83,13 @@ export const ar = {
     signInSuccess: 'تم تسجيل الدخول بنجاح',
     signOutSuccess: 'تم تسجيل الخروج بنجاح',
     googleSignIn: 'تسجيل الدخول باستخدام جوجل',
-    appleSignIn: 'تسجيل الدخول باستخدام آبل'
+    appleSignIn: 'تسجيل الدخول باستخدام آبل',
+    apple: {
+      dataStored: 'تم تخزين بيانات مستخدم آبل للاستخدام في المستقبل',
+      dataRetrieved: 'تم استرجاع البيانات المخزنة لمستخدم آبل',
+      storeError: 'خطأ في تخزين بيانات مستخدم آبل',
+      retrieveError: 'خطأ في استرجاع بيانات مستخدم آبل المخزنة'
+    }
   },
   dashboard: {
     greeting: 'مرحباً، {name}!',
@@ -247,5 +253,10 @@ export const ar = {
     logoutButton: 'تسجيل الخروج',
     cancelButton: 'إلغاء',
     switchLanguage: 'تغيير اللغة'
+  },
+  notFound: {
+    title: 'غير موجود',
+    message: 'هذه الصفحة غير موجودة.',
+    goHome: 'الذهاب إلى الصفحة الرئيسية!'
   }
 };

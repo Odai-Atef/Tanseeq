@@ -83,7 +83,13 @@ export const en = {
     signInSuccess: 'Signed in successfully',
     signOutSuccess: 'Signed out successfully',
     googleSignIn: 'Sign in with Google',
-    appleSignIn: 'Sign in with Apple'
+    appleSignIn: 'Sign in with Apple',
+    apple: {
+      dataStored: 'Apple user data stored for future sign-ins',
+      dataRetrieved: 'Retrieved stored data for Apple user',
+      storeError: 'Error storing Apple user data',
+      retrieveError: 'Error retrieving stored Apple user data'
+    }
   },
   dashboard: {
     greeting: 'Hello, {name}!',
@@ -243,5 +249,10 @@ export const en = {
     logoutButton: 'Logout',
     cancelButton: 'Cancel',
     switchLanguage: 'Switch Language'
+  },
+  notFound: {
+    title: 'Not Found',
+    message: 'This page doesn\'t exist.',
+    goHome: 'Go to home screen!'
   }
 };
