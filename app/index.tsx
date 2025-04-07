@@ -44,7 +44,7 @@ export default function Index() {
           // Store updated user info
           await AsyncStorage.setItem('userInfo', JSON.stringify(userData.data));
           // Redirect based on role
-          setRedirectTo(userData.data.role === ADMIN_ROLE ? ROUTES.DASHBOARD : ROUTES.CALENDAR);
+          setRedirectTo( ROUTES.DASHBOARD);
         } else {
           setRedirectTo(ROUTES.SIGNIN);
         }
