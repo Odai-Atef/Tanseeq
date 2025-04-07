@@ -92,7 +92,7 @@ export default function Layout() {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                one_signal: deviceState.userId
+                one_signal: deviceState.pushToken
               })
             });
           }
