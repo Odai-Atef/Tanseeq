@@ -137,7 +137,11 @@ export default function ScheduleView() {
               <ThemedText style={[styles.listItemTitle, { textAlign }]}>{t('schedules.view.status')}</ThemedText>
             </View>
             <View style={[styles.statusBadge, { backgroundColor: colors.statusTodo }]}>
-              <ThemedText style={styles.statusText}>{schedule.status}</ThemedText>
+              <ThemedText style={styles.statusText}>
+                {schedule.status === 'Not-Started' ? t('tasks.calendar.notStarted') :
+                 schedule.status === 'In-progress' ? t('tasks.calendar.inProgress') :
+                 schedule.status === 'Done' ? t('tasks.calendar.done') : schedule.status}
+              </ThemedText>
             </View>
           </View>
         </View>
