@@ -10,5 +10,6 @@ export const API_ENDPOINTS = {
     TASKS: `${API_HOST}/items/tasks`,
     FILES: `${API_HOST}/files`,
     HOME: `${API_HOST}/items/properties`,
+    HOME_SEARCH: `${API_HOST}/auth/join_home`,
     PROPERTY_USERS: `${API_HOST}/items/properties_directus_users`,
 };
