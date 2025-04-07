@@ -8,6 +8,7 @@ export const taskItemTheme = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
+    zIndex:1
   },
   taskHeader: {
     justifyContent: 'space-between',
@@ -81,7 +82,7 @@ export const taskItemTheme = StyleSheet.create({
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 8,
+    padding: 4,
     borderRadius: 0,
     backgroundColor: '#ffffff',
   },
@@ -90,7 +91,7 @@ export const taskItemTheme = StyleSheet.create({
     textAlign: 'center',
   },
   menuText: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#464D61',
     fontWeight: '600',
   },

@@ -36,7 +36,6 @@ const OptionsMenu = ({ visible, onClose, onView, onEdit, showEdit }: MenuProps &
           }}
         >
           <View style={[styles.menuItem, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-            <Ionicons name="eye-outline" size={20} color="#464D61" style={[styles.menuIcon, { marginLeft: isRTL ? 6 : 0, marginRight: isRTL ? 0 : 6 }]} />
             <ThemedText style={styles.menuText}>{t('common.buttons.viewAll')}</ThemedText>
           </View>
         </TouchableOpacity>
@@ -49,7 +48,6 @@ const OptionsMenu = ({ visible, onClose, onView, onEdit, showEdit }: MenuProps &
             }}
           >
             <View style={[styles.menuItem, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-              <Ionicons name="pencil-outline" size={20} color="#464D61" style={[styles.menuIcon, { marginLeft: isRTL ? 6 : 0, marginRight: isRTL ? 0 : 6 }]} />
               <ThemedText style={styles.menuText}>{t('common.buttons.edit')}</ThemedText>
             </View>
           </TouchableOpacity>
@@ -116,6 +114,11 @@ export const TaskItem = ({ item, type }: TaskItemProps) => {
   };
 
   const getStatus = () => {
+    if (item.status === 'Active') {
+      return t('common.status.active');
+    } else if (item.status === 'Inactive') {
+      return t('common.status.inactive');
+    }
     return item.status;
   };
 

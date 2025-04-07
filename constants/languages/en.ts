@@ -66,6 +66,10 @@ export const en = {
       viewAll: 'View All',
       confirm: 'Yes'
     },
+    status: {
+      active: 'Active',
+      inactive: 'Inactive'
+    },
     progress: 'Progress'
   },
   auth: {

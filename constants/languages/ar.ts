@@ -66,6 +66,10 @@ export const ar = {
       viewAll: 'عرض الكل',
       confirm: 'نعم'
     },
+    status: {
+      active: 'نشط',
+      inactive: 'غير نشط'
+    },
     progress: 'التقدم'
   },
   auth: {
