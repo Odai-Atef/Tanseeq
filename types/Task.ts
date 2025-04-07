@@ -142,31 +142,71 @@ export class Task {
     return parseInt(this.repeat_monthly, 10);
   }
 
-  // Get formatted repeat schedule
-  getRepeatFormat(): string {
+  // Get formatted repeat schedule with translations
+  getRepeatFormat(t?: (key: string, params?: Record<string, string>) => string): string {
     const monthlyValue = parseInt(this.repeat_monthly, 10);
     
+    // If translation function is not provided, use default English strings
+    if (!t) {
+      if (monthlyValue === -1) {
+        return "No Schedule";
+      }
+      
+      if (monthlyValue === 1) {
+        return "Every day";
+      }
+
+      const repeatMapping: { [key: number]: string } = {
+        7: "Every week at",
+        14: "Every two weeks at",
+        28: "Every month at",
+        90: "Every three months at",
+        180: "Every six months at",
+        360: "Every year at"
+      };
+
+      const prefix = repeatMapping[monthlyValue] || "";
+      if (!prefix) return "";
+
+      const dayNames = this.getRepeatDayNames();
+      return `${prefix} ${dayNames.join(', ')}`;
+    }
+    
+    // Using translations
     if (monthlyValue === -1) {
-      return "No Schedule";
+      return t('tasks.add.periods.manual');
     }
     
     if (monthlyValue === 1) {
-      return "Every day";
+      return t('tasks.add.periods.daily');
     }
 
     const repeatMapping: { [key: number]: string } = {
-      7: "Every week at",
-      14: "Every two weeks at",
-      28: "Every month at",
-      90: "Every three months at",
-      180: "Every six months at",
-      360: "Every year at"
+      7: t('tasks.add.periods.weekly'),
+      14: t('tasks.add.periods.biWeekly'),
+      28: t('tasks.add.periods.monthly'),
+      90: t('tasks.add.periods.quarterly'),
+      180: t('tasks.add.periods.biAnnually'),
+      360: t('tasks.add.periods.annually')
     };
 
     const prefix = repeatMapping[monthlyValue] || "";
     if (!prefix) return "";
 
-    const dayNames = this.getRepeatDayNames();
+    // Get translated day names
+    const dayNames = this.repeat_days.map(day => {
+      const dayMap: { [key: string]: string } = {
+        '1': t('tasks.add.days.sunday'),
+        '2': t('tasks.add.days.monday'),
+        '3': t('tasks.add.days.tuesday'),
+        '4': t('tasks.add.days.wednesday'),
+        '5': t('tasks.add.days.thursday'),
+        '6': t('tasks.add.days.friday'),
+        '7': t('tasks.add.days.saturday')
+      };
+      return dayMap[day] || day;
+    });
+    
     return `${prefix} ${dayNames.join(', ')}`;
   }
 

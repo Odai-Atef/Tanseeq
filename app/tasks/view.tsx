@@ -105,7 +105,7 @@ export default function TaskView() {
               <MaterialCommunityIcons name="calendar-clock" size={20} color={colors.text} />
               <ThemedText style={[styles.listItemTitle, { textAlign }]}>{t('tasks.view.schedule')}</ThemedText>
             </View>
-            <ThemedText style={{ textAlign }}>{task.getRepeatFormat()}</ThemedText>
+            <ThemedText style={{ textAlign }}>{task.getRepeatFormat(t)}</ThemedText>
           </View>
 
          

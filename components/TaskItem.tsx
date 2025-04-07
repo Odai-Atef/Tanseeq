@@ -106,11 +106,13 @@ export const TaskItem = ({ item, type }: TaskItemProps) => {
     return item.description;
   };
 
+  const { t } = useTranslation();
+  
   const getTimeInfo = () => {
     if (isSchedule(item)) {
       return `${item.getFormattedStartTime()} - ${item.getFormattedEndTime()}`;
     }
-    return item.getRepeatFormat();
+    return item.getRepeatFormat(t);
   };
 
   const getStatus = () => {
