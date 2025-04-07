@@ -42,6 +42,7 @@ export default function Dashboard() {
     schedules,
     firstInProgressSchedule,
     recentCompletedSchedule,
+    waitingSchedule,
     progressPercentage,
     isLoading,
     error,
@@ -89,6 +90,10 @@ export default function Dashboard() {
 
         {recentCompletedSchedule && (
           <TaskItem item={recentCompletedSchedule} type="schedule" />
+        )}
+       
+        {waitingSchedule && (
+          <TaskItem item={waitingSchedule} type="schedule" />
         )}
 
         {!firstInProgressSchedule && !recentCompletedSchedule && (

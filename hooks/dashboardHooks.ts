@@ -15,6 +15,9 @@ export const useDashboard = () => {
     useState<Schedule | null>(null);
   const [recentCompletedSchedule, setRecentCompletedSchedule] =
     useState<Schedule | null>(null);
+    const [waitingSchedule, setwaitingSchedule] =
+    useState<Schedule | null>(null);
+    
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -78,6 +81,9 @@ export const useDashboard = () => {
       const inProgressSchedule = todaySchedules.find(
         (schedule: Schedule) => schedule.status === "In-progress"
       );
+      const inWaitingSchedule = todaySchedules.find(
+        (schedule: Schedule) => schedule.status === "Not-Started"
+      );
       setFirstInProgressSchedule(inProgressSchedule || null);
 
       // Find most recent completed schedule
@@ -96,7 +102,7 @@ export const useDashboard = () => {
         }
       )[0];
       setRecentCompletedSchedule(mostRecentCompleted || null);
-
+      setwaitingSchedule(inWaitingSchedule||null)
       // Calculate progress percentage
       const totalSchedules = todaySchedules.length;
       const activeSchedules = todaySchedules.filter((schedule: Schedule) =>
@@ -148,6 +154,7 @@ export const useDashboard = () => {
     schedules,
     firstInProgressSchedule,
     recentCompletedSchedule,
+    waitingSchedule,
     progressPercentage,
     isLoading,
     error,
