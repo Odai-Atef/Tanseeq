@@ -23,7 +23,10 @@
         "NSPhotoLibraryUsageDescription": "This app needs access to photos for profile pictures and task attachments",
         "NSPhotoLibraryAddUsageDescription": "This app needs access to photos to save images",
         "NSMicrophoneUsageDescription": "This app needs access to microphone"
-      }
+      },
+      "associatedDomains": [
+        "applinks:tanseeq.pro"
+      ]
     },
     "android": {
       "adaptiveIcon": {
@@ -36,6 +39,28 @@
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.RECORD_AUDIO"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "http",
+              "host": "tanseeq.pro",
+              "pathPattern": ".*join/home.*"
+            },
+            {
+              "scheme": "https",
+              "host": "tanseeq.pro",
+              "pathPattern": ".*join/home.*"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
       ]
     },
     "web": {

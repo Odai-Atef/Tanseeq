@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { router } from "expo-router";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -13,6 +13,38 @@ export const useJoinHome = () => {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [showScanner, setShowScanner] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check for deep link parameters on component mount
+  useEffect(() => {
+    const checkDeepLinkParams = async () => {
+      try {
+        const deepLinkAuthId = await AsyncStorage.getItem('deeplink_auth_id');
+        const deepLinkAuthToken = await AsyncStorage.getItem('deeplink_auth_token');
+        
+        if (deepLinkAuthId && deepLinkAuthToken) {
+          // Set the values from deep link
+          setHomeId(deepLinkAuthId);
+          setHomePassword(deepLinkAuthToken);
+          
+          // Clear the stored values to prevent reuse
+          AsyncStorage.removeItem('deeplink_auth_id');
+          AsyncStorage.removeItem('deeplink_auth_token');
+          
+          // Automatically submit the form if both values are present
+          if (deepLinkAuthId.length === 6 && deepLinkAuthToken.length === 6) {
+            // Use setTimeout to ensure state is updated before submission
+            setTimeout(() => {
+              handleSubmit();
+            }, 500);
+          }
+        }
+      } catch (error) {
+        console.error('Error retrieving deep link parameters:', error);
+      }
+    };
+    
+    checkDeepLinkParams();
+  }, []);
 
   const validateInputs = (): boolean => {
     if (!homeId || !homePassword) {
