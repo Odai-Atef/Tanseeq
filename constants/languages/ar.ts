@@ -68,7 +68,10 @@ export const ar = {
     },
     status: {
       active: 'نشط',
-      inactive: 'غير نشط'
+      inactive: 'غير نشط',
+      inProgress: 'قيد التنفيذ',
+      done: 'مكتمل',
+      notStarted: 'لم يبدأ'
     },
     progress: 'التقدم'
   },

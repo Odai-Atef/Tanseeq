@@ -95,7 +95,9 @@ export default function TaskView() {
               <ThemedText style={[styles.listItemTitle, { textAlign }]}>{t('tasks.view.status')}</ThemedText>
             </View>
             <View style={[styles.statusBadge, { backgroundColor: colors.statusTodo }]}>
-              <ThemedText style={styles.statusText}>{task.status}</ThemedText>
+              <ThemedText style={styles.statusText}>
+                {t(`common.status.${task.status.toLowerCase()}`)}
+              </ThemedText>
             </View>
           </View>
 

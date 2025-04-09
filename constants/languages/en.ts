@@ -68,7 +68,10 @@ export const en = {
     },
     status: {
       active: 'Active',
-      inactive: 'Inactive'
+      inactive: 'Inactive',
+      inProgress: 'In Progress',
+      done: 'Done',
+      notStarted: 'Not Started'
     },
     progress: 'Progress'
   },

@@ -118,6 +118,12 @@ export const TaskItem = ({ item, type }: TaskItemProps) => {
       return t('common.status.active');
     } else if (item.status === 'Inactive') {
       return t('common.status.inactive');
+    }else if (item.status === 'In-progress') {
+      return t('common.status.inProgress');
+    }else if (item.status === 'Done') {
+      return t('common.status.done');
+    }else if (item.status === 'Not-Started') {
+      return t('common.status.notStarted');
     }
     return item.status;
   };
