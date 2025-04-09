@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { Stack, useRouter } from 'expo-router';
+import { Stack } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ENDPOINTS } from '../constants/api';
 import { LanguageProvider } from '../contexts/LanguageContext';
 import Toast from 'react-native-toast-message';
 import { useFonts } from 'expo-font';
-import { useColorScheme, Linking } from 'react-native';
-import { DarkTheme, DefaultTheme, Theme, NavigationContainer } from '@react-navigation/native';
+import { useColorScheme } from 'react-native';
+import { DarkTheme, DefaultTheme, Theme, ThemeProvider } from '@react-navigation/native';
 import { colors } from '../constants/Theme';
 import * as SplashScreen from 'expo-splash-screen';
 import OneSignal from 'react-native-onesignal';
@@ -48,57 +48,6 @@ export default function Layout() {
   });
 
   const colorScheme = useColorScheme();
-  const router = useRouter();
-
-  // Handle deep links
-  useEffect(() => {
-    // Handle deep links when the app is not open
-    const handleInitialURL = async () => {
-      const url = await Linking.getInitialURL();
-      if (url) {
-        handleDeepLink(url);
-      }
-    };
-
-    // Handle deep links when the app is already open
-    const handleURLChange = ({ url }: { url: string }) => {
-      handleDeepLink(url);
-    };
-
-    // Function to parse and handle the deep link
-    const handleDeepLink = (url: string) => {
-      try {
-        const parsedUrl = new URL(url);
-        
-        // Check if this is our join/home deep link
-        // Make it more flexible to handle any path that contains /join/home
-        if (parsedUrl.pathname.includes('/join/home')) {
-          const aid = parsedUrl.searchParams.get('aid');
-          const token = parsedUrl.searchParams.get('token');
-          
-          if (aid && token) {
-            // Store the parameters in AsyncStorage for the join page to use
-            AsyncStorage.setItem('deeplink_auth_id', aid);
-            AsyncStorage.setItem('deeplink_auth_token', token);
-            
-            // Navigate to the join page
-            router.replace('/home/join');
-          }
-        }
-      } catch (error) {
-        console.error('Error handling deep link:', error);
-      }
-    };
-
-    // Set up listeners
-    handleInitialURL();
-    const subscription = Linking.addEventListener('url', handleURLChange);
-
-    // Clean up
-    return () => {
-      subscription.remove();
-    };
-  }, [router]);
 
   useEffect(() => {
     const initOneSignal = async () => {
@@ -143,7 +92,7 @@ export default function Layout() {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                one_signal: deviceState.pushToken
+                one_signal: deviceState.userId
               })
             });
           }
@@ -167,39 +116,31 @@ export default function Layout() {
   }
 
   return (
-    <LanguageProvider>
-        <NavigationContainer theme={navigationTheme[colorScheme ?? 'light']}>
-          <StackNavigator />
-          <Toast />
-        </NavigationContainer>
-    </LanguageProvider>
-  );
-}
-
-function StackNavigator() {
-  
-  return (
-    <Stack screenOptions={{ 
-      headerShown: false,
-      headerTitleStyle: {
-        fontFamily: 'Cairo'
-      },
-      headerBackTitleStyle: {
-        fontFamily: 'Cairo'
-      }
-    }}>
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="dashboard" options={{ headerShown: false }} />
-      <Stack.Screen name="tasks" options={{ headerShown: false }} />
-      <Stack.Screen name="schedules" options={{ headerShown: false }} />
-      <Stack.Screen name="tasks/calendar" options={{ headerBackTitleVisible: false, headerShown: false }} />
-      <Stack.Screen name="tasks/index" options={{ headerBackTitleVisible: false, headerShown: false }} />
-      <Stack.Screen name="tasks/view" options={{ headerBackTitleVisible: false, headerShown: false }} />
-      <Stack.Screen name="tasks/add" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false,  }} />
-      <Stack.Screen name="schedules/view" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false }} />
-      <Stack.Screen name="schedules/add" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false}} />
-      <Stack.Screen name="home/invite" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false }} />
-      <Stack.Screen name="home/join" options={{ headerBackTitleVisible: false, headerBackTitle: '', headerShown: false }} />
-    </Stack>
+    <ThemeProvider value={navigationTheme[colorScheme ?? 'light']}>
+      <LanguageProvider>
+        <Stack screenOptions={{ 
+          headerShown: false,
+          headerTitleStyle: {
+            fontFamily: 'Cairo'
+          },
+          headerBackTitleStyle: {
+            fontFamily: 'Cairo'
+          }
+        }}>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="dashboard" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="tasks/calendar" options={{ headerShown: false }} />
+          <Stack.Screen name="tasks/index" options={{ headerShown: false }} />
+          <Stack.Screen name="tasks/view" options={{ headerShown: false }} />
+          <Stack.Screen name="tasks/add" options={{ headerBackTitle: '', headerShown: false }} />
+          <Stack.Screen name="schedules/view" options={{ headerBackTitle: '', headerShown: false }} />
+          <Stack.Screen name="schedules/add" options={{ headerBackTitle: '', headerShown: false }} />
+          <Stack.Screen name="home/invite" options={{ headerBackTitle: '', headerShown: false }} />
+          <Stack.Screen name="home/join" options={{ headerBackTitle: '', headerShown: false }} />
+        </Stack>
+        <Toast />
+      </LanguageProvider>
+    </ThemeProvider>
   );
 }
