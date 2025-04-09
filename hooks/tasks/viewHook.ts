@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import { useLanguage } from '../useLanguage';
 import { Task } from '../../types/Task';
+import { useRouter } from 'expo-router';
 
 interface ApiResponse {
   data: any[];
@@ -11,11 +12,13 @@ interface ApiResponse {
 
 export const useTaskView = (id: string | string[]) => {
   const { t } = useLanguage();
+  const router = useRouter();
 
   const [task, setTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [token, setToken] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
 
   useEffect(() => {
@@ -85,10 +88,78 @@ export const useTaskView = (id: string | string[]) => {
     }
   }, [id]);
 
+  const deleteTask = async () => {
+    if (!task) return;
+    
+    try {
+      setDeleteLoading(true);
+      const accessToken = await AsyncStorage.getItem('access_token');
+      if (!accessToken) {
+        Toast.show({
+          type: 'error',
+          text1: t('common.toast.auth.required'),
+          text2: t('common.error.auth.required'),
+          position: 'top',
+          visibilityTime: 3000,
+          autoHide: true,
+          topOffset: 70
+        });
+        return;
+      }
+
+      const response = await fetch(
+        `${API_ENDPOINTS.TASKS}/${task.id}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            status: 'Inactive'
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to delete task');
+      }
+
+      Toast.show({
+        type: 'success',
+        text1: t('common.toast.success'),
+        text2: t('common.success.deleted', { item: t('tasks.title') }),
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 70
+      });
+      
+      // Navigate back to tasks list
+      router.replace('/tasks');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete task';
+      Toast.show({
+        type: 'error',
+        text1: t('common.toast.error'),
+        text2: errorMessage,
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 70
+      });
+      console.error('Error deleting task:', err);
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
   return {
     task,
     loading,
     error,
-    token
+    token,
+    deleteTask,
+    deleteLoading
   };
 };

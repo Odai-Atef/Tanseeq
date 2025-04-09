@@ -241,6 +241,7 @@ export const taskTheme = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.line,
     backgroundColor: colors.white,
+    justifyContent: 'space-between',
   },
   footerButton: {
     ...baseTheme.submitButton,

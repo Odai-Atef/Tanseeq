@@ -154,7 +154,13 @@ export const ar = {
       attachment: 'المرفق',
       attachments: 'مرفقات',
       noAttachments: 'لا توجد مرفقات',
-      notFound: 'لم يتم العثور على المهمة'
+      notFound: 'لم يتم العثور على المهمة',
+      deleteConfirmation: {
+        title: 'حذف المهمة',
+        message: 'هل أنت متأكد أنك تريد حذف هذه المهمة؟ سيؤدي هذا إلى تعيين حالة المهمة إلى غير نشط.',
+        cancel: 'إلغاء',
+        confirm: 'حذف'
+      }
     },
     calendar: {
       title: 'التقويم',

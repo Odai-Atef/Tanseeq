@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, ActivityIndicator, Image, Dimensions, TouchableOpacity, Platform } from 'react-native';
+import { View, ScrollView, ActivityIndicator, Image, TouchableOpacity, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
@@ -14,7 +14,7 @@ import { Header } from '../../components/Header';
 export default function TaskView() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
-  const { task, loading, error, token } = useTaskView(id);
+  const { task, loading, error, token, deleteTask, deleteLoading } = useTaskView(id);
   const { t } = useTranslation();
   const { textAlign, flexDirection } = useTextDirection();
   const [canEdit, setCanEdit] = useState(false);
@@ -117,13 +117,40 @@ export default function TaskView() {
       {canEdit && (
         <View style={[styles.footer, { flexDirection }]}>
           <TouchableOpacity
-            style={[styles.editButton, { alignSelf: flexDirection === 'row-reverse' ? 'flex-start' : 'flex-end' }]}
+            style={[styles.editButton, { flex: 1 }]}
             onPress={() => router.push({
               pathname: "/tasks/add",
               params: { id: task.id }
             })}
           >
             <ThemedText style={styles.editButtonText}>{t('common.buttons.edit')}</ThemedText>
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={[styles.editButton, { backgroundColor: colors.danger, flex: 1 }]}
+            onPress={() => {
+              Alert.alert(
+                t('tasks.view.deleteConfirmation.title'),
+                t('tasks.view.deleteConfirmation.message'),
+                [
+                  {
+                    text: t('tasks.view.deleteConfirmation.cancel'),
+                    style: 'cancel',
+                  },
+                  {
+                    text: t('tasks.view.deleteConfirmation.confirm'),
+                    onPress: deleteTask,
+                    style: 'destructive',
+                  },
+                ],
+                { cancelable: true }
+              );
+            }}
+            disabled={deleteLoading}
+          >
+            <ThemedText style={styles.editButtonText}>
+              {deleteLoading ? t('common.loading') : t('common.buttons.delete')}
+            </ThemedText>
           </TouchableOpacity>
         </View>
       )}

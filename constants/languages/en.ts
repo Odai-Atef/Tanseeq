@@ -150,7 +150,13 @@ export const en = {
       schedule: 'Schedule',
       attachment: 'Attachment',
       attachments: 'attachments',
-      noAttachments: 'No attachments'
+      noAttachments: 'No attachments',
+      deleteConfirmation: {
+        title: 'Delete Task',
+        message: 'Are you sure you want to delete this task? This will set the task status to Inactive.',
+        cancel: 'Cancel',
+        confirm: 'Delete'
+      }
     },
     calendar: {
       title: 'Calendar',
