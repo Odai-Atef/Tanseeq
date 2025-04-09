@@ -110,6 +110,8 @@ export const ar = {
   },
   tasks: {
     title: 'المهام',
+    emptyMessage: 'خطط مهمتك،\nقم بإنشاء مهمة لإدارة وتتبع منزلك بسهولة وفورية وبشكل رائع',
+    addTaskButton: 'إضافة مهمة',
     add: {
       title: 'إضافة مهمة',
       name: 'اسم المهمة',

@@ -110,6 +110,8 @@ export const en = {
   },
   tasks: {
     title: 'Tasks',
+    emptyMessage: 'Planning Your Task,\nCreate task to manage and tracking your home easily instantly incredibly',
+    addTaskButton: 'Add Task',
     add: {
       title: 'Add Task',
       name: 'Task Name',

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, ScrollView, ActivityIndicator, RefreshControl, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Footer } from '../../components/Footer';
 import { ThemedText } from '../../components/ThemedText';
 import { ThemedView } from '../../components/ThemedView';
+import { useTranslation, useTextDirection } from '../../contexts/LanguageContext';
 import { colors, taskTheme as styles } from '../../constants/Theme';
 import { API_ENDPOINTS } from '../../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,6 +17,8 @@ interface ApiResponse {
 
 export default function TasksScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
+  const { textAlign, flexDirection } = useTextDirection();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -82,6 +85,20 @@ export default function TasksScreen() {
         ) : error ? (
           <View style={[styles.content, { justifyContent: 'center', alignItems: 'center' }]}>
             <ThemedText style={{ color: colors.danger }}>{error}</ThemedText>
+          </View>
+        ) : tasks.length === 0 ? (
+          <View style={{ alignItems: 'center', justifyContent: 'center', padding: 20, marginTop: 20 }}>
+            <ThemedText style={{ textAlign: 'center', marginBottom: 20, fontSize: 16, lineHeight: 24 }}>
+              {t('tasks.emptyMessage')}
+            </ThemedText>
+            <TouchableOpacity 
+              style={{ backgroundColor: colors.primary, paddingVertical: 12, paddingHorizontal: 24, borderRadius: 8 }} 
+              onPress={() => router.push('/tasks/add')}
+            >
+              <ThemedText style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>
+                {t('tasks.addTaskButton')}
+              </ThemedText>
+            </TouchableOpacity>
           </View>
         ) : (
           <View>
