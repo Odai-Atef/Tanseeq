@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, ActivityIndicator, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, ScrollView, ActivityIndicator, Image, TouchableOpacity, Alert, FlatList } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
@@ -14,7 +14,16 @@ import { Header } from '../../components/Header';
 export default function TaskView() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
-  const { task, loading, error, token, deleteTask, deleteLoading } = useTaskView(id);
+  const { 
+    task, 
+    loading, 
+    error, 
+    token, 
+    deleteTask, 
+    deleteLoading,
+    historicalLogs,
+    logsLoading
+  } = useTaskView(id);
   const { t } = useTranslation();
   const { textAlign, flexDirection } = useTextDirection();
   const [canEdit, setCanEdit] = useState(false);
@@ -77,8 +86,6 @@ export default function TaskView() {
         </View>
 
         <View style={styles.listSection}>
-        
-
           {/* Created Date Section */}
           <View style={[styles.listItem, { flexDirection }]}>
             <View style={[styles.listItemLeft, { flexDirection }]}>
@@ -109,8 +116,49 @@ export default function TaskView() {
             </View>
             <ThemedText style={{ textAlign }}>{task.getRepeatFormat(t)}</ThemedText>
           </View>
+        </View>
 
-         
+        {/* Historical Logs Section */}
+        <View style={[styles.section]}>
+          <ThemedText style={[styles.sectionTitle, { textAlign }]}>{t('tasks.view.historicalLogs')}</ThemedText>
+          
+          {logsLoading ? (
+            <ActivityIndicator size="small" color={colors.primary} style={{ marginVertical: 20 }} />
+          ) : historicalLogs && historicalLogs.length > 0 ? (
+            <View style={styles.taskSection}>
+              {historicalLogs.map((log) => (
+                <View key={log.id} style={[styles.listItem, { flexDirection }]}>
+                  <View style={{ flex: 1 }}>
+                    <View style={[styles.listItemLeft, { flexDirection, marginBottom: 4 }]}>
+                      {log.status === 'Done' ? (
+                        <MaterialCommunityIcons name="check-circle" size={16} color={colors.success} />
+                      ) : (
+                        <MaterialCommunityIcons name="close-circle" size={16} color={colors.danger} />
+                      )}
+                      <ThemedText style={[styles.listItemTitle, { fontSize: 14, marginLeft: 8 }]}>
+                        {new Date(log.day).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </ThemedText>
+                    </View>
+                    <View style={{ flexDirection, justifyContent: 'space-between', marginLeft: 24 }}>
+                      <ThemedText style={{ fontSize: 12, color: colors.textSecondary }}>
+                        {t(`common.status.${log.status.toLowerCase()}`)}
+                      </ThemedText>
+                    </View>
+                  </View>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <View style={[styles.taskSection, { padding: 16, alignItems: 'center' }]}>
+              <ThemedText style={{ color: colors.textSecondary }}>
+                {t('tasks.view.noLogs')}
+              </ThemedText>
+            </View>
+          )}
         </View>
       </ScrollView>
 

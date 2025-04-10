@@ -26,6 +26,7 @@ export const taskTheme = StyleSheet.create({
   },
   section: {
     marginBottom: 24,
+    marginTop:24
   },
   taskSection: {
     backgroundColor: colors.white,

@@ -1,5 +1,6 @@
 export const en = {
   common: {
+
     loading: 'Loading...',
     toast: {
       success: 'Success',
@@ -71,7 +72,9 @@ export const en = {
       inactive: 'Inactive',
       inProgress: 'In Progress',
       done: 'Done',
-      notStarted: 'Not Started'
+      notStarted: 'Not Started',
+      'not-Started': 'Not Started',
+      cancelled:"Cancelled"
     },
     progress: 'Progress'
   },
@@ -153,6 +156,8 @@ export const en = {
       attachment: 'Attachment',
       attachments: 'attachments',
       noAttachments: 'No attachments',
+      historicalLogs: 'Historical Logs',
+      noLogs: 'No historical logs available',
       deleteConfirmation: {
         title: 'Delete Task',
         message: 'Are you sure you want to delete this task? This will set the task status to Inactive.',

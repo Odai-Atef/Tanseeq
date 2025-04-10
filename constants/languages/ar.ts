@@ -71,7 +71,9 @@ export const ar = {
       inactive: 'غير نشط',
       inProgress: 'قيد التنفيذ',
       done: 'مكتمل',
-      notStarted: 'لم يبدأ'
+      notStarted: 'لم يبدأ',
+      'not-started': 'لم يبدأ',
+      cancelled:"ملغي"
     },
     progress: 'التقدم'
   },
@@ -156,6 +158,8 @@ export const ar = {
       attachment: 'المرفق',
       attachments: 'مرفقات',
       noAttachments: 'لا توجد مرفقات',
+      historicalLogs: 'السجلات التاريخية',
+      noLogs: 'لا توجد سجلات تاريخية متاحة',
       notFound: 'لم يتم العثور على المهمة',
       deleteConfirmation: {
         title: 'حذف المهمة',

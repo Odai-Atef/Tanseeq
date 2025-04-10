@@ -10,6 +10,12 @@ interface ApiResponse {
   data: any[];
 }
 
+interface HistoricalLog {
+  id: string;
+  day: string;
+  status: string;
+}
+
 export const useTaskView = (id: string | string[]) => {
   const { t } = useLanguage();
   const router = useRouter();
@@ -19,6 +25,8 @@ export const useTaskView = (id: string | string[]) => {
   const [error, setError] = useState('');
   const [token, setToken] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [historicalLogs, setHistoricalLogs] = useState<HistoricalLog[]>([]);
+  const [logsLoading, setLogsLoading] = useState(false);
 
 
   useEffect(() => {
@@ -61,8 +69,12 @@ export const useTaskView = (id: string | string[]) => {
 
         const result: ApiResponse = await response.json();
         if (result.data && result.data.length > 0) {
-          setTask(Task.fromAPI(result.data[0]));
+          const taskData = Task.fromAPI(result.data[0]);
+          setTask(taskData);
           setToken(accessToken);
+          
+          // Fetch historical logs after task is loaded
+          fetchHistoricalLogs(taskData.id, accessToken);
         } else {
           throw new Error('Task not found');
         }
@@ -87,6 +99,60 @@ export const useTaskView = (id: string | string[]) => {
       fetchTask();
     }
   }, [id]);
+  
+  const fetchHistoricalLogs = async (taskId: number, accessToken: string) => {
+    try {
+      setLogsLoading(true);
+      
+      // Get today's date in YYYY-MM-DD format
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Fetch schedule data for the task from the API
+      // Filter by task ID and day less than or equal to today
+      const url = `${API_ENDPOINTS.SCHEDULE}?fields=id,day,status&filter[task][_eq]=${taskId}&filter[day][_lte]=${today}`;
+      
+      const response = await fetch(
+        url,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch historical logs');
+      }
+
+      const result: ApiResponse = await response.json();
+      
+      if (result.data && result.data.length > 0) {
+        // Map the API response to our HistoricalLog interface
+        const logs: HistoricalLog[] = result.data.map((item: any) => ({
+          id: item.id,
+          day: item.day,
+          status: item.status
+        }));
+        
+        // Sort logs by day (newest first)
+        const sortedLogs = logs.sort((a, b) => {
+          const dateA = new Date(a.day);
+          const dateB = new Date(b.day);
+          return dateB.getTime() - dateA.getTime();
+        });
+        
+        setHistoricalLogs(sortedLogs);
+      } else {
+        setHistoricalLogs([]);
+      }
+    } catch (err) {
+      console.error('Error fetching historical logs:', err);
+      setHistoricalLogs([]);
+    } finally {
+      setLogsLoading(false);
+    }
+  };
 
   const deleteTask = async () => {
     if (!task) return;
@@ -160,6 +226,8 @@ export const useTaskView = (id: string | string[]) => {
     error,
     token,
     deleteTask,
-    deleteLoading
+    deleteLoading,
+    historicalLogs,
+    logsLoading
   };
 };
