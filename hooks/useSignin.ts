@@ -82,11 +82,7 @@ export const useSignin = () => {
         scheme: 'tanseeq',
         path: 'auth/google-redirect',
       });
-      console.log('Auth Configuration:', {
-        redirectUri,
-        nativeRedirect: 'tanseeq://auth/google-redirect',
-        platform: Platform.OS
-      });
+     
     };
     getRedirectUri();
   }, []);
@@ -191,7 +187,6 @@ export const useSignin = () => {
           AppleAuthentication.AppleAuthenticationScope.EMAIL,
         ],
       });
-      console.log(credential);
       
       // Get stored user data for Apple sign-in if available
       let userEmail = credential.email;
@@ -205,7 +200,6 @@ export const useSignin = () => {
             const userData = JSON.parse(storedUserData);
             userEmail = userData.email;
             userName = userData.fullName || userName;
-            console.log(t('auth.apple.dataRetrieved'), userEmail);
           }
         } catch (storageError) {
           console.error(t('auth.apple.retrieveError'), storageError);
@@ -223,14 +217,9 @@ export const useSignin = () => {
           email: userEmail,
         }),
       });
-      console.log(JSON.stringify({
-        identityToken: credential.identityToken,
-        fullName: userName,
-        email: userEmail,
-      }));
+      
 
       const data: LoginResponse = await response.json();
-      console.log(data);
 
       if (data.errors) {
         throw new Error(data.errors[0]?.message || 'Apple login failed');
@@ -247,7 +236,6 @@ export const useSignin = () => {
             email: credential.email,
             fullName: credential.fullName
           }));
-          console.log(t('auth.apple.dataStored'));
         } catch (storageError) {
           console.error(t('auth.apple.storeError'), storageError);
         }

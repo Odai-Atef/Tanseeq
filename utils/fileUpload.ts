@@ -45,7 +45,6 @@ export const uploadFile = async (fileUri: string, token: string): Promise<string
       },
     });
 
-    console.log('Upload Success:', response.data);
     return response.data.data.id;
   } catch (error) {
     console.error('Upload Error:', error);

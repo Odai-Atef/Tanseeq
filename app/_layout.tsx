@@ -74,7 +74,6 @@ export default function Layout() {
 
         // Handle notification opened
         OneSignal.setNotificationOpenedHandler((event) => {
-          console.log("OneSignal: notification opened:", event);
         });
 
         // Request push notification permission
