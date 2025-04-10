@@ -114,6 +114,8 @@ export const ar = {
     title: 'المهام',
     emptyMessage: 'خطط مهمتك،\nقم بإنشاء مهمة لإدارة وتتبع منزلك بسهولة وفورية وبشكل رائع',
     addTaskButton: 'إضافة مهمة',
+    searchPlaceholder: 'البحث عن المهام بالعنوان أو الوصف...',
+    noSearchResults: 'لا توجد مهام تطابق بحثك',
     add: {
       title: 'إضافة مهمة',
       name: 'اسم المهمة',

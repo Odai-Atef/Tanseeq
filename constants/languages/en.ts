@@ -115,6 +115,8 @@ export const en = {
     title: 'Tasks',
     emptyMessage: 'Planning Your Task,\nCreate task to manage and tracking your home easily instantly incredibly',
     addTaskButton: 'Add Task',
+    searchPlaceholder: 'Search tasks by title or description...',
+    noSearchResults: 'No tasks match your search',
     add: {
       title: 'Add Task',
       name: 'Task Name',

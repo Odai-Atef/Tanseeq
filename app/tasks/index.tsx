@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, ActivityIndicator, RefreshControl, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, ScrollView, ActivityIndicator, RefreshControl, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Footer } from '../../components/Footer';
 import { ThemedText } from '../../components/ThemedText';
@@ -17,9 +18,11 @@ interface ApiResponse {
 
 export default function TasksScreen() {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, isRTL } = useTranslation();
   const { textAlign, flexDirection } = useTextDirection();
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
@@ -27,6 +30,20 @@ export default function TasksScreen() {
   useEffect(() => {
     fetchTasks();
   }, []);
+
+  // Filter tasks when search query or tasks change
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setFilteredTasks(tasks);
+    } else {
+      const query = searchQuery.toLowerCase();
+      const filtered = tasks.filter(task => 
+        (task.name && task.name.toLowerCase().includes(query)) || 
+        (task.description && task.description.toLowerCase().includes(query))
+      );
+      setFilteredTasks(filtered);
+    }
+  }, [searchQuery, tasks]);
 
   const fetchTasks = async () => {
     try {
@@ -50,7 +67,9 @@ export default function TasksScreen() {
       }
 
       const result: ApiResponse = await response.json();
-      setTasks((result.data || []).map(item => Task.fromAPI(item)));
+      const fetchedTasks = (result.data || []).map(item => Task.fromAPI(item));
+      setTasks(fetchedTasks);
+      setFilteredTasks(fetchedTasks);
       setError('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load tasks');
@@ -67,17 +86,49 @@ export default function TasksScreen() {
 
   return (
     <ThemedView style={[styles.container_trans,styles.ios_boarder]}>
-      <ScrollView 
-        style={styles.content}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[colors.primary]}
-            tintColor={colors.primary}
+      <View style={styles.content}>
+        <View style={[{
+          backgroundColor: colors.white,
+          borderRadius: 8,
+          marginBottom: 16,
+          padding: 8,
+          borderWidth: 1,
+          borderColor: colors.line,
+          alignItems: 'center'
+        }, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+          {isRTL ? null : (
+            <Ionicons name="search" size={20} color={colors.secondary2} style={{ marginHorizontal: 8 }} />
+          )}
+          
+          <TextInput
+            style={[{
+              flex: 1,
+              height: 40,
+              fontSize: 16,
+              color: colors.textPrimary,
+              paddingHorizontal: 8
+            }, { textAlign: isRTL ? 'right' : 'left' }]}
+            placeholder={t('tasks.searchPlaceholder') || "Search tasks..."}
+            placeholderTextColor={colors.secondary2}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
           />
-        }
-      >
+          
+          {isRTL ? (
+            <Ionicons name="search" size={20} color={colors.secondary2} style={{ marginHorizontal: 8 }} />
+          ) : null}
+        </View>
+        
+        <ScrollView 
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[colors.primary]}
+              tintColor={colors.primary}
+            />
+          }
+        >
         {loading ? (
           <View style={[styles.content, { justifyContent: 'center', alignItems: 'center' }]}>
             <ActivityIndicator size="large" color={colors.primary} />
@@ -86,7 +137,7 @@ export default function TasksScreen() {
           <View style={[styles.content, { justifyContent: 'center', alignItems: 'center' }]}>
             <ThemedText style={{ color: colors.danger }}>{error}</ThemedText>
           </View>
-        ) : tasks.length === 0 ? (
+        ) : filteredTasks.length === 0 && searchQuery === '' ? (
           <View style={{ alignItems: 'center', justifyContent: 'center', padding: 20, marginTop: 20 }}>
             <ThemedText style={{ textAlign: 'center', marginBottom: 20, fontSize: 16, lineHeight: 24 }}>
               {t('tasks.emptyMessage')}
@@ -100,9 +151,15 @@ export default function TasksScreen() {
               </ThemedText>
             </TouchableOpacity>
           </View>
+        ) : filteredTasks.length === 0 && searchQuery !== '' ? (
+          <View style={{ alignItems: 'center', justifyContent: 'center', padding: 20, marginTop: 20 }}>
+            <ThemedText style={{ textAlign: 'center', marginBottom: 20, fontSize: 16, lineHeight: 24 }}>
+              {t('tasks.noSearchResults') || "No tasks match your search"}
+            </ThemedText>
+          </View>
         ) : (
           <View>
-            {tasks.map((task) => (
+            {filteredTasks.map((task) => (
               <TaskItem
                 key={task.id}
                 item={task}
@@ -111,7 +168,8 @@ export default function TasksScreen() {
             ))}
           </View>
         )}
-      </ScrollView>
+        </ScrollView>
+      </View>
       <Footer activeTab="tasks" />
     </ThemedView>
   );
