@@ -25,7 +25,7 @@ export const getTranslation = (obj: any, path: string, params?: Record<string, s
 
 // Helper to check if current locale is RTL
 export const isRTL = (language: Language): boolean => {
-  return language === 'en';
+  return language === 'ar';
 };
 
 // Get direction based on language

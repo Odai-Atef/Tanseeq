@@ -1,4 +1,21 @@
 export const en = {
+  intro: {
+    slide1: {
+      title: "Organize Your Home Effortlessly",
+      description: "Create and assign household tasks with ease. Stay on top of everything from cleaning to grocery runs"
+    },
+    slide2: {
+      title: "Plan Your Week with Clarity",
+      description: "Visualize your schedule, track progress in real time, and never miss a beat with your home tasks daily calendar."
+    },
+    slide3: {
+      title: "Empower Your Family to Collaborate",
+      description: "Invite homemakers and family members & housemaid to join your household system and contribute to a well-managed home."
+    },
+    skip: "Skip",
+    next: "Next",
+    done: "Get Started"
+  },
   common: {
 
     loading: 'Loading...',
