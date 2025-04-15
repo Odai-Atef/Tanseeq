@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ADMIN_ROLE } from '../constants/roles';
 import { ThemedText } from './ThemedText';
 import { useTranslation, useTextDirection } from '../contexts/LanguageContext';
+import { getTourText } from '../constants/languages/tour';
 
 type FooterProps = {
   activeTab: 'home' | 'tasks' | 'profile' | 'calendar' | 'tasks/calendar';
@@ -72,10 +73,8 @@ export function Footer({ activeTab }: FooterProps) {
     }
   };
   
-  const getTourText = () => {
-    return language === 'ar' 
-      ? "انقر على هذا الزر للانضمام إلى منزل أو دعوة شخص ما إلى منزلك أو إضافة مهمة أو إضافة جدول."
-      : "Click this button to join a home, invite someone to your home, add a task, or add a schedule.";
+  const getFooterTourText = () => {
+    return getTourText(language, 'footer.addButton');
   };
 
   return (
@@ -227,7 +226,7 @@ export function Footer({ activeTab }: FooterProps) {
                     styles.tourTooltipText,
                     language === 'ar' && styles.tourTooltipTextRTL
                   ]}>
-                    {getTourText()}
+                    {getFooterTourText()}
                   </Text>
                   <TouchableOpacity 
                     style={styles.tourNextButton}

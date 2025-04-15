@@ -21,7 +21,7 @@ export const tourTexts: TourTexts = {
       taskSection: "Here you can see your most recent in-progress tasks, completed tasks, and tasks that haven't started yet.",
     },
     footer: {
-      addButton: "Click this button to join a home, invite someone to your home, add a task, or add a schedule.",
+      addButton: "From here you can join home, invite housemaids family to join your home, create task, schedule a task and see the calendar.",
     }
   },
   ar: {
@@ -31,7 +31,7 @@ export const tourTexts: TourTexts = {
       taskSection: "هنا يمكنك رؤية أحدث المهام قيد التنفيذ والمهام المكتملة والمهام التي لم تبدأ بعد.",
     },
     footer: {
-      addButton: "انقر على هذا الزر للانضمام إلى منزل أو دعوة شخص ما إلى منزلك أو إضافة مهمة أو إضافة جدول.",
+      addButton: "من هنا يمكنك الانضمام إلى المنزل، ودعوة عائلة العاملات المنزليات للانضمام إلى منزلك، وإنشاء مهمة، وجدولة مهمة ومشاهدة التقويم.",
     }
   }
 };

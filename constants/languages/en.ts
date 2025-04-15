@@ -126,7 +126,15 @@ export const en = {
     progressTitle: 'Progress Today Task',
     tasksCompleted: '{completed}/{total} Tasks Completed',
     noTasks: 'No tasks for today',
-    noInProgress: 'No in-progress or completed schedules'
+    noInProgress: 'No in-progress or completed schedules',
+    tour: {
+      myHomes: "Each user has their own home. You can invite others to your home or join someone else's home. Click on a home to set it as your default.",
+      progressSection: "This progress bar shows your task completion status for today.",
+      taskSection: "Here you can see your most recent in-progress tasks, completed tasks, and tasks that haven't started yet.",
+      footer: "From here you can join home, invite housemaids family to join your home, create task, schedule a task and see the calendar.",
+      next: "Next",
+      finish: "Finish"
+    }
   },
   tasks: {
     title: 'Tasks',

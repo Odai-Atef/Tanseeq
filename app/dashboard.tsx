@@ -42,13 +42,14 @@ const EmptyState = ({ message }: { message: string }) => (
 export default function Dashboard() {
   const [currentTourStep, setCurrentTourStep] = useState<number | null>(null);
   const [showTour, setShowTour] = useState(false);
-  const { language } = useTranslation();
+  const { t, language, isRTL } = useTranslation();
   
   // Tour steps
   const tourSteps = [
-    { id: 1, target: "myHomes", text: "Each user has their own home. You can invite others to your home or join someone else's home. Click on a home to set it as your default." },
-    { id: 2, target: "progressSection", text: "This progress bar shows your task completion status for today." },
-    { id: 3, target: "taskSection", text: "Here you can see your most recent in-progress tasks, completed tasks, and tasks that haven't started yet." },
+    { id: 1, target: "myHomes", text: t("dashboard.tour.myHomes") },
+    { id: 2, target: "progressSection", text: t("dashboard.tour.progressSection") },
+    { id: 3, target: "taskSection", text: t("dashboard.tour.taskSection") },
+    { id: 4, target: "footer", text: t("dashboard.tour.footer") },
   ];
   
   useEffect(() => {
@@ -104,20 +105,9 @@ export default function Dashboard() {
   const getCurrentTourText = () => {
     if (!currentTourStep) return "";
     const step = tourSteps.find(step => step.id === currentTourStep);
-    return step ? (language === 'ar' ? getArabicText(step.target) : step.text) : "";
-  };
-  
-  const getArabicText = (target: string) => {
-    switch(target) {
-      case 'myHomes':
-        return "لكل مستخدم منزله الخاص. يمكنك دعوة الآخرين إلى منزلك أو الانضمام إلى منزل شخص آخر. انقر على منزل لتعيينه كمنزلك الافتراضي.";
-      case 'progressSection':
-        return "يوضح شريط التقدم هذا حالة إكمال المهمة لهذا اليوم للمنزل المحدد.";
-      case 'taskSection':
-        return "هنا يمكنك رؤية أحدث المهام قيد التنفيذ والمهام المكتملة والمهام التي لم تبدأ بعد.";
-      default:
-        return "";
-    }
+    if (!step) return "";
+    
+    return step.text;
   };
   const [refreshing, setRefreshing] = React.useState(false);
   const {
@@ -132,7 +122,6 @@ export default function Dashboard() {
     fetchTodaySchedules,
   } = useDashboard();
 
-  const { t, isRTL } = useTranslation();
 
   const { fetchHomes } = useHomes();
   
@@ -333,7 +322,15 @@ export default function Dashboard() {
         </View>
       </ScrollView>
 
-      <Footer activeTab="home" />
+      <View 
+        style={[
+          tourStyles.sectionContainer, 
+          currentTourStep === 4 && tourStyles.highlightedSection
+        ]}
+        testID="footer"
+      >
+        <Footer activeTab="home" />
+      </View>
       
       {/* Tour Modal */}
       {showTour && (
@@ -356,8 +353,8 @@ export default function Dashboard() {
               >
                 <Text style={tourStyles.nextButtonText}>
                   {currentTourStep === tourSteps.length 
-                    ? (language === 'ar' ? 'إنهاء' : 'Finish') 
-                    : (language === 'ar' ? 'التالي' : 'Next')}
+                    ? t("dashboard.tour.finish") 
+                    : t("dashboard.tour.next")}
                 </Text>
               </TouchableOpacity>
             </View>
