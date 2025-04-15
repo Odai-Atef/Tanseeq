@@ -10,7 +10,7 @@ export const en = {
     },
     slide3: {
       title: "Empower Your Family to Collaborate",
-      description: "Invite homemakers and family members & housemaid to join your household system and contribute to a well-managed home."
+      description: "Invite family members & housemaid to join your household system and contribute to a well-managed home."
     },
     skip: "Skip",
     next: "Next",
@@ -128,10 +128,10 @@ export const en = {
     noTasks: 'No tasks for today',
     noInProgress: 'No in-progress or completed schedules',
     tour: {
-      myHomes: "Each user has their own home. You can invite others to your home or join someone else's home. Click on a home to set it as your default.",
+      myHomes: "Each user has their own home. \nYou can invite others to your home or join someone else's home. \nClick on a home to set it as your default.\nin other pages you will see the informations like tasks and calendar for the selected default home",
       progressSection: "This progress bar shows your task completion status for today.",
       taskSection: "Here you can see your most recent in-progress tasks, completed tasks, and tasks that haven't started yet.",
-      footer: "From here you can join home, invite housemaids family to join your home, create task, schedule a task and see the calendar.",
+      footer: "From here you can join home\ninvite housemaids and family members to join your home\ncreate tasks\nschedule a task and see the calendar.",
       next: "Next",
       finish: "Finish"
     }

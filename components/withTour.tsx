@@ -22,6 +22,11 @@ export const withTour = (Component: React.ComponentType<any>) => {
     stepNumberComponent: () => null,
     tooltipStyle: {
       borderRadius: 10,
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      marginTop: 10,
     },
   })(({ start, copilotEvents, ...props }: any) => {
     const { currentTour, markTourAsCompleted, hasCompletedTour } = useTour();
