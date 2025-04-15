@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Modal, Text } from 'react-native';
 import { Link, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../constants/Theme';
@@ -16,9 +16,12 @@ type FooterProps = {
 export function Footer({ activeTab }: FooterProps) {
   const [showModal, setShowModal] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { flexDirection } = useTextDirection();
-
+  
+  // Tour state
+  const [showTour, setShowTour] = useState(false);
+  
   useEffect(() => {
     const fetchUserRole = async () => {
       try {
@@ -32,7 +35,48 @@ export function Footer({ activeTab }: FooterProps) {
       }
     };
     fetchUserRole();
+    
+    // Check if the footer tour has been completed
+    checkTourStatus();
   }, []);
+  
+  const checkTourStatus = async () => {
+    try {
+      const completedTours = await AsyncStorage.getItem('completed_tours');
+      const tours = completedTours ? JSON.parse(completedTours) : [];
+      
+      if (!tours.includes('footer')) {
+        // Start tour after a short delay
+        setTimeout(() => {
+          setShowTour(true);
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Error checking tour status:', error);
+    }
+  };
+  
+  const completeTour = async () => {
+    try {
+      const completedTours = await AsyncStorage.getItem('completed_tours');
+      let tours = completedTours ? JSON.parse(completedTours) : [];
+      
+      if (!tours.includes('footer')) {
+        tours.push('footer');
+        await AsyncStorage.setItem('completed_tours', JSON.stringify(tours));
+      }
+      
+      setShowTour(false);
+    } catch (error) {
+      console.error('Error completing tour:', error);
+    }
+  };
+  
+  const getTourText = () => {
+    return language === 'ar' 
+      ? "انقر على هذا الزر للانضمام إلى منزل أو دعوة شخص ما إلى منزلك أو إضافة مهمة أو إضافة جدول."
+      : "Click this button to join a home, invite someone to your home, add a task, or add a schedule.";
+  };
 
   return (
     <View style={styles.footer}>
@@ -58,7 +102,10 @@ export function Footer({ activeTab }: FooterProps) {
           </Link>
 
           <TouchableOpacity 
-            style={styles.addButton}
+            style={[
+              styles.addButton,
+              showTour && styles.highlightedButton
+            ]}
             onPress={() => setShowModal(true)}
           >
             <Ionicons name="add" size={24} color="white" />
@@ -166,6 +213,34 @@ export function Footer({ activeTab }: FooterProps) {
               </View>
             </TouchableOpacity>
           </Modal>
+          
+          {/* Tour Modal */}
+          {showTour && (
+            <Modal
+              transparent={true}
+              visible={showTour}
+              animationType="fade"
+            >
+              <View style={styles.tourModalOverlay}>
+                <View style={styles.tourTooltipContainer}>
+                  <Text style={[
+                    styles.tourTooltipText,
+                    language === 'ar' && styles.tourTooltipTextRTL
+                  ]}>
+                    {getTourText()}
+                  </Text>
+                  <TouchableOpacity 
+                    style={styles.tourNextButton}
+                    onPress={completeTour}
+                  >
+                    <Text style={styles.tourNextButtonText}>
+                      {language === 'ar' ? 'فهمت' : 'Got it'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+          )}
       
     </View>
   );
@@ -194,6 +269,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: -30,
+  },
+  highlightedButton: {
+    borderWidth: 3,
+    borderColor: colors.primary,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 10,
   },
   modalOverlay: {
     flex: 1,
@@ -230,5 +314,40 @@ const styles = StyleSheet.create({
   optionTitle: {
     fontSize: 16,
     color: colors.text,
+  },
+  // Tour styles
+  tourModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tourTooltipContainer: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    width: '80%',
+    alignItems: 'center',
+  },
+  tourTooltipText: {
+    fontSize: 16,
+    color: colors.text,
+    marginBottom: 20,
+    textAlign: 'left',
+    fontFamily: 'Cairo',
+  },
+  tourTooltipTextRTL: {
+    textAlign: 'right',
+  },
+  tourNextButton: {
+    backgroundColor: colors.primary,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  tourNextButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontFamily: 'Cairo',
   },
 });

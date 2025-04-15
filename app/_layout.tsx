@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ENDPOINTS } from '../constants/api';
 import { LanguageProvider } from '../contexts/LanguageContext';
+import { TourProvider } from '../contexts/TourContext';
 import Toast from 'react-native-toast-message';
 import { useFonts } from 'expo-font';
 import { useColorScheme } from 'react-native';
@@ -117,15 +118,16 @@ export default function Layout() {
   return (
     <ThemeProvider value={navigationTheme[colorScheme ?? 'light']}>
       <LanguageProvider>
-        <Stack screenOptions={{ 
-          headerShown: false,
-          headerTitleStyle: {
-            fontFamily: 'Cairo'
-          },
-          headerBackTitleStyle: {
-            fontFamily: 'Cairo'
-          }
-        }}>
+        <TourProvider>
+          <Stack screenOptions={{ 
+            headerShown: false,
+            headerTitleStyle: {
+              fontFamily: 'Cairo'
+            },
+            headerBackTitleStyle: {
+              fontFamily: 'Cairo'
+            }
+          }}>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="dashboard" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
@@ -137,8 +139,9 @@ export default function Layout() {
           <Stack.Screen name="schedules/add" options={{ headerBackTitle: '', headerShown: false }} />
           <Stack.Screen name="home/invite" options={{ headerBackTitle: '', headerShown: false }} />
           <Stack.Screen name="home/join" options={{ headerBackTitle: '', headerShown: false }} />
-        </Stack>
-        <Toast />
+          </Stack>
+          <Toast />
+        </TourProvider>
       </LanguageProvider>
     </ThemeProvider>
   );
