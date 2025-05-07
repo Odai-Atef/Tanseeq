@@ -19,6 +19,7 @@ export const ar = {
   common: {
     loading: 'جاري التحميل...',
     toast: {
+      info:"تنبية",
       success: 'نجاح',
       error: 'خطأ',
       join: {

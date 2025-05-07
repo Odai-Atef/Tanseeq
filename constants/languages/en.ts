@@ -17,7 +17,7 @@ export const en = {
     done: "Get Started"
   },
   common: {
-
+    info:"Info",
     loading: 'Loading...',
     toast: {
       success: 'Success',

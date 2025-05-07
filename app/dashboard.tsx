@@ -61,12 +61,12 @@ export default function Dashboard() {
       const completedTours = await AsyncStorage.getItem('completed_tours');
       const tours = completedTours ? JSON.parse(completedTours) : [];
       
-      if (!tours.includes('dashboard')) {
-        // Start tour after a short delay
-        setTimeout(() => {
-          startTour();
-        }, 1000);
-      }
+      // if (!tours.includes('dashboard')) {
+      //   // Start tour after a short delay
+      //   setTimeout(() => {
+      //     startTour();
+      //   }, 1000);
+      // }
     } catch (error) {
       console.error('Error checking tour status:', error);
     }
@@ -235,7 +235,6 @@ export default function Dashboard() {
       >
         <View 
           style={[
-            tourStyles.sectionContainer, 
             currentTourStep === 1 && tourStyles.highlightedSection
           ]}
         >
@@ -292,7 +291,6 @@ export default function Dashboard() {
 
         <View 
           style={[
-            tourStyles.sectionContainer, 
             currentTourStep === 3 && tourStyles.highlightedSection
           ]}
         >
@@ -324,7 +322,6 @@ export default function Dashboard() {
 
       <View 
         style={[
-          tourStyles.sectionContainer, 
           currentTourStep === 4 && tourStyles.highlightedSection
         ]}
         testID="footer"
@@ -410,9 +407,7 @@ const tourStyles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Cairo',
   },
-  sectionContainer: {
-    marginBottom: 20,
-  },
+ 
   copilotIcon: {
     padding: 5,
   },
