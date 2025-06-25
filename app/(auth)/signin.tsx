@@ -30,7 +30,7 @@ export default function SignIn() {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
           <Image 
-            source={require('../../assets/images/logo/logo-1.png')} 
+            source={require('../../assets/images/icon.png')} 
             style={{ 
               width: 100, 
               height: 100, 

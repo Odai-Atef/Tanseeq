@@ -6,7 +6,6 @@ import {
   ScrollView,
   Image,
   ActivityIndicator,
-  I18nManager,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemedView } from "../../components/ThemedView";
@@ -28,27 +27,28 @@ const ProfileListItem = ({
   onPress,
   color = colors.textPrimary,
   danger = false,
+  isRTL,
 }: {
   icon: IconName;
   title: string;
   onPress: () => void;
   color?: string;
   danger?: boolean;
+  isRTL: boolean;
 }) => (
   <TouchableOpacity
     onPress={onPress}
     style={[
       styles.listItem,
       {
-        flexDirection: I18nManager.isRTL ? "row-reverse" : "row",
-        justifyContent: "flex-start",
+        flexDirection: isRTL ? "row" : "row-reverse",
       },
     ]}
   >
     <View
       style={[
         styles.iconContainer,
-        I18nManager.isRTL ? { marginLeft: 10 } : { marginRight: 10 },
+        isRTL ? { marginLeft: 10 } : { marginRight: 10 },
       ]}
     >
       <Ionicons name={icon} size={20} color={danger ? colors.danger : color} />
@@ -57,7 +57,7 @@ const ProfileListItem = ({
       style={[
         styles.listItemText,
         danger && { color: colors.danger },
-        { textAlign: I18nManager.isRTL ? "right" : "left" },
+        { textAlign: isRTL ? "left" : "right" },
       ]}
     >
       {title}
@@ -66,7 +66,7 @@ const ProfileListItem = ({
 );
 
 export default function Profile() {
-  const { t, language, changeLanguage } = useTranslation();
+  const { t, language, changeLanguage,isRTL } = useTranslation();
   const {
     loading,
     userInfo,
@@ -98,14 +98,12 @@ export default function Profile() {
   return (
     <ThemedView style={[baseTheme.container, baseTheme.ios_boarder]}>
       <ScrollView
-        contentContainerStyle={
-          I18nManager.isRTL ? { alignItems: "flex-end" } : undefined
-        }
+   
       >
         <View
           style={[
             styles.profileSection,
-            I18nManager.isRTL && { alignItems: "center" },
+            isRTL && { alignItems: "center" },
           ]}
         >
           <View style={styles.avatarContainer}>
@@ -117,7 +115,7 @@ export default function Profile() {
           <ThemedText
             style={[
               styles.userName,
-              I18nManager.isRTL && { textAlign: "center", width: "100%" },
+              isRTL && { textAlign: "center", width: "100%" },
             ]}
           >
             {getDisplayName()}
@@ -125,7 +123,7 @@ export default function Profile() {
           <Text
             style={[
               styles.userEmail,
-              I18nManager.isRTL && { textAlign: "center" },
+              isRTL && { textAlign: "center" },
             ]}
           >
             {userInfo?.email || t("profile.noEmail")}
@@ -135,7 +133,7 @@ export default function Profile() {
         <View
           style={[
             { marginTop: 16 },
-            I18nManager.isRTL && { alignItems: "stretch" },
+            isRTL && { alignItems: "stretch" },
           ]}
         >
           <ProfileListItem
@@ -145,27 +143,32 @@ export default function Profile() {
               const newLanguage = language === "ar" ? "en" : "ar";
               changeLanguage(newLanguage);
             }}
+            isRTL={isRTL}
           />
           <ProfileListItem
             icon="diamond-outline"
             title={t("profile.upgradeTitle")}
             onPress={handleFeatureNotAvailable}
             color={colors.primary}
+            isRTL={isRTL}
           />
           <ProfileListItem
             icon="help-circle-outline"
             title={t("profile.helpCenter")}
             onPress={handleFeatureNotAvailable}
+            isRTL={isRTL}
           />
           <ProfileListItem
             icon="star-outline"
             title={t("profile.rateApp")}
             onPress={handleFeatureNotAvailable}
+            isRTL={isRTL}
           />
           <ProfileListItem
             icon="shield-outline"
             title={t("profile.privacyPolicy")}
             onPress={handleFeatureNotAvailable}
+            isRTL={isRTL}
           />
 
           <ProfileListItem
@@ -173,24 +176,25 @@ export default function Profile() {
             title={t("profile.logout")}
             onPress={() => setShowLogoutModal(true)}
             danger
+            isRTL={isRTL}
           />
         </View>
       </ScrollView>
 
       {showLogoutModal && (
         <View
-          style={[styles.modal, I18nManager.isRTL && { alignItems: "center" }]}
+          style={[styles.modal, isRTL && { alignItems: "center" }]}
         >
           <View
             style={[
               styles.modalContent,
-              I18nManager.isRTL && { alignItems: "center", width: "90%" },
+              isRTL && { alignItems: "center", width: "90%" },
             ]}
           >
             <ThemedText
               style={[
                 styles.modalTitle,
-                I18nManager.isRTL && { textAlign: "center" },
+                isRTL && { textAlign: "center" },
               ]}
             >
               {t("profile.logoutConfirmation")}
@@ -202,7 +206,7 @@ export default function Profile() {
               <Text
                 style={[
                   { color: colors.danger, fontSize: 16, fontWeight: "600" },
-                  I18nManager.isRTL && { textAlign: "center" },
+                  isRTL && { textAlign: "center" },
                 ]}
               >
                 {t("profile.logoutButton")}
@@ -215,7 +219,7 @@ export default function Profile() {
               <Text
                 style={[
                   { color: colors.textSecondary, fontSize: 16 },
-                  I18nManager.isRTL && { textAlign: "center" },
+                  isRTL && { textAlign: "center" },
                 ]}
               >
                 {t("profile.cancelButton")}
