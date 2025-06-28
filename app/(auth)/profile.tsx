@@ -41,7 +41,7 @@ const ProfileListItem = ({
     style={[
       styles.listItem,
       {
-        flexDirection: isRTL ? "row" : "row-reverse",
+        flexDirection: isRTL ? "row-reverse" : "row",
       },
     ]}
   >
@@ -57,7 +57,7 @@ const ProfileListItem = ({
       style={[
         styles.listItemText,
         danger && { color: colors.danger },
-        { textAlign: isRTL ? "left" : "right" },
+        { textAlign: isRTL ? "right" : "left" },
       ]}
     >
       {title}
@@ -108,7 +108,7 @@ export default function Profile() {
         >
           <View style={styles.avatarContainer}>
             <Image
-              source={require("../../assets/images/avt4.jpg")}
+              source={require("../../assets/images/icon.png")}
               style={styles.avatar}
             />
           </View>
@@ -150,24 +150,6 @@ export default function Profile() {
             title={t("profile.upgradeTitle")}
             onPress={handleFeatureNotAvailable}
             color={colors.primary}
-            isRTL={isRTL}
-          />
-          <ProfileListItem
-            icon="help-circle-outline"
-            title={t("profile.helpCenter")}
-            onPress={handleFeatureNotAvailable}
-            isRTL={isRTL}
-          />
-          <ProfileListItem
-            icon="star-outline"
-            title={t("profile.rateApp")}
-            onPress={handleFeatureNotAvailable}
-            isRTL={isRTL}
-          />
-          <ProfileListItem
-            icon="shield-outline"
-            title={t("profile.privacyPolicy")}
-            onPress={handleFeatureNotAvailable}
             isRTL={isRTL}
           />
 

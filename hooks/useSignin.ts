@@ -79,8 +79,7 @@ export const useSignin = () => {
   useEffect(() => {
     const getRedirectUri = async () => {
       const redirectUri = makeRedirectUri({
-        scheme: 'tanseeq',
-        path: 'auth/google-redirect',
+        scheme: 'tanseeq'
       });
      
     };

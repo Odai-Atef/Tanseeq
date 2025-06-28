@@ -174,8 +174,9 @@ export const taskTheme = StyleSheet.create({
     padding: 16,
   },
   uploadText: {
-    marginLeft: 8,
+    marginLeft: 5,
     fontSize: 16,
+    marginRight:5
   },
   imagePreview: {
     marginTop: 16,
@@ -224,8 +225,6 @@ export const taskTheme = StyleSheet.create({
     borderColor: colors.line,
     marginRight: 12,
     marginLeft:12,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   checkboxChecked: {
     borderColor: colors.primary,
