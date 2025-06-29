@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions, Platform } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 import { colors } from '../constants/Theme';
@@ -43,16 +44,27 @@ export const VideoCard: React.FC<VideoCardProps> = ({ title_ar, title_en, link }
       </ThemedText>
 
       <View style={styles.videoContainer}>
-        <iframe
-          width="100%"
-          height="200"
-          src={embedUrl}
-          title={title}
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          style={styles.iframe}
-        />
+        {Platform.OS === 'web' ? (
+          <iframe
+            width="100%"
+            height="200"
+            src={embedUrl}
+            title={title}
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            style={styles.iframe}
+          />
+        ) : (
+          <WebView
+            source={{ uri: embedUrl }}
+            style={styles.webview}
+            allowsFullscreenVideo={true}
+            mediaPlaybackRequiresUserAction={false}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+          />
+        )}
       </View>
     </ThemedView>
   );
@@ -85,6 +97,10 @@ const styles = StyleSheet.create({
     aspectRatio: 16/9,
   },
   iframe: {
+    borderRadius: 8,
+  },
+  webview: {
+    flex: 1,
     borderRadius: 8,
   },
   errorCard: {
