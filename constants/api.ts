@@ -14,5 +14,5 @@ export const API_ENDPOINTS = {
     HOME_SEARCH: `${API_HOST}/auth/join_home`,
     PROPERTY_USERS: `${API_HOST}/items/properties_directus_users`,
     JOIN_HOME_DEEP: `${HOST}/join/home`,
-    VIDEOS: `${API_HOST}/items/videos`
+    VIDEOS: `${API_HOST}/items/videos` `${API_HOST}/items/videos`
 };

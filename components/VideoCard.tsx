@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { ThemedText } from './ThemedText';
@@ -16,7 +15,7 @@ const { width } = Dimensions.get('window');
 
 export const VideoCard: React.FC<VideoCardProps> = ({ title_ar, title_en, link }) => {
   const { language } = useTranslation();
-  
+
   // Extract YouTube video ID from various YouTube URL formats
   const getYouTubeVideoId = (url: string): string | null => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -26,7 +25,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({ title_ar, title_en, link }
 
   const videoId = getYouTubeVideoId(link);
   const title = language === 'ar' ? title_ar : title_en;
-  
+
   if (!videoId) {
     return (
       <ThemedView style={styles.errorCard}>
@@ -42,7 +41,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({ title_ar, title_en, link }
       <ThemedText type="subtitle" style={styles.title}>
         {title}
       </ThemedText>
-      
+
       <View style={styles.videoContainer}>
         <iframe
           width="100%"
