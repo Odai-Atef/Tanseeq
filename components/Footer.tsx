@@ -11,7 +11,7 @@ import { useTranslation, useTextDirection } from '../contexts/LanguageContext';
 import { getTourText } from '../constants/languages/tour';
 
 type FooterProps = {
-  activeTab: 'home' | 'tasks' | 'profile' | 'calendar' | 'tasks/calendar';
+  activeTab: 'home' | 'tasks' | 'profile' | 'calendar' | 'tasks/calendar' | 'houses' | 'videos';
 };
 
 export function Footer({ activeTab }: FooterProps) {
@@ -100,6 +100,16 @@ export function Footer({ activeTab }: FooterProps) {
             </TouchableOpacity>
           </Link>
 
+          <Link href="/houses" asChild>
+            <TouchableOpacity style={styles.tab}>
+              <Ionicons
+                name={activeTab === 'houses' ? 'home' : 'home-outline'}
+                size={24}
+                color={activeTab === 'houses' ? colors.primary : colors.textSecondary}
+              />
+            </TouchableOpacity>
+          </Link>
+
           <TouchableOpacity 
             style={[
               styles.addButton,
@@ -109,6 +119,16 @@ export function Footer({ activeTab }: FooterProps) {
           >
             <Ionicons name="add" size={24} color="white" />
           </TouchableOpacity>
+
+          <Link href="/videos" asChild>
+            <TouchableOpacity style={styles.tab}>
+              <Ionicons
+                name={activeTab === 'videos' ? 'videocam' : 'videocam-outline'}
+                size={24}
+                color={activeTab === 'videos' ? colors.primary : colors.textSecondary}
+              />
+            </TouchableOpacity>
+          </Link>
 
           <Link href="/tasks" asChild>
             <TouchableOpacity style={styles.tab}>
