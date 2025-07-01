@@ -32,7 +32,7 @@ export default function Videos() {
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <ThemedText type="subtitle" style={styles.emptyText}>
-        {t('videos.empty', 'No videos available')}
+        {t('videos.empty')}
       </ThemedText>
     </View>
   );
@@ -48,12 +48,12 @@ export default function Videos() {
   if (loading && videos.length === 0) {
     return (
       <ThemedView style={[styles.container, styles.ios_boarder]}>
-        <Header title={t('videos.title', 'Videos')} />
+        <Header title={t('videos.title')} />
         
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <ThemedText style={styles.loadingText}>
-            {t('common.loading', 'Loading...')}
+            {t('common.loading')}
           </ThemedText>
         </View>
 
@@ -64,7 +64,7 @@ export default function Videos() {
 
   return (
     <ThemedView style={[styles.container, styles.ios_boarder]}>
-      <Header title={t('videos.title', 'Videos')} />
+      <Header title={t('videos.title')} />
       
       <View style={styles.content}>
         {error ? (
@@ -130,6 +130,6 @@ const styles = StyleSheet.create({
   },
   errorText: {
     textAlign: 'center',
-    color: colors.error,
+    color: colors.danger,
   },
 });

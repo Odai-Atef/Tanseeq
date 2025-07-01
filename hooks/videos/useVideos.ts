@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ENDPOINTS } from '../../constants/api';
 import Toast from 'react-native-toast-message';
-import { useLanguage } from '../useLanguage';
+import { useTranslation } from '../../contexts/LanguageContext';
 
 interface Video {
   id: string;
@@ -17,7 +17,7 @@ interface ApiResponse {
 }
 
 export const useVideos = () => {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
