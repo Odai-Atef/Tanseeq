@@ -7,8 +7,8 @@ import { Header } from '../../components/Header';
 import { Footer } from '../../components/Footer';
 import { VideoCard } from '../../components/VideoCard';
 import { useVideos } from '../../hooks/videos/useVideos';
-import { colors } from '../../constants/Theme';
 import { useTranslation } from '../../contexts/LanguageContext';
+import { dashboardTheme as main_styles, colors } from "../../constants/Theme";
 
 interface Video {
   id: string;
@@ -48,8 +48,6 @@ export default function Videos() {
   if (loading && videos.length === 0) {
     return (
       <ThemedView style={[styles.container, styles.ios_boarder]}>
-        <Header title={t('videos.title')} />
-        
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <ThemedText style={styles.loadingText}>
@@ -63,9 +61,8 @@ export default function Videos() {
   }
 
   return (
-    <ThemedView style={[styles.container, styles.ios_boarder]}>
+    <ThemedView style={[styles.container, main_styles.ios_boarder]}>
       <Header title={t('videos.title')} />
-      
       <View style={styles.content}>
         {error ? (
           renderError()
