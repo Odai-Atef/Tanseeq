@@ -52,7 +52,7 @@ export const useHomes = () => {
         throw new Error('Authentication required');
       }
 
-      const fields = 'fields=*,property_users.*,property_users.directus_users_id.id,property_users.directus_users_id.first_name,property_users.directus_users_id.last_name,property_users.directus_users_id.email,property_users.directus_users_id.avatar,property_users.directus_users_id.status';
+      const fields = 'fields=*,property_users.*,property_users.directus_users_id.id,property_users.directus_users_id.first_name,property_users.directus_users_id.last_name,property_users.directus_users_id.avatar,property_users.directus_users_id.status';
       const response = await fetch(`${API_ENDPOINTS.HOME}?${fields}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
