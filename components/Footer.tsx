@@ -166,7 +166,7 @@ export function Footer({ activeTab }: FooterProps) {
                   style={[styles.modalOption, flexDirection === 'row-reverse' && styles.modalOptionRTL]}
                   onPress={() => {
                     setShowModal(false);
-                    router.push('/tasks/add');
+                    router.push({ pathname: '/tasks/add' });
                   }}
                 >
                   <Ionicons name="create-outline" size={20} color={colors.primary} />
@@ -183,7 +183,7 @@ export function Footer({ activeTab }: FooterProps) {
                   style={[styles.modalOption, flexDirection === 'row-reverse' && styles.modalOptionRTL]}
                   onPress={() => {
                     setShowModal(false);
-                    router.push('/schedules/add');
+                    router.push({ pathname: '/schedules/add' });
                   }}
                 >
                   <Ionicons name="calendar-outline" size={20} color={colors.primary} />
@@ -200,7 +200,7 @@ export function Footer({ activeTab }: FooterProps) {
                   style={[styles.modalOption, flexDirection === 'row-reverse' && styles.modalOptionRTL]}
                   onPress={() => {
                     setShowModal(false);
-                    router.push('/home/join');
+                    router.push({ pathname: '/home/join' });
                   }}
                 >
                   <Ionicons name="woman-outline" size={20} color={colors.primary} />
@@ -217,7 +217,7 @@ export function Footer({ activeTab }: FooterProps) {
                   style={[styles.modalOption, flexDirection === 'row-reverse' && styles.modalOptionRTL]}
                   onPress={() => {
                     setShowModal(false);
-                    router.push('/home/invite');
+                    router.push({ pathname: '/home/invite' });
                   }}
                 >
                   <Ionicons name="person-add-outline" size={20} color={colors.primary} />
@@ -225,6 +225,23 @@ export function Footer({ activeTab }: FooterProps) {
                     <View style={styles.textContainer}>
                       <ThemedText type="defaultSemiBold" style={styles.optionTitle}>
                         {t('home.invite.title')}
+                      </ThemedText>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity 
+                  style={[styles.modalOption, flexDirection === 'row-reverse' && styles.modalOptionRTL]}
+                  onPress={() => {
+                    setShowModal(false);
+                    router.push({ pathname: '/houses/add' });
+                  }}
+                >
+                  <Ionicons name="home-outline" size={20} color={colors.primary} />
+                  <View style={[styles.optionText, flexDirection === 'row-reverse' && styles.optionTextRTL]}>
+                    <View style={styles.textContainer}>
+                      <ThemedText type="defaultSemiBold" style={styles.optionTitle}>
+                        {t('home.add.title')}
                       </ThemedText>
                     </View>
                   </View>

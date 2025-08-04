@@ -261,6 +261,14 @@ export const en = {
     profile: 'Profile'
   },
   home: {
+    add: {
+      title: 'Add New Home',
+      name: 'Home Name',
+      namePlaceholder: 'Enter home name',
+      createHome: 'Create Home',
+      success: 'Home created successfully',
+      error: 'Failed to create home'
+    },
     invite: {
       title: 'Home Invite',
       homeId: 'Home ID',

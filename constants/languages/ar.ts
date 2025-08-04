@@ -265,6 +265,14 @@ export const ar = {
     profile: 'الملف الشخصي'
   },
   home: {
+    add: {
+      title: 'إضافة منزل جديد',
+      name: 'اسم المنزل',
+      namePlaceholder: 'أدخل اسم المنزل',
+      createHome: 'إنشاء منزل',
+      success: 'تم إنشاء المنزل بنجاح',
+      error: 'فشل في إنشاء المنزل'
+    },
     invite: {
       title: 'دعوة للمنزل',
       homeId: 'معرف المنزل',
