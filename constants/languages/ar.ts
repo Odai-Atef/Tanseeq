@@ -18,6 +18,8 @@ export const ar = {
   },
   common: {
     loading: 'جاري التحميل...',
+    default: 'افتراضي',
+    setDefault: 'تعيين كافتراضي',
     toast: {
       info:"تنبية",
       success: 'نجاح',
@@ -272,6 +274,11 @@ export const ar = {
       createHome: 'إنشاء منزل',
       success: 'تم إنشاء المنزل بنجاح',
       error: 'فشل في إنشاء المنزل'
+    },
+    edit: {
+      title: 'تعديل المنزل',
+      updateHome: 'تحديث المنزل',
+      success: 'تم تحديث المنزل بنجاح'
     },
     invite: {
       title: 'دعوة للمنزل',

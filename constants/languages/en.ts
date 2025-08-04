@@ -19,6 +19,8 @@ export const en = {
   common: {
     info:"Info",
     loading: 'Loading...',
+    default: 'Default',
+    setDefault: 'Set Default',
     toast: {
       success: 'Success',
       error: 'Error',
@@ -268,6 +270,11 @@ export const en = {
       createHome: 'Create Home',
       success: 'Home created successfully',
       error: 'Failed to create home'
+    },
+    edit: {
+      title: 'Edit Home',
+      updateHome: 'Update Home',
+      success: 'Home updated successfully'
     },
     invite: {
       title: 'Home Invite',

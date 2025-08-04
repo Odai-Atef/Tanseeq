@@ -3,6 +3,7 @@ import { View, TouchableOpacity, Image, Dimensions, FlatList, ActivityIndicator,
 import { ThemedText } from './ThemedText';
 import { colors } from '../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
+import { HomeItem } from './HomeItem';
 import { useTranslation } from '../contexts/LanguageContext';
 import { myHomesTheme as styles } from '../constants/myHomesTheme';
 import { Home } from '../types/Home';
@@ -83,59 +84,13 @@ export const MyHomes = () => {
   };
 
   const renderHomeItem = ({ item }: { item: Home }) => (
-    <TouchableOpacity 
-      style={[
-        styles.homeItem, 
-        { width: CARD_WIDTH - 20 },
-        item.is_default && styles.activeHomeItem,
-        showTour && item.is_default && tourStyles.highlightedItem
-      ]}
-      onPress={() => handleHomePress(item.id)}
-    >
-      <View style={styles.top}>
-        <View style={[styles.headerRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-          <View style={styles.iconBox}>
-            <Ionicons name="home-outline" size={18} color={colors.primary} />
-          </View>
-          <ThemedText type="defaultSemiBold" style={[styles.title, { textAlign: isRTL ? 'right' : 'left' }]}>
-            {item.name}
-          </ThemedText>
-        </View>
-        <View style={[styles.metaList, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-          {/* <View style={[styles.metaItem, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-            <Ionicons name="list-outline" size={12} color={colors.text} />
-            <ThemedText style={[styles.metaText, { marginRight: isRTL ? 4 : 0, marginLeft: isRTL ? 0 : 4 }]}>
-              {item.tasks}
-            </ThemedText>
-          </View>
-          <View style={[styles.metaItem, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-            <Ionicons name="link-outline" size={12} color={colors.text} />
-            <ThemedText style={[styles.metaText, { marginRight: isRTL ? 4 : 0, marginLeft: isRTL ? 0 : 4 }]}>
-              {item.links}
-            </ThemedText>
-          </View> */}
-        </View>
-      </View>
-
-      <View style={[styles.bottom, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-        <View style={[styles.membersList, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-          {item.property_users.map((member, index) => (
-            <MemberAvatar key={member.id} member={member} index={index} isRTL={isRTL} />
-          ))}
-        </View>
-        <View style={[styles.progressContainer, { marginLeft: isRTL ? 0 : 15, marginRight: isRTL ? 15 : 0 }]}>
-          <View style={[styles.progressHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-            <ThemedText style={[styles.progressLabel, { textAlign: isRTL ? 'right' : 'left' }]}>
-              {t('common.progress')}
-            </ThemedText>
-            <ThemedText style={styles.progressValue}>{item.progress}%</ThemedText>
-          </View>
-          <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${item.progress}%` }]} />
-          </View>
-        </View>
-      </View>
-    </TouchableOpacity>
+    <View style={{ width: CARD_WIDTH - 20 }}>
+      <HomeItem 
+        home={item} 
+        onPress={handleHomePress}
+        inHousesList={false}
+      />
+    </View>
   );
 
   if (isLoading) {

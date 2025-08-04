@@ -40,7 +40,8 @@ export default function Houses() {
                 <HomeItem 
                   key={home.id} 
                   home={home} 
-                  onPress={handleHomePress} 
+                  onPress={handleHomePress}
+                  inHousesList={true}
                 />
               ))}
             </View>

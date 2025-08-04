@@ -10,11 +10,11 @@ import { Footer } from '../../components/Footer';
 
 export default function HomeAdd() {
   const { t, isRTL } = useTranslation();
-  const { homeName, setHomeName, isSubmitting, handleSubmit } = useHomeAdd();
+  const { homeName, setHomeName, isSubmitting, handleSubmit, isEditing } = useHomeAdd();
 
   return (
     <ThemedView style={styles.container}>
-      <Header title={t('home.add.title')} />
+      <Header title={isEditing ? t('home.edit.title') : t('home.add.title')} />
       <ScrollView style={styles.content}>
         <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
           <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
@@ -42,7 +42,9 @@ export default function HomeAdd() {
           <ThemedText style={styles.submitButtonText}>
             {isSubmitting 
               ? t('common.loading')
-              : t('home.add.createHome')
+              : isEditing 
+                ? t('home.edit.updateHome')
+                : t('home.add.createHome')
             }
           </ThemedText>
         </TouchableOpacity>

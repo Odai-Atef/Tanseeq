@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Image, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { ThemedText } from './ThemedText';
 import { colors } from '../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from '../contexts/LanguageContext';
 import { Home } from '../types/Home';
 import { Member } from '../types/Member';
+import { router } from 'expo-router';
 
 const MemberAvatar = ({ member, index, isRTL }: { member: Member; index: number; isRTL: boolean }) => (
   <View 
@@ -25,10 +26,22 @@ const MemberAvatar = ({ member, index, isRTL }: { member: Member; index: number;
 interface HomeItemProps {
   home: Home;
   onPress: (homeId: string) => void;
+  inHousesList?: boolean;
 }
 
-export const HomeItem = ({ home, onPress }: HomeItemProps) => {
+export const HomeItem = ({ home, onPress, inHousesList = false }: HomeItemProps) => {
   const { t, isRTL } = useTranslation();
+
+  const handleSetDefault = () => {
+    onPress(home.id);
+  };
+
+  const handleEdit = () => {
+    router.push({
+      pathname: '/houses/add',
+      params: { id: home.id }
+    });
+  };
 
   return (
     <TouchableOpacity 
@@ -36,7 +49,7 @@ export const HomeItem = ({ home, onPress }: HomeItemProps) => {
         styles.homeItem,
         home.is_default && styles.activeHomeItem,
       ]}
-      onPress={() => onPress(home.id)}
+      onPress={() => inHousesList ? handleEdit() : handleSetDefault()}
     >
       <View style={styles.top}>
         <View style={[styles.headerRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
@@ -46,6 +59,21 @@ export const HomeItem = ({ home, onPress }: HomeItemProps) => {
           <ThemedText type="defaultSemiBold" style={[styles.title, { textAlign: isRTL ? 'right' : 'left' }]}>
             {home.name}
           </ThemedText>
+          
+          {inHousesList && (
+            <TouchableWithoutFeedback onPress={handleSetDefault}>
+              <View style={styles.actionButton}>
+                <Ionicons 
+                  name={home.is_default ? "star" : "star-outline"} 
+                  size={18} 
+                  color={home.is_default ? colors.primary : colors.textSecondary} 
+                />
+                <ThemedText style={styles.actionText}>
+                  {home.is_default ? t('common.default') : t('common.setDefault')}
+                </ThemedText>
+              </View>
+            </TouchableWithoutFeedback>
+          )}
         </View>
       </View>
 
@@ -170,5 +198,18 @@ const styles = StyleSheet.create({
   progressFill: {
     height: '100%',
     backgroundColor: colors.primary,
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    backgroundColor: colors.background,
+  },
+  actionText: {
+    fontSize: 10,
+    marginLeft: 4,
+    color: colors.textSecondary,
   },
 });
