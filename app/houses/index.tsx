@@ -5,16 +5,14 @@ import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
 import { Header } from '../../components/Header';
 import { Footer } from '../../components/Footer';
-import { colors } from '../../constants/Theme';
 import { useTranslation } from '../../contexts/LanguageContext';
+import { dashboardTheme as main_styles, colors } from "../../constants/Theme";
 
 export default function Houses() {
   const { t } = useTranslation();
 
   return (
-    <ThemedView style={[styles.container, styles.ios_boarder]}>
-      <Header title="Manage Houses" />
-      
+    <ThemedView style={[styles.container, main_styles.ios_boarder]}>
       <View style={styles.content}>
         <ThemedText type="title" style={styles.title}>
           Manage Houses

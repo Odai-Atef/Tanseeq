@@ -62,7 +62,6 @@ export default function Videos() {
 
   return (
     <ThemedView style={[styles.container, main_styles.ios_boarder]}>
-      <Header title={t('videos.title')} />
       <View style={styles.content}>
         {error ? (
           renderError()
