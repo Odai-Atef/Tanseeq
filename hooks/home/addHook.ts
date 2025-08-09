@@ -5,7 +5,9 @@ import { API_ENDPOINTS, DEFAULT_HOME } from "../../constants/api";
 import Toast from "react-native-toast-message";
 import { useLanguage } from "../useLanguage";
 import { Home } from "../../types/Home";
+import { Member } from "../../types/Member";
 import { eventEmitter, EVENTS } from "../../utils/eventEmitter";
+import { Alert } from "react-native";
 
 export const useHomeAdd = () => {
   const { t } = useLanguage();
@@ -16,12 +18,15 @@ export const useHomeAdd = () => {
   const [homeName, setHomeName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [propertyUsers, setPropertyUsers] = useState<Member[]>([]);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   // Fetch home details if editing
   useEffect(() => {
     if (homeId) {
       setIsEditing(true);
       fetchHomeDetails();
+      fetchPropertyUsers();
     }
   }, [homeId]);
   
@@ -54,6 +59,47 @@ export const useHomeAdd = () => {
       
       const data = await response.json();
       setHomeName(data.data.name);
+    } catch (error) {
+      console.error("Error fetching home details:", error);
+      Toast.show({
+        type: "error",
+        text1: t("common.toast.error"),
+        text2: t("common.toast.fetch.homeDetails"),
+        position: "top",
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 70,
+      });
+    }
+  };
+
+  const fetchPropertyUsers = async () => {
+    try {
+      const token = await AsyncStorage.getItem("access_token");
+      if (!token || !homeId) return;
+      
+      const response = await fetch(`${API_ENDPOINTS.PROPERTY_USERS}?filter[properties_id][_eq]=${homeId}&fields=id,directus_users_id.*`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch property users");
+      }
+      
+      const data = await response.json();
+      const users = data.data.map((item: any) => ({
+        id: item.id, // This is the property_user relationship ID
+        user_id: item.directus_users_id.id,
+        first_name: item.directus_users_id.first_name || "",
+        last_name: item.directus_users_id.last_name || null,
+        email: item.directus_users_id.email,
+        avatar: item.directus_users_id.avatar || null,
+        status: item.directus_users_id.status || "active"
+      }));
+      setPropertyUsers(users);
     } catch (error) {
       console.error("Error fetching home details:", error);
       Toast.show({
@@ -274,11 +320,89 @@ export const useHomeAdd = () => {
     }
   };
 
+  const confirmDeleteUser = (userId: string, userName: string) => {
+    Alert.alert(
+      t("home.users.deleteConfirmation.title"),
+      t("home.users.deleteConfirmation.message").replace("{name}", userName),
+      [
+        {
+          text: t("common.buttons.cancel"),
+          style: "cancel"
+        },
+        {
+          text: t("common.buttons.confirm"),
+          onPress: () => deletePropertyUser(userId)
+        }
+      ]
+    );
+  };
+
+  const deletePropertyUser = async (propertyUserId: string) => {
+    setIsDeleting(true);
+    try {
+      const token = await AsyncStorage.getItem("access_token");
+      if (!token) {
+        Toast.show({
+          type: "error",
+          text1: t("common.toast.auth.required"),
+          text2: t("common.error.auth.required"),
+          position: "top",
+          visibilityTime: 3000,
+          autoHide: true,
+          topOffset: 70,
+        });
+        setIsDeleting(false);
+        return;
+      }
+
+      const response = await fetch(`${API_ENDPOINTS.PROPERTY_USERS}/${propertyUserId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete property user");
+      }
+
+      // Update the local state by removing the deleted user
+      setPropertyUsers(prevUsers => prevUsers.filter(user => user.id !== propertyUserId));
+
+      Toast.show({
+        type: "success",
+        text1: t("common.toast.success"),
+        text2: t("home.users.deleteSuccess"),
+        position: "top",
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 70,
+      });
+    } catch (error) {
+      console.error("Error deleting property user:", error);
+      Toast.show({
+        type: "error",
+        text1: t("common.toast.error"),
+        text2: t("home.users.deleteError"),
+        position: "top",
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 70,
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return {
     homeName,
     setHomeName,
     isSubmitting,
     handleSubmit,
-    isEditing
+    isEditing,
+    propertyUsers,
+    isDeleting,
+    confirmDeleteUser
   };
 };

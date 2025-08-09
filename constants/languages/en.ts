@@ -276,6 +276,16 @@ export const en = {
       updateHome: 'Update Home',
       success: 'Home updated successfully'
     },
+    users: {
+      title: 'Home Members',
+      noUsers: 'No members have joined this home yet',
+      deleteConfirmation: {
+        title: 'Delete Member',
+        message: 'Are you sure you want to remove {name} from this home?'
+      },
+      deleteSuccess: 'Member removed successfully',
+      deleteError: 'Failed to remove member'
+    },
     invite: {
       title: 'Home Invite',
       homeId: 'Home ID',

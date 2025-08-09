@@ -280,6 +280,16 @@ export const ar = {
       updateHome: 'تحديث المنزل',
       success: 'تم تحديث المنزل بنجاح'
     },
+    users: {
+      title: 'أعضاء المنزل',
+      noUsers: 'لم ينضم أي أعضاء إلى هذا المنزل بعد',
+      deleteConfirmation: {
+        title: 'حذف العضو',
+        message: 'هل أنت متأكد أنك تريد إزالة {name} من هذا المنزل؟'
+      },
+      deleteSuccess: 'تم إزالة العضو بنجاح',
+      deleteError: 'فشل في إزالة العضو'
+    },
     invite: {
       title: 'دعوة للمنزل',
       homeId: 'معرف المنزل',

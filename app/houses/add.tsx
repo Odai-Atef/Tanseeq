@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, TextInput, TouchableOpacity, ScrollView, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { Header } from '../../components/Header';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
@@ -7,10 +7,20 @@ import { colors } from '../../constants/Theme';
 import { useHomeAdd } from '../../hooks/home/addHook';
 import { useTranslation } from '../../contexts/LanguageContext';
 import { Footer } from '../../components/Footer';
+import { API_HOST } from '../../constants/api';
 
 export default function HomeAdd() {
   const { t, isRTL } = useTranslation();
-  const { homeName, setHomeName, isSubmitting, handleSubmit, isEditing } = useHomeAdd();
+  const { 
+    homeName, 
+    setHomeName, 
+    isSubmitting, 
+    handleSubmit, 
+    isEditing,
+    propertyUsers,
+    isDeleting,
+    confirmDeleteUser
+  } = useHomeAdd();
 
   return (
     <ThemedView style={styles.container}>
@@ -28,6 +38,55 @@ export default function HomeAdd() {
             onChangeText={setHomeName}
           />
         </View>
+
+        {isEditing && (
+          <View style={styles.section}>
+            <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
+              {t('home.users.title')}
+            </ThemedText>
+            
+            {propertyUsers.length === 0 ? (
+              <ThemedText style={styles.noUsers}>
+                {t('home.users.noUsers')}
+              </ThemedText>
+            ) : (
+              propertyUsers.map((user) => (
+                <View key={user.id} style={styles.userRow}>
+                  <View style={styles.userInfo}>
+                    {user.avatar ? (
+                      <Image 
+                        source={{ uri: `${API_HOST}/assets/${user.avatar}` }} 
+                        style={styles.userAvatar} 
+                      />
+                    ) : (
+                      <View style={styles.userAvatarPlaceholder}>
+                        <ThemedText style={styles.userAvatarText}>
+                          {user.first_name.charAt(0).toUpperCase()}
+                        </ThemedText>
+                      </View>
+                    )}
+                    <ThemedText style={styles.userName}>
+                      {user.first_name} {user.last_name || ''}
+                    </ThemedText>
+                  </View>
+                  <TouchableOpacity 
+                    style={styles.deleteButton}
+                    onPress={() => confirmDeleteUser(user.id, `${user.first_name} ${user.last_name || ''}`)}
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <ThemedText style={styles.deleteButtonText}>
+                        {t('common.buttons.delete')}
+                      </ThemedText>
+                    )}
+                  </TouchableOpacity>
+                </View>
+              ))
+            )}
+          </View>
+        )}
       </ScrollView>
 
       <View style={styles.footer}>
@@ -99,5 +158,58 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  userRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.line,
+  },
+  userInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  userAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
+  userAvatarPlaceholder: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  userAvatarText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  userName: {
+    fontSize: 16,
+    color: colors.textPrimary,
+  },
+  deleteButton: {
+    backgroundColor: colors.danger,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 4,
+    marginLeft: 10,
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontSize: 14,
+  },
+  noUsers: {
+    fontStyle: 'italic',
+    color: colors.textSecondary,
+    marginTop: 10,
   },
 });
