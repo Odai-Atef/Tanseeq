@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, ScrollView, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { Header } from '../../components/Header';
 import { ThemedView } from '../../components/ThemedView';
@@ -8,6 +8,7 @@ import { useHomeAdd } from '../../hooks/home/addHook';
 import { useTranslation } from '../../contexts/LanguageContext';
 import { Footer } from '../../components/Footer';
 import { API_HOST } from '../../constants/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeAdd() {
   const { t, isRTL } = useTranslation();
@@ -21,6 +22,24 @@ export default function HomeAdd() {
     isDeleting,
     confirmDeleteUser
   } = useHomeAdd();
+  
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      try {
+        const userInfoStr = await AsyncStorage.getItem('userInfo');
+        if (userInfoStr) {
+          const userInfo = JSON.parse(userInfoStr);
+          setCurrentUserId(userInfo.id);
+        }
+      } catch (error) {
+        console.error('Error getting current user:', error);
+      }
+    };
+    
+    getCurrentUser();
+  }, []);
 
   return (
     <ThemedView style={styles.container}>
@@ -67,21 +86,27 @@ export default function HomeAdd() {
                     )}
                     <ThemedText style={styles.userName}>
                       {user.first_name} {user.last_name || ''}
+                      {currentUserId !== user.id && (
+                        <ThemedText style={styles.adminLabel}> {currentUserId}({t('common.admin')})</ThemedText>
+                      )}
                     </ThemedText>
                   </View>
-                  <TouchableOpacity 
-                    style={styles.deleteButton}
-                    onPress={() => confirmDeleteUser(user.id, `${user.first_name} ${user.last_name || ''}`)}
-                    disabled={isDeleting}
-                  >
-                    {isDeleting ? (
-                      <ActivityIndicator size="small" color="#fff" />
-                    ) : (
-                      <ThemedText style={styles.deleteButtonText}>
-                        {t('common.buttons.delete')}
-                      </ThemedText>
-                    )}
-                  </TouchableOpacity>
+                  {/* Don't show delete button if it's the current user */}
+                  {currentUserId !== user.id && (
+                    <TouchableOpacity 
+                      style={styles.deleteButton}
+                      onPress={() => confirmDeleteUser(user.id, `${user.first_name} ${user.last_name || ''}`)}
+                      disabled={isDeleting}
+                    >
+                      {isDeleting ? (
+                        <ActivityIndicator size="small" color="#fff" />
+                      ) : (
+                        <ThemedText style={styles.deleteButtonText}>
+                          {t('common.buttons.delete')}
+                        </ThemedText>
+                      )}
+                    </TouchableOpacity>
+                  )}
                 </View>
               ))
             )}
@@ -211,5 +236,9 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: colors.textSecondary,
     marginTop: 10,
+  },
+  adminLabel: {
+    fontWeight: 'bold',
+    color: colors.primary,
   },
 });

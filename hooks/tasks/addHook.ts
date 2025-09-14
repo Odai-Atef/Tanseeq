@@ -354,6 +354,68 @@ export const useTaskAdd = (id?: string) => {
     }
   };
 
+  const deleteTask = async () => {
+    if (!id) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      const token = await AsyncStorage.getItem("access_token");
+      if (!token) {
+        Toast.show({
+          type: "error",
+          text1: t("common.toast.auth.required"),
+          text2: t("common.error.auth.required"),
+          position: "top",
+          visibilityTime: 3000,
+          autoHide: true,
+          topOffset: 70,
+        });
+        setIsSubmitting(false);
+        return;
+      }
+      
+      const response = await fetch(`${API_ENDPOINTS.TASKS}/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to delete task");
+      }
+      
+      Toast.show({
+        type: "success",
+        text1: t("common.toast.success"),
+        text2: t("common.toast.task.deleted"),
+        position: "top",
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 70,
+      });
+      
+      setTimeout(() => {
+        router.push("/tasks");
+      }, 1000);
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      Toast.show({
+        type: "error",
+        text1: t("common.toast.error"),
+        text2: t("common.toast.task.error.delete"),
+        position: "top",
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 70,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return {
     task,
     startDate,
@@ -373,5 +435,6 @@ export const useTaskAdd = (id?: string) => {
     takePhoto,
     handleSubmit,
     setSelectedImage,
+    deleteTask,
   };
 };

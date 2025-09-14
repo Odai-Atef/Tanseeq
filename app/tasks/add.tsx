@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, TextInput, TouchableOpacity, ScrollView, Platform, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, TouchableOpacity, ScrollView, Platform, Image, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useLocalSearchParams } from 'expo-router';
 import { Header } from '../../components/Header';
@@ -7,9 +7,11 @@ import { Ionicons, Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { ThemedView } from '../../components/ThemedView';
 import { ThemedText } from '../../components/ThemedText';
-import { colors, taskTheme as styles } from '../../constants/Theme';
+import { colors } from '../../constants/Theme';
+import { StyleSheet } from 'react-native';
 import { useTaskAdd } from '../../hooks/tasks/addHook';
 import { useTranslation } from '../../contexts/LanguageContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
@@ -36,10 +38,150 @@ const getPeriodKey = (period: string): string => {
   }
 };
 
+// Define styles locally to add the missing styles
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  ios_boarder: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+    padding: 20,
+  },
+  section: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: colors.textPrimary,
+  },
+  input: {
+    backgroundColor: colors.lightGray,
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    color: colors.textPrimary,
+    width: '100%',
+    borderWidth: 1,
+    borderColor: colors.line,
+  },
+  textArea: {
+    height: 120,
+    textAlignVertical: 'top',
+  },
+  radioGroup: {
+    marginTop: 8,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  checkboxActive: {
+    backgroundColor: `${colors.primary}20`,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: colors.primary,
+    marginRight: 10,
+  },
+  checkboxChecked: {
+    backgroundColor: colors.primary,
+  },
+  checkboxText: {
+    fontSize: 16,
+    color: colors.textPrimary,
+  },
+  imageButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
+  },
+  uploadButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.lightGray,
+    borderRadius: 8,
+    padding: 12,
+    flex: 1,
+    marginHorizontal: 4,
+    justifyContent: 'center',
+  },
+  uploadText: {
+    marginHorizontal: 8,
+    color: colors.textPrimary,
+  },
+  imagePreview: {
+    marginTop: 16,
+    borderRadius: 8,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  previewImage: {
+    borderRadius: 8,
+  },
+  removeImageButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 15,
+  },
+  footer: {
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: colors.line,
+  },
+  footerButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  submitButton: {
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    padding: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  submitButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  deleteButton: {
+    backgroundColor: colors.danger,
+    borderRadius: 8,
+    padding: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+    width: 100,
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
+
 export default function TaskAdd() {
   const params = useLocalSearchParams();
   const id = params.id as string | undefined;
   const { t, isRTL } = useTranslation();
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [canDelete, setCanDelete] = useState(false);
 
   const {
     task,
@@ -59,8 +201,51 @@ export default function TaskAdd() {
     pickImage,
     takePhoto,
     handleSubmit,
-    setSelectedImage
+    setSelectedImage,
+    deleteTask
   } = useTaskAdd(id);
+  
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      try {
+        const userInfoStr = await AsyncStorage.getItem('userInfo');
+        if (userInfoStr) {
+          const userInfo = JSON.parse(userInfoStr);
+          setCurrentUserId(userInfo.id);
+          
+          // Check if user can delete this task
+          if (id && task) {
+            setCanDelete(
+              userInfo.id === task.user_created || 
+              userInfo.id === task.property_id
+            );
+          }
+        }
+      } catch (error) {
+        console.error('Error getting current user:', error);
+      }
+    };
+    
+    getCurrentUser();
+  }, [id, task]);
+  
+  const confirmDelete = () => {
+    Alert.alert(
+      t('tasks.delete.title'),
+      t('tasks.delete.message'),
+      [
+        {
+          text: t('common.buttons.cancel'),
+          style: 'cancel'
+        },
+        {
+          text: t('common.buttons.delete'),
+          onPress: deleteTask,
+          style: 'destructive'
+        }
+      ]
+    );
+  };
 
   if (isLoading) {
     return (
@@ -188,23 +373,41 @@ export default function TaskAdd() {
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity 
-          style={[
-            styles.submitButton,
-            isSubmitting && { opacity: 0.5 }
-          ]} 
-          onPress={handleSubmit}
-          disabled={isSubmitting}
-        >
-          <ThemedText style={styles.submitButtonText}>
-            {isSubmitting 
-              ? t('common.loading')
-              : id 
-                ? t('common.buttons.update')
-                : t('common.buttons.create')
-            }
-          </ThemedText>
-        </TouchableOpacity>
+        <View style={styles.footerButtonsContainer}>
+          {id && canDelete && (
+            <TouchableOpacity 
+              style={[
+                styles.deleteButton,
+                isSubmitting && { opacity: 0.5 }
+              ]} 
+              onPress={confirmDelete}
+              disabled={isSubmitting}
+            >
+              <ThemedText style={styles.deleteButtonText}>
+                {t('common.buttons.delete')}
+              </ThemedText>
+            </TouchableOpacity>
+          )}
+          
+          <TouchableOpacity 
+            style={[
+              styles.submitButton,
+              isSubmitting && { opacity: 0.5 },
+              id && canDelete ? { flex: 1 } : { width: '100%' }
+            ]} 
+            onPress={handleSubmit}
+            disabled={isSubmitting}
+          >
+            <ThemedText style={styles.submitButtonText}>
+              {isSubmitting 
+                ? t('common.loading')
+                : id 
+                  ? t('common.buttons.update')
+                  : t('common.buttons.create')
+              }
+            </ThemedText>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {showPicker && (

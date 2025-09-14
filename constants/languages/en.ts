@@ -21,6 +21,7 @@ export const en = {
     loading: 'Loading...',
     default: 'Default',
     setDefault: 'Set Default',
+    admin: 'Admin',
     toast: {
       success: 'Success',
       error: 'Error',

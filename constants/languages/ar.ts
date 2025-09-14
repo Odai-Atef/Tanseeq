@@ -20,6 +20,7 @@ export const ar = {
     loading: 'جاري التحميل...',
     default: 'افتراضي',
     setDefault: 'تعيين كافتراضي',
+    admin: 'مدير',
     toast: {
       info:"تنبية",
       success: 'نجاح',
