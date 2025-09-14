@@ -17,6 +17,8 @@ export const en = {
     done: "Get Started"
   },
   common: {
+    you:"you",
+    home_admin:"House Owner",
     info:"Info",
     loading: 'Loading...',
     default: 'Default',

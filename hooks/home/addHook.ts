@@ -20,6 +20,9 @@ export const useHomeAdd = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [propertyUsers, setPropertyUsers] = useState<Member[]>([]);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [userCreated, setUserCreated] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [isOwner, setIsOwner] = useState(false);
   
   // Fetch home details if editing
   useEffect(() => {
@@ -27,8 +30,26 @@ export const useHomeAdd = () => {
       setIsEditing(true);
       fetchHomeDetails();
       fetchPropertyUsers();
+      getCurrentUser();
     }
   }, [homeId]);
+
+  // Get current user info
+  const getCurrentUser = async () => {
+    try {
+      const userInfoStr = await AsyncStorage.getItem("userInfo");
+      if (userInfoStr) {
+        const userInfo = JSON.parse(userInfoStr);
+        setCurrentUserId(userInfo.id);
+        
+        // Check if user is owner after userCreated is set
+          setIsOwner(userInfo.id === userCreated || userInfo.id === homeId);
+          console.log(userInfo.id === userCreated || userInfo.id === homeId)
+      }
+    } catch (error) {
+      console.error("Error getting current user:", error);
+    }
+  };
   
   const fetchHomeDetails = async () => {
     try {
@@ -59,6 +80,12 @@ export const useHomeAdd = () => {
       
       const data = await response.json();
       setHomeName(data.data.name);
+      setUserCreated(data.data.user_created);
+      
+      // Check if user is owner if we already have currentUserId
+      if (currentUserId) {
+        setIsOwner(currentUserId === data.data.user_created || currentUserId === homeId);
+      }
     } catch (error) {
       console.error("Error fetching home details:", error);
       Toast.show({
@@ -90,6 +117,7 @@ export const useHomeAdd = () => {
       }
       
       const data = await response.json();
+      console.log(data)
       const users = data.data.map((item: any) => ({
         id: item.id, // This is the property_user relationship ID
         user_id: item.directus_users_id.id,
@@ -403,6 +431,9 @@ export const useHomeAdd = () => {
     isEditing,
     propertyUsers,
     isDeleting,
-    confirmDeleteUser
+    confirmDeleteUser,
+    userCreated,
+    homeId,
+    isOwner
   };
 };

@@ -17,6 +17,8 @@ export const ar = {
     done: "ابدأ الآن"
   },
   common: {
+    you:"انت",
+    home_admin:"مدير المنزل",
     loading: 'جاري التحميل...',
     default: 'افتراضي',
     setDefault: 'تعيين كافتراضي',

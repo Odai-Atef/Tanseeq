@@ -20,7 +20,10 @@ export default function HomeAdd() {
     isEditing,
     propertyUsers,
     isDeleting,
-    confirmDeleteUser
+    confirmDeleteUser,
+    userCreated,
+    homeId,
+    isOwner
   } = useHomeAdd();
   
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -47,7 +50,7 @@ export default function HomeAdd() {
       <ScrollView style={styles.content}>
         <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
           <ThemedText style={[styles.label, { textAlign: isRTL ? 'right' : 'left', width: '100%' }]}>
-            {t('home.add.name')} *
+            {t('home.add.name')} * {isOwner}
           </ThemedText>
           <TextInput
             style={[styles.input, { textAlign: isRTL ? 'right' : 'left' }]}
@@ -55,6 +58,7 @@ export default function HomeAdd() {
             placeholderTextColor="rgba(49, 57, 79, 0.6)"
             value={homeName}
             onChangeText={setHomeName}
+            editable={isEditing && isOwner}
           />
         </View>
 
@@ -86,13 +90,17 @@ export default function HomeAdd() {
                     )}
                     <ThemedText style={styles.userName}>
                       {user.first_name} {user.last_name || ''}
-                      {currentUserId !== user.id && (
-                        <ThemedText style={styles.adminLabel}> {currentUserId}({t('common.admin')})</ThemedText>
+                      {currentUserId === user.user_id && (
+                        <ThemedText style={styles.adminLabel}> ({t('common.you')})</ThemedText>
+                      )}
+
+                        {(currentUserId === userCreated || currentUserId===homeId ) && (
+                        <ThemedText style={styles.adminLabel}>  ({t('common.home_admin')})</ThemedText>
                       )}
                     </ThemedText>
                   </View>
                   {/* Don't show delete button if it's the current user */}
-                  {currentUserId !== user.id && (
+                  {(currentUserId === userCreated || currentUserId===homeId) && currentUserId !== user.user_id  && (
                     <TouchableOpacity 
                       style={styles.deleteButton}
                       onPress={() => confirmDeleteUser(user.id, `${user.first_name} ${user.last_name || ''}`)}
@@ -115,23 +123,25 @@ export default function HomeAdd() {
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity 
-          style={[
-            styles.submitButton,
-            isSubmitting && { opacity: 0.5 }
-          ]} 
-          onPress={handleSubmit}
-          disabled={isSubmitting}
-        >
-          <ThemedText style={styles.submitButtonText}>
-            {isSubmitting 
-              ? t('common.loading')
-              : isEditing 
-                ? t('home.edit.updateHome')
-                : t('home.add.createHome')
-            }
-          </ThemedText>
-        </TouchableOpacity>
+        {(!isEditing || isOwner) && (
+          <TouchableOpacity 
+            style={[
+              styles.submitButton,
+              isSubmitting && { opacity: 0.5 }
+            ]} 
+            onPress={handleSubmit}
+            disabled={isSubmitting}
+          >
+            <ThemedText style={styles.submitButtonText}>
+              {isSubmitting 
+                ? t('common.loading')
+                : isEditing 
+                  ? t('home.edit.updateHome')
+                  : t('home.add.createHome')
+              }
+            </ThemedText>
+          </TouchableOpacity>
+        )}
       </View>
 
       <Footer activeTab="houses" />
