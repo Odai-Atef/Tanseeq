@@ -94,13 +94,13 @@ export default function HomeAdd() {
                         <ThemedText style={styles.adminLabel}> ({t('common.you')})</ThemedText>
                       )}
 
-                        {(currentUserId === userCreated || currentUserId===homeId ) && (
+                        {( user.user_id === userCreated ||  user.user_id===homeId ) && (
                         <ThemedText style={styles.adminLabel}>  ({t('common.home_admin')})</ThemedText>
                       )}
                     </ThemedText>
                   </View>
                   {/* Don't show delete button if it's the current user */}
-                  {(currentUserId === userCreated || currentUserId===homeId) && currentUserId !== user.user_id  && (
+                  {(isOwner && currentUserId !== user.user_id)  && (
                     <TouchableOpacity 
                       style={styles.deleteButton}
                       onPress={() => confirmDeleteUser(user.id, `${user.first_name} ${user.last_name || ''}`)}

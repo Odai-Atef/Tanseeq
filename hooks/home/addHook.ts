@@ -44,7 +44,6 @@ export const useHomeAdd = () => {
         
         // Check if user is owner after userCreated is set
           setIsOwner(userInfo.id === userCreated || userInfo.id === homeId);
-          console.log(userInfo.id === userCreated || userInfo.id === homeId)
       }
     } catch (error) {
       console.error("Error getting current user:", error);
