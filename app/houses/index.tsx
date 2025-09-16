@@ -22,10 +22,7 @@ export default function Houses() {
     <ThemedView style={[styles.container, main_styles.ios_boarder]}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.content}>
-          <ThemedText type="title" style={styles.title}>
-            {t('dashboard.myHomes')}
-          </ThemedText>
-          
+         
           {isLoading ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color={colors.primary} />

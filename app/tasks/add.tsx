@@ -40,13 +40,13 @@ const getPeriodKey = (period: string): string => {
 
 // Define styles locally to add the missing styles
 const styles = StyleSheet.create({
+  
   container: {
     flex: 1,
     backgroundColor: colors.background,
   },
-  ios_boarder: {
-    flex: 1,
-  },
+  ios_boarder: { borderTopWidth: 65, borderTopColor: 'rgb(121, 128, 255)' },
+
   content: {
     flex: 1,
     padding: 20,

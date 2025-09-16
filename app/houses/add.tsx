@@ -45,7 +45,7 @@ export default function HomeAdd() {
   }, []);
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.ios_boarder,styles.container]}>
       <Header title={isEditing ? t('home.edit.title') : t('home.add.title')} />
       <ScrollView style={styles.content}>
         <View style={[styles.section, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
@@ -58,7 +58,7 @@ export default function HomeAdd() {
             placeholderTextColor="rgba(49, 57, 79, 0.6)"
             value={homeName}
             onChangeText={setHomeName}
-            editable={isEditing && isOwner}
+            editable={((!isEditing) || (isEditing && isOwner))?true:false}
           />
         </View>
 
@@ -154,6 +154,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+    ios_boarder: { borderTopWidth: 65, borderTopColor: 'rgb(121, 128, 255)' },
+
   content: {
     flex: 1,
     padding: 20,

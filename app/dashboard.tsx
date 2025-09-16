@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ScrollView,
   View,
@@ -6,9 +6,6 @@ import {
   Dimensions,
   ActivityIndicator,
   RefreshControl,
-  StyleSheet,
-  Modal,
-  Text,
 } from "react-native";
 import { ThemedView } from "../components/ThemedView";
 import { ThemedText } from "../components/ThemedText";
@@ -23,7 +20,6 @@ import { useDashboard } from "../hooks/dashboardHooks";
 import { useTranslation } from "../contexts/LanguageContext";
 import { MyHomes } from "../components/MyHomes";
 import { useHomes } from "../hooks/home/useHomes";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -40,76 +36,9 @@ const EmptyState = ({ message }: { message: string }) => (
 );
 
 export default function Dashboard() {
-  const [currentTourStep, setCurrentTourStep] = useState<number | null>(null);
-  const [showTour, setShowTour] = useState(false);
-  const { t, language, isRTL } = useTranslation();
+  const { t, isRTL } = useTranslation();
+  const [refreshing, setRefreshing] = useState(false);
   
-  // Tour steps
-  const tourSteps = [
-    { id: 1, target: "myHomes", text: t("dashboard.tour.myHomes") },
-    { id: 2, target: "progressSection", text: t("dashboard.tour.progressSection") },
-    { id: 3, target: "taskSection", text: t("dashboard.tour.taskSection") },
-    { id: 4, target: "footer", text: t("dashboard.tour.footer") },
-  ];
-  
-  useEffect(() => {
-    checkTourStatus();
-  }, []);
-  
-  const checkTourStatus = async () => {
-    try {
-      const completedTours = await AsyncStorage.getItem('completed_tours');
-      const tours = completedTours ? JSON.parse(completedTours) : [];
-      
-      // if (!tours.includes('dashboard')) {
-      //   // Start tour after a short delay
-      //   setTimeout(() => {
-      //     startTour();
-      //   }, 1000);
-      // }
-    } catch (error) {
-      console.error('Error checking tour status:', error);
-    }
-  };
-  
-  const startTour = () => {
-    setCurrentTourStep(1);
-    setShowTour(true);
-  };
-  
-  const nextStep = () => {
-    if (currentTourStep && currentTourStep < tourSteps.length) {
-      setCurrentTourStep(currentTourStep + 1);
-    } else {
-      completeTour();
-    }
-  };
-  
-  const completeTour = async () => {
-    try {
-      const completedTours = await AsyncStorage.getItem('completed_tours');
-      let tours = completedTours ? JSON.parse(completedTours) : [];
-      
-      if (!tours.includes('dashboard')) {
-        tours.push('dashboard');
-        await AsyncStorage.setItem('completed_tours', JSON.stringify(tours));
-      }
-      
-      setShowTour(false);
-      setCurrentTourStep(null);
-    } catch (error) {
-      console.error('Error completing tour:', error);
-    }
-  };
-  
-  const getCurrentTourText = () => {
-    if (!currentTourStep) return "";
-    const step = tourSteps.find(step => step.id === currentTourStep);
-    if (!step) return "";
-    
-    return step.text;
-  };
-  const [refreshing, setRefreshing] = React.useState(false);
   const {
     userName,
     schedules,
@@ -121,7 +50,6 @@ export default function Dashboard() {
     error,
     fetchTodaySchedules,
   } = useDashboard();
-
 
   const { fetchHomes } = useHomes();
   
@@ -194,20 +122,6 @@ export default function Dashboard() {
             >
               {t("dashboard.greeting", { name: userName })}
             </ThemedText>
-            
-            <TouchableOpacity 
-              style={[
-                tourStyles.copilotIcon, 
-                { marginRight: isRTL ? 10 : 0, marginLeft: isRTL ? 0 : 10 }
-              ]}
-              onPress={startTour}
-            >
-              <Ionicons
-                name="help-circle"
-                size={24}
-                color={colors.primary}
-              />
-            </TouchableOpacity>
           </View>
           
           <ThemedText
@@ -233,20 +147,11 @@ export default function Dashboard() {
           />
         }
       >
-        <View 
-          style={[
-            currentTourStep === 1 && tourStyles.highlightedSection
-          ]}
-        >
+        <View>
           <MyHomes />
         </View>
 
-        <View 
-          style={[
-            styles.progressSection, 
-            currentTourStep === 2 && tourStyles.highlightedSection
-          ]}
-        >
+        <View style={styles.progressSection}>
           <View style={[styles.progressCircle, { backgroundColor: "#7980FF" }]}>
             <CircularProgress
               value={progressPercentage}
@@ -289,11 +194,7 @@ export default function Dashboard() {
           </View>
         </View>
 
-        <View 
-          style={[
-            currentTourStep === 3 && tourStyles.highlightedSection
-          ]}
-        >
+        <View>
           <View
             style={[
               styles.sectionHeader,
@@ -320,95 +221,9 @@ export default function Dashboard() {
         </View>
       </ScrollView>
 
-      <View 
-        style={[
-          currentTourStep === 4 && tourStyles.highlightedSection
-        ]}
-        testID="footer"
-      >
+      <View testID="footer">
         <Footer activeTab="home" />
       </View>
-      
-      {/* Tour Modal */}
-      {showTour && (
-        <Modal
-          transparent={true}
-          visible={showTour}
-          animationType="fade"
-        >
-          <View style={tourStyles.modalOverlay}>
-            <View style={tourStyles.tooltipContainer}>
-              <Text style={[
-                tourStyles.tooltipText,
-                language === 'ar' && tourStyles.tooltipTextRTL
-              ]}>
-                {getCurrentTourText()}
-              </Text>
-              <TouchableOpacity 
-                style={tourStyles.nextButton}
-                onPress={nextStep}
-              >
-                <Text style={tourStyles.nextButtonText}>
-                  {currentTourStep === tourSteps.length 
-                    ? t("dashboard.tour.finish") 
-                    : t("dashboard.tour.next")}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-      )}
     </ThemedView>
   );
 }
-
-const tourStyles = StyleSheet.create({
-  highlightedSection: {
-    borderWidth: 2,
-    borderColor: colors.primary,
-    borderRadius: 10,
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-    elevation: 5,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  tooltipContainer: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 10,
-    width: '80%',
-    alignItems: 'center',
-  },
-  tooltipText: {
-    fontSize: 12,
-    color: colors.text,
-    marginBottom: 20,
-    textAlign: 'left',
-    fontFamily: 'Cairo',
-  },
-  tooltipTextRTL: {
-    textAlign: 'right',
-  },
-  nextButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-  },
-  nextButtonText: {
-    color: 'white',
-    fontSize: 12,
-    fontFamily: 'Cairo',
-  },
- 
-  copilotIcon: {
-    padding: 5,
-  },
-});
