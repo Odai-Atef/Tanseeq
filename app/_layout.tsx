@@ -6,12 +6,16 @@ import { LanguageProvider } from '../contexts/LanguageContext';
 import { TourProvider } from '../contexts/TourContext';
 import Toast from 'react-native-toast-message';
 import { useFonts } from 'expo-font';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, LogBox } from 'react-native';
 import { DarkTheme, DefaultTheme, Theme, ThemeProvider } from '@react-navigation/native';
 import { colors } from '../constants/Theme';
 import * as SplashScreen from 'expo-splash-screen';
-import OneSignal from 'react-native-onesignal';
-import { ONESIGNAL_APP_ID } from '../constants/OneSignal';
+import firebase from '@react-native-firebase/app';
+import { FIREBASE_CONFIG } from '../constants/Firebase';
+import { initializeFirebaseMessaging, setupBackgroundNotificationHandler } from '../utils/firebaseMessaging';
+
+// Ignore specific warnings
+LogBox.ignoreLogs(['Warning: ...']); // Ignore specific warnings
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -43,6 +47,14 @@ const navigationTheme = {
   },
 };
 
+// Initialize Firebase at the app level, outside of any component
+if (!firebase.apps.length) {
+  firebase.initializeApp(FIREBASE_CONFIG);
+}
+
+// Set up background message handler outside of any component
+setupBackgroundNotificationHandler();
+
 export default function Layout() {
   const [loaded] = useFonts({
     'Cairo': require('../assets/fonts/Cairo/Cairo-VariableFont_slnt,wght.ttf'),
@@ -51,58 +63,19 @@ export default function Layout() {
   const colorScheme = useColorScheme();
 
   useEffect(() => {
-    const initOneSignal = async () => {
+    const initFirebase = async () => {
       try {
-        // Initialize OneSignal
-        OneSignal.initialize(ONESIGNAL_APP_ID);
-        
-        // Enable logging for debugging (optional)
-        OneSignal.setLogLevel(6, 0);
-
-        // Handle foreground notifications
-        OneSignal.setNotificationWillShowInForegroundHandler((event) => {
-          // Show Toast notification
-          Toast.show({
-            type: 'info',
-            text1: event.notification.title || 'New Notification',
-            text2: event.notification.body || '',
-            position: 'top',
-            visibilityTime: 4000,
-            autoHide: true,
-            topOffset: 30,
-          });
-        });
-
-        // Handle notification opened
-        OneSignal.setNotificationOpenedHandler((event) => {
-        });
-
-        // Request push notification permission
-        OneSignal.promptForPushNotificationsWithUserResponse();
-
-        // Get OneSignal User ID and update user info
-        const deviceState = await OneSignal.getDeviceState();
-        if (deviceState?.userId) {
-          const token = await AsyncStorage.getItem('access_token');
-          if (token) {
-            await fetch(API_ENDPOINTS.USER_INFO, {
-              method: 'PATCH',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                one_signal: deviceState.userId
-              })
-            });
-          }
-        }
+        // Firebase is already initialized at the app level
+        // Just initialize Firebase Messaging
+        await initializeFirebaseMessaging();
       } catch (error) {
+        console.error('Error initializing Firebase Messaging:', error);
       }
     };
 
-    initOneSignal();
+    initFirebase();
   }, []);
+
 
   useEffect(() => {
     if (loaded) {

@@ -13,6 +13,7 @@
       "bundleIdentifier": "pro.tanseeq.app",
       "usesAppleSignIn": true,
       "entitlements": {
+        "aps-environment": "development",
         "com.apple.developer.applesignin": [
           "Default"
         ]
@@ -22,7 +23,10 @@
         "NSCameraUsageDescription": "This app needs access to the camera to scan QR codes",
         "NSPhotoLibraryUsageDescription": "This app needs access to photos for profile pictures and task attachments",
         "NSPhotoLibraryAddUsageDescription": "This app needs access to photos to save images",
-        "NSMicrophoneUsageDescription": "This app needs access to microphone"
+        "NSMicrophoneUsageDescription": "This app needs access to microphone",
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
       },
       "associatedDomains": [
         "applinks:tanseeq.pro"
@@ -92,7 +96,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-build-properties"
     ],
     "experiments": {
       "typedRoutes": true

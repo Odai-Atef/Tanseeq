@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ScrollView,
   View,
@@ -6,6 +6,7 @@ import {
   Dimensions,
   ActivityIndicator,
   RefreshControl,
+  Text,
 } from "react-native";
 import { ThemedView } from "../components/ThemedView";
 import { ThemedText } from "../components/ThemedText";
@@ -20,6 +21,9 @@ import { useDashboard } from "../hooks/dashboardHooks";
 import { useTranslation } from "../contexts/LanguageContext";
 import { MyHomes } from "../components/MyHomes";
 import { useHomes } from "../hooks/home/useHomes";
+import { getFCMToken } from "../utils/firebaseMessaging";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_ENDPOINTS } from "../constants/api";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -36,8 +40,51 @@ const EmptyState = ({ message }: { message: string }) => (
 );
 
 export default function Dashboard() {
-  const { t, isRTL } = useTranslation();
+  // Initialize with default values to prevent errors if context is not available yet
+  const { t = (key: string, options?: any) => key, isRTL = false } = useTranslation() || {};
   const [refreshing, setRefreshing] = useState(false);
+  const [fcmToken, setFcmToken] = useState<string>("");
+  
+  useEffect(() => {
+    const getToken = async () => {
+      try {
+        const token = await getFCMToken();
+        console.log(token)
+        if (token) {
+          setFcmToken(token);
+          
+          // Update the token in the one_signal column in the database
+          const authToken = await AsyncStorage.getItem("access_token");
+          if (authToken) {
+            try {
+              const response = await fetch(API_ENDPOINTS.USER_INFO, {
+                method: 'PATCH',
+                headers: {
+                  'Authorization': `Bearer ${authToken}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  one_signal: token
+                })
+              });
+              
+              if (response.ok) {
+                console.log("Token updated successfully in one_signal column");
+              } else {
+                console.error("Failed to update token in one_signal column:", await response.text());
+              }
+            } catch (updateError) {
+              console.error("Error updating token in one_signal column:", updateError);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error getting FCM token:", error);
+      }
+    };
+    
+    getToken();
+  }, []);
   
   const {
     userName,
@@ -147,10 +194,19 @@ export default function Dashboard() {
           />
         }
       >
-        <View>
-          <MyHomes />
+        <View style={{
+          padding: 15,
+          backgroundColor: "#f0f0f0",
+          borderRadius: 8,
+          marginVertical: 10,
+        }}>
+          <ThemedText style={{
+            fontSize: 16,
+            fontWeight: "500",
+          }}>
+            FCM Token: {fcmToken ? fcmToken.substring(0, 20) + "..." : "loading..."}
+          </ThemedText>
         </View>
-
         <View style={styles.progressSection}>
           <View style={[styles.progressCircle, { backgroundColor: "#7980FF" }]}>
             <CircularProgress
