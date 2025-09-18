@@ -49,10 +49,8 @@ export default function Dashboard() {
     const getToken = async () => {
       try {
         const token = await getFCMToken();
-        console.log(token)
         if (token) {
           setFcmToken(token);
-          
           // Update the token in the one_signal column in the database
           const authToken = await AsyncStorage.getItem("access_token");
           if (authToken) {
@@ -194,19 +192,7 @@ export default function Dashboard() {
           />
         }
       >
-        <View style={{
-          padding: 15,
-          backgroundColor: "#f0f0f0",
-          borderRadius: 8,
-          marginVertical: 10,
-        }}>
-          <ThemedText style={{
-            fontSize: 16,
-            fontWeight: "500",
-          }}>
-            FCM Token: {fcmToken ? fcmToken.substring(0, 20) + "..." : "loading..."}
-          </ThemedText>
-        </View>
+      <MyHomes></MyHomes>
         <View style={styles.progressSection}>
           <View style={[styles.progressCircle, { backgroundColor: "#7980FF" }]}>
             <CircularProgress
