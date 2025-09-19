@@ -38,44 +38,12 @@ export function Footer({ activeTab }: FooterProps) {
     fetchUserRole();
     
     // Check if the footer tour has been completed
-    checkTourStatus();
   }, []);
   
-  const checkTourStatus = async () => {
-    try {
-      const completedTours = await AsyncStorage.getItem('completed_tours');
-      const tours = completedTours ? JSON.parse(completedTours) : [];
-      
-      if (!tours.includes('footer')) {
-        // Start tour after a short delay
-        setTimeout(() => {
-          setShowTour(true);
-        }, 2000);
-      }
-    } catch (error) {
-      console.error('Error checking tour status:', error);
-    }
-  };
   
-  const completeTour = async () => {
-    try {
-      const completedTours = await AsyncStorage.getItem('completed_tours');
-      let tours = completedTours ? JSON.parse(completedTours) : [];
-      
-      if (!tours.includes('footer')) {
-        tours.push('footer');
-        await AsyncStorage.setItem('completed_tours', JSON.stringify(tours));
-      }
-      
-      setShowTour(false);
-    } catch (error) {
-      console.error('Error completing tour:', error);
-    }
-  };
   
-  const getFooterTourText = () => {
-    return getTourText(language, 'footer.addButton');
-  };
+
+  
 
   return (
     <View style={styles.footer}>
@@ -249,35 +217,6 @@ export function Footer({ activeTab }: FooterProps) {
               </View>
             </TouchableOpacity>
           </Modal>
-          
-          {/* Tour Modal */}
-          {showTour && (
-            <Modal
-              transparent={true}
-              visible={showTour}
-              animationType="fade"
-            >
-              <View style={styles.tourModalOverlay}>
-                <View style={styles.tourTooltipContainer}>
-                  <Text style={[
-                    styles.tourTooltipText,
-                    language === 'ar' && styles.tourTooltipTextRTL
-                  ]}>
-                    {getFooterTourText()}
-                  </Text>
-                  <TouchableOpacity 
-                    style={styles.tourNextButton}
-                    onPress={completeTour}
-                  >
-                    <Text style={styles.tourNextButtonText}>
-                      {language === 'ar' ? 'فهمت' : 'Got it'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </Modal>
-          )}
-      
     </View>
   );
 }
@@ -350,40 +289,5 @@ const styles = StyleSheet.create({
   optionTitle: {
     fontSize: 16,
     color: colors.text,
-  },
-  // Tour styles
-  tourModalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  tourTooltipContainer: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    width: '80%',
-    alignItems: 'center',
-  },
-  tourTooltipText: {
-    fontSize: 16,
-    color: colors.text,
-    marginBottom: 20,
-    textAlign: 'left',
-    fontFamily: 'Cairo',
-  },
-  tourTooltipTextRTL: {
-    textAlign: 'right',
-  },
-  tourNextButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-  },
-  tourNextButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontFamily: 'Cairo',
   },
 });

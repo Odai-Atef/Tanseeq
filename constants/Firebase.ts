@@ -4,14 +4,14 @@
 export const FIREBASE_CONFIG = {
   // You'll need to replace these values with your actual Firebase project configuration
   // from the Firebase console (https://console.firebase.google.com/)
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "tanseeq-app",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "1078602923233",
-  appId: "YOUR_APP_ID",
-  // measurementId is optional if you're not using Firebase Analytics
-  measurementId: "YOUR_MEASUREMENT_ID" // Optional if not using Analytics
+ apiKey: "AIzaSyA9kwufgmYL1zzG-mrGAaY696ZgS7B8V4c",
+  authDomain: "tanseeq-pushnotification.firebaseapp.com",
+  projectId: "tanseeq-pushnotification",
+  storageBucket: "tanseeq-pushnotification.firebasestorage.app",
+  messagingSenderId: "887468193862",
+  appId: "1:887468193862:web:265fc72b040b5434de3247",
+  databaseURL: "https://tanseeq-app-default-rtdb.firebaseio.com"  // ✅ Add this
+
 };
 
 // Note: Even though your app only receives notifications and doesn't send them,

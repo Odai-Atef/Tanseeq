@@ -38,46 +38,9 @@ export const MyHomes = () => {
   
   useEffect(() => {
     // Check if the homes tour has been completed
-    checkTourStatus();
   }, []);
-  
-  const checkTourStatus = async () => {
-    try {
-      const completedTours = await AsyncStorage.getItem('completed_tours');
-      const tours = completedTours ? JSON.parse(completedTours) : [];
-      
-      if (!tours.includes('homes')) {
-        // Start tour after a short delay
-        setTimeout(() => {
-          setShowTour(true);
-        }, 3000); // Delay a bit more to not conflict with dashboard tour
-      }
-    } catch (error) {
-      console.error('Error checking tour status:', error);
-    }
-  };
-  
-  const completeTour = async () => {
-    try {
-      const completedTours = await AsyncStorage.getItem('completed_tours');
-      let tours = completedTours ? JSON.parse(completedTours) : [];
-      
-      if (!tours.includes('homes')) {
-        tours.push('homes');
-        await AsyncStorage.setItem('completed_tours', JSON.stringify(tours));
-      }
-      
-      setShowTour(false);
-    } catch (error) {
-      console.error('Error completing tour:', error);
-    }
-  };
-  
-  const getTourText = () => {
-    return language === 'ar' 
-      ? "لكل مستخدم منزله الخاص. يمكنك دعوة الآخرين إلى منزلك أو الانضمام إلى منزل شخص آخر. انقر على منزل لتعيينه كمنزلك الافتراضي."
-      : "Each user has their own home. You can invite others to your home or join someone else's home. Click on a home to set it as your default.";
-  };
+
+
 
   const handleHomePress = (homeId: string) => {
     setDefaultHome(homeId);
@@ -132,34 +95,7 @@ export const MyHomes = () => {
         ItemSeparatorComponent={() => <View style={{ width: 20 }} />}
         inverted={isRTL} // Reverse the list direction for RTL
       />
-      
-      {/* Tour Modal */}
-      {showTour && (
-        <Modal
-          transparent={true}
-          visible={showTour}
-          animationType="fade"
-        >
-          <View style={tourStyles.modalOverlay}>
-            <View style={tourStyles.tooltipContainer}>
-              <Text style={[
-                tourStyles.tooltipText,
-                language === 'ar' && tourStyles.tooltipTextRTL
-              ]}>
-                {getTourText()}
-              </Text>
-              <TouchableOpacity 
-                style={tourStyles.nextButton}
-                onPress={completeTour}
-              >
-                <Text style={tourStyles.nextButtonText}>
-                  {language === 'ar' ? 'فهمت' : 'Got it'}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-      )}
+    
     </View>
   );
 };
