@@ -147,7 +147,7 @@ export const TaskItem = ({ item, type }: TaskItemProps) => {
   return (
     <TouchableOpacity onPress={handleView}>
       <View style={styles.taskItem}>
-        <View style={[styles.taskHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+        <View style={[styles.taskHeader, { flexDirection:  'row-reverse' }]}>
           {isRTL ? (
             <>
               <ThemedText type="defaultSemiBold" style={[styles.taskTitle, { marginRight: 8, textAlign: 'right' }]}>

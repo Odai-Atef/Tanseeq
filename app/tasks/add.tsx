@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     borderWidth: 2,
     borderColor: colors.primary,
-    marginRight: 10,
+    margin: 10,
   },
   checkboxChecked: {
     backgroundColor: colors.primary,
