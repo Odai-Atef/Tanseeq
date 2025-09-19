@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   ScrollView,
   View,
@@ -14,7 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { dashboardTheme as styles, colors } from "../constants/Theme";
 import { Footer } from "../components/Footer";
 import CircularProgress from "react-native-circular-progress-indicator";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { Schedule } from "../types/Schedule";
 import { TaskItem } from "../components/TaskItem";
 import { useDashboard } from "../hooks/dashboardHooks";
@@ -44,6 +44,8 @@ export default function Dashboard() {
   const { t = (key: string, options?: any) => key, isRTL = false } = useTranslation() || {};
   const [refreshing, setRefreshing] = useState(false);
   const [fcmToken, setFcmToken] = useState<string>("");
+  const lastRefreshTimeRef = useRef<number>(0);
+  const isRefreshingRef = useRef<boolean>(false);
   
   useEffect(() => {
     const getToken = async () => {
@@ -98,13 +100,56 @@ export default function Dashboard() {
 
   const { fetchHomes } = useHomes();
   
+  // Reload data when the dashboard screen comes into focus, with rate limiting
+  useFocusEffect(
+    React.useCallback(() => {
+      // Check if we're already refreshing or if it's been less than 30 seconds since the last refresh
+      const now = Date.now();
+      const timeSinceLastRefresh = now - lastRefreshTimeRef.current;
+      
+      if (isRefreshingRef.current || timeSinceLastRefresh < 30000) {
+        // Skip refresh if we're already refreshing or refreshed recently
+        return;
+      }
+      
+      // Set refreshing flag
+      isRefreshingRef.current = true;
+      
+      // Reload data when the screen is focused
+      Promise.all([
+        fetchTodaySchedules(),
+        fetchHomes()
+      ]).finally(() => {
+        // Update last refresh time and clear refreshing flag
+        lastRefreshTimeRef.current = Date.now();
+        isRefreshingRef.current = false;
+      });
+      
+      return () => {
+        // Cleanup function (if needed)
+      };
+    }, [fetchTodaySchedules, fetchHomes])
+  );
+  
   const onRefresh = React.useCallback(async () => {
+    // Skip if we're already refreshing
+    if (isRefreshingRef.current) {
+      return;
+    }
+    
+    isRefreshingRef.current = true;
     setRefreshing(true);
-    await Promise.all([
-      fetchTodaySchedules(),
-      fetchHomes()
-    ]);
-    setRefreshing(false);
+    
+    try {
+      await Promise.all([
+        fetchTodaySchedules(),
+        fetchHomes()
+      ]);
+    } finally {
+      lastRefreshTimeRef.current = Date.now();
+      isRefreshingRef.current = false;
+      setRefreshing(false);
+    }
   }, [fetchTodaySchedules, fetchHomes]);
 
   const renderTaskContent = () => {
