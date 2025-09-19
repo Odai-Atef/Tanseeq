@@ -9,9 +9,15 @@ import { useColorScheme, LogBox } from 'react-native';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { colors } from '../constants/Theme';
 import * as SplashScreen from 'expo-splash-screen';
-import { firebase } from '@react-native-firebase/app'; // ✅ FIXED
+import firebase from '@react-native-firebase/app';
 import { FIREBASE_CONFIG } from '../constants/Firebase';
-import { initializeFirebaseMessaging } from '../utils/firebaseMessaging';
+import { 
+  requestUserPermission, 
+  getFCMToken, 
+  registerDeviceWithBackend, 
+  setupForegroundNotificationHandler,
+  setupBackgroundNotificationHandler
+} from '../utils/firebaseMessaging';
 
 // Ignore specific warnings
 LogBox.ignoreLogs(['Warning: ...']);
@@ -61,7 +67,18 @@ export default function Layout() {
   useEffect(() => {
     const initFirebase = async () => {
       try {
-        await initializeFirebaseMessaging();
+        // Request permission (iOS only)
+        const hasPermission = await requestUserPermission();
+        
+        if (hasPermission) {
+          // Get FCM token and register with backend
+          await getFCMToken();
+          await registerDeviceWithBackend();
+          
+          // Setup notification handlers
+          setupForegroundNotificationHandler();
+          setupBackgroundNotificationHandler();
+        }
       } catch (error) {
         console.error('Error initializing Firebase Messaging:', error);
       }
