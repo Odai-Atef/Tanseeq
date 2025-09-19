@@ -28,22 +28,30 @@ export const useHomeAdd = () => {
   useEffect(() => {
     if (homeId) {
       setIsEditing(true);
-      fetchHomeDetails();
-      fetchPropertyUsers();
-      getCurrentUser();
+      const fetchData = async () => {
+        await fetchHomeDetails();
+        fetchPropertyUsers();
+        // getCurrentUser is now called inside fetchHomeDetails after setUserCreated
+      };
+      fetchData();
     }
   }, [homeId]);
 
   // Get current user info
-  const getCurrentUser = async () => {
+  const getCurrentUser = async (createdUserId: string | null = null) => {
     try {
       const userInfoStr = await AsyncStorage.getItem("userInfo");
       if (userInfoStr) {
         const userInfo = JSON.parse(userInfoStr);
         setCurrentUserId(userInfo.id);
+        console.log(userInfo);
         
-        // Check if user is owner after userCreated is set
-          setIsOwner(userInfo.id === userCreated || userInfo.id === homeId);
+        // Use the passed createdUserId parameter if provided, otherwise fall back to state
+        const effectiveUserCreated = createdUserId !== null ? createdUserId : userCreated;
+        console.log(effectiveUserCreated);
+        
+        // Check if user is owner using the effective user created ID
+        setIsOwner(userInfo.id === effectiveUserCreated || userInfo.id === homeId);
       }
     } catch (error) {
       console.error("Error getting current user:", error);
@@ -79,12 +87,21 @@ export const useHomeAdd = () => {
       
       const data = await response.json();
       setHomeName(data.data.name);
+      
+      // Set userCreated state
       setUserCreated(data.data.user_created);
+      
+      // Only call getCurrentUser in edit mode, passing the user_created directly from the API response
+      if (homeId) {
+        getCurrentUser(data.data.user_created);
+      }
       
       // Check if user is owner if we already have currentUserId
       if (currentUserId) {
         setIsOwner(currentUserId === data.data.user_created || currentUserId === homeId);
       }
+      
+      return data.data.user_created;
     } catch (error) {
       console.error("Error fetching home details:", error);
       Toast.show({
