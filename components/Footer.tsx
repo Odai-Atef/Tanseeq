@@ -8,7 +8,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ADMIN_ROLE } from '../constants/roles';
 import { ThemedText } from './ThemedText';
 import { useTranslation, useTextDirection } from '../contexts/LanguageContext';
-import { getTourText } from '../constants/languages/tour';
 
 type FooterProps = {
   activeTab: 'home' | 'tasks' | 'profile' | 'calendar' | 'tasks/calendar' | 'houses' | 'videos';
@@ -20,8 +19,6 @@ export function Footer({ activeTab }: FooterProps) {
   const { t, language } = useTranslation();
   const { flexDirection } = useTextDirection();
   
-  // Tour state
-  const [showTour, setShowTour] = useState(false);
   
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -37,14 +34,9 @@ export function Footer({ activeTab }: FooterProps) {
     };
     fetchUserRole();
     
-    // Check if the footer tour has been completed
   }, []);
   
   
-  
-
-  
-
   return (
     <View style={styles.footer}>
     
@@ -80,8 +72,8 @@ export function Footer({ activeTab }: FooterProps) {
 
           <TouchableOpacity 
             style={[
-              styles.addButton,
-              showTour && styles.highlightedButton
+              styles.addButton
+              
             ]}
             onPress={() => setShowModal(true)}
           >
@@ -217,6 +209,8 @@ export function Footer({ activeTab }: FooterProps) {
               </View>
             </TouchableOpacity>
           </Modal>
+          
+        
     </View>
   );
 }
@@ -290,4 +284,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.text,
   },
+ 
 });

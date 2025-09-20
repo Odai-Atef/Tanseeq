@@ -33,15 +33,7 @@ export const MyHomes = () => {
   const { t, isRTL, language } = useTranslation();
   const { homes, isLoading, error, setDefaultHome } = useHomes();
   
-  // Tour state
-  const [showTour, setShowTour] = useState(false);
-  
-  useEffect(() => {
-    // Check if the homes tour has been completed
-  }, []);
-
-
-
+ 
   const handleHomePress = (homeId: string) => {
     setDefaultHome(homeId);
   };
@@ -73,7 +65,7 @@ export const MyHomes = () => {
   }
 
   return (
-    <View style={[styles.container, showTour && tourStyles.highlightedContainer]}>
+    <View style={[styles.container]}>
       <View style={[styles.sectionHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
         <ThemedText type="defaultSemiBold" style={[styles.sectionTitle, { textAlign: isRTL ? 'right' : 'left' }]}>
           {t('dashboard.myHomes')}

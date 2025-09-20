@@ -6,23 +6,17 @@ import { LanguageProvider } from '../contexts/LanguageContext';
 import Toast from 'react-native-toast-message';
 import { useFonts } from 'expo-font';
 import { useColorScheme, LogBox } from 'react-native';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, Theme, ThemeProvider } from '@react-navigation/native';
 import { colors } from '../constants/Theme';
 import * as SplashScreen from 'expo-splash-screen';
 import firebase from '@react-native-firebase/app';
 import { FIREBASE_CONFIG } from '../constants/Firebase';
-import { 
-  requestUserPermission, 
-  getFCMToken, 
-  registerDeviceWithBackend, 
-  setupForegroundNotificationHandler,
-  setupBackgroundNotificationHandler
-} from '../utils/firebaseMessaging';
+import { initializeFirebaseMessaging, setupBackgroundNotificationHandler } from '../utils/firebaseMessaging';
 
 // Ignore specific warnings
-LogBox.ignoreLogs(['Warning: ...']);
+LogBox.ignoreLogs(['Warning: ...']); // Ignore specific warnings
 
-// Keep splash screen visible while we fetch resources
+// Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
 const navigationTheme = {
@@ -52,10 +46,13 @@ const navigationTheme = {
   },
 };
 
-// Initialize Firebase only once
+// Initialize Firebase at the app level, outside of any component
 if (!firebase.apps.length) {
   firebase.initializeApp(FIREBASE_CONFIG);
 }
+
+// Set up background message handler outside of any component
+setupBackgroundNotificationHandler();
 
 export default function Layout() {
   const [loaded] = useFonts({
@@ -67,18 +64,9 @@ export default function Layout() {
   useEffect(() => {
     const initFirebase = async () => {
       try {
-        // Request permission (iOS only)
-        const hasPermission = await requestUserPermission();
-        
-        if (hasPermission) {
-          // Get FCM token and register with backend
-          await getFCMToken();
-          await registerDeviceWithBackend();
-          
-          // Setup notification handlers
-          setupForegroundNotificationHandler();
-          setupBackgroundNotificationHandler();
-        }
+        // Firebase is already initialized at the app level
+        // Just initialize Firebase Messaging
+        await initializeFirebaseMessaging();
       } catch (error) {
         console.error('Error initializing Firebase Messaging:', error);
       }
@@ -87,35 +75,43 @@ export default function Layout() {
     initFirebase();
   }, []);
 
+
   useEffect(() => {
     if (loaded) {
+      // Hide splash screen once fonts are loaded
       SplashScreen.hideAsync();
     }
   }, [loaded]);
 
-  if (!loaded) return null;
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <ThemeProvider value={navigationTheme[colorScheme ?? 'light']}>
       <LanguageProvider>
-        <Stack screenOptions={{ 
-          headerShown: false,
-          headerTitleStyle: { fontFamily: 'Cairo' },
-          headerBackTitleStyle: { fontFamily: 'Cairo' }
-        }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="dashboard" />
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="tasks/calendar" />
-          <Stack.Screen name="tasks/index" />
-          <Stack.Screen name="tasks/view" />
-          <Stack.Screen name="tasks/add" />
-          <Stack.Screen name="schedules/view" />
-          <Stack.Screen name="schedules/add" />
-          <Stack.Screen name="home/invite" />
-          <Stack.Screen name="home/join" />
-        </Stack>
-        <Toast />
+          <Stack screenOptions={{ 
+            headerShown: false,
+            headerTitleStyle: {
+              fontFamily: 'Cairo'
+            },
+            headerBackTitleStyle: {
+              fontFamily: 'Cairo'
+            }
+          }}>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="dashboard" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="tasks/calendar" options={{ headerShown: false }} />
+          <Stack.Screen name="tasks/index" options={{ headerShown: false }} />
+          <Stack.Screen name="tasks/view" options={{ headerShown: false }} />
+          <Stack.Screen name="tasks/add" options={{ headerBackTitle: '', headerShown: false }} />
+          <Stack.Screen name="schedules/view" options={{ headerBackTitle: '', headerShown: false }} />
+          <Stack.Screen name="schedules/add" options={{ headerBackTitle: '', headerShown: false }} />
+          <Stack.Screen name="home/invite" options={{ headerBackTitle: '', headerShown: false }} />
+          <Stack.Screen name="home/join" options={{ headerBackTitle: '', headerShown: false }} />
+          </Stack>
+          <Toast />
       </LanguageProvider>
     </ThemeProvider>
   );
